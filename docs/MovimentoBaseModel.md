@@ -1,0 +1,40 @@
+# MovimentoBaseModel
+
+Dati della registrazione
+
+## Properties
+
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**riferimenti** | [**DatiRiferimentiBaseModel**](DatiRiferimentiBaseModel.md) | Riferimenti operazione | 
+**rifiuto** | [**DatiRifiutoModel**](DatiRifiutoModel.md) | Identificazione del rifiuto.  Richiesto solamente se causale_operazione è diversa da \&quot;M\&quot;. | [optional] 
+**materiali** | [**DatiMaterialiModel**](DatiMaterialiModel.md) | Materiali (solo impianti).  Richiesto solamente se causale_operazione è uguale a \&quot;M\&quot;. | [optional] 
+**integrazione_fir** | [**DatiIntegrazioneFirModel**](DatiIntegrazioneFirModel.md) | Integrazione FIR - Registro C/S.  Non deve essere indicato se causale_operazione è diversa da \&quot;aT\&quot;, \&quot;TR\&quot;, \&quot;T*\&quot;, \&quot;T*AT\&quot;. | [optional] 
+**esito** | [**DatiEsitoModel**](DatiEsitoModel.md) | Esito conferimento.  Non deve essere indicato se causale_operazione è diversa da \&quot;aT\&quot;, \&quot;T*AT\&quot;. | [optional] 
+**produttore** | [**DatiProduttoreModel**](DatiProduttoreModel.md) | Produttore del rifiuto | [optional] 
+**trasportatore** | [**DatiTrasportatoreModel**](DatiTrasportatoreModel.md) | Trasportatore | [optional] 
+**destinatario** | [**DatiDestinatarioModel**](DatiDestinatarioModel.md) | Destinatario | [optional] 
+**intermediario** | [**DatiIntermediarioModel**](DatiIntermediarioModel.md) | Intermediario     ⚠️ Deprecato: utilizzare \&quot;Intermediari\&quot; | [optional] 
+**intermediari** | [**List[DatiIntermediarioModel]**](DatiIntermediarioModel.md) | Intermediari | [optional] 
+**annotazioni** | **str** | Annotazioni generiche | [optional] 
+
+## Example
+
+```python
+from rentri_dati_registri.models.movimento_base_model import MovimentoBaseModel
+
+# TODO update the JSON string below
+json = "{}"
+# create an instance of MovimentoBaseModel from a JSON string
+movimento_base_model_instance = MovimentoBaseModel.from_json(json)
+# print the JSON string representation of the object
+print(MovimentoBaseModel.to_json())
+
+# convert the object into a dict
+movimento_base_model_dict = movimento_base_model_instance.to_dict()
+# create an instance of MovimentoBaseModel from a dict
+movimento_base_model_from_dict = MovimentoBaseModel.from_dict(movimento_base_model_dict)
+```
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
+
