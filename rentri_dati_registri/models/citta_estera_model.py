@@ -89,8 +89,7 @@ class CittaEsteraModel(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
-        })
+        _obj = cls.model_validate(obj)
         return _obj
 
 
