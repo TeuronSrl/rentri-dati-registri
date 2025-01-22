@@ -186,7 +186,7 @@ class MovimentoModel(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "riferimenti": DatiRiferimentiBaseModel.from_dict(obj["riferimenti"]) if obj.get("riferimenti") is not None else None,
+            "riferimenti": DatiRiferimentiModel.from_dict(obj["riferimenti"]) if obj.get("riferimenti") is not None else None,
             "rifiuto": DatiRifiutoModel.from_dict(obj["rifiuto"]) if obj.get("rifiuto") is not None else None,
             "materiali": DatiMaterialiModel.from_dict(obj["materiali"]) if obj.get("materiali") is not None else None,
             "integrazione_fir": DatiIntegrazioneFirModel.from_dict(obj["integrazione_fir"]) if obj.get("integrazione_fir") is not None else None,
