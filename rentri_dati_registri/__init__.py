@@ -15,7 +15,7 @@
 """  # noqa: E501
 
 
-__version__ = "1.0.2"
+__version__ = "1.0.3"
 
 # import apis into sdk package
 from rentri_dati_registri.api.operatore_api import OperatoreApi

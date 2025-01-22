@@ -18,7 +18,7 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 from typing import Any, ClassVar, Dict, List, Optional
 from typing_extensions import Annotated
 from typing import Optional, Set
@@ -40,6 +40,12 @@ class DatiDestinatarioModel(BaseModel):
         protected_namespaces=(),
     )
 
+    @field_validator("num_autorizzazione")
+    def validate_num_autorizzazione(cls, v: Optional[str], info) -> Optional[str]:
+        nazione = info.data.get("nazione_id")
+        if nazione == "IT" and not v:
+            raise ValueError('The num_autorizzazione field is required when nation is IT')
+        return v
 
     def to_str(self) -> str:
         """Returns the string representation of the model using alias"""
@@ -93,7 +99,7 @@ class DatiDestinatarioModel(BaseModel):
 
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
-
+        
         _obj = cls.model_validate({
             "denominazione": obj.get("denominazione"),
             "codice_fiscale": obj.get("codice_fiscale"),

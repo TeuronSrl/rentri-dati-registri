@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rentri_dati_registri"
-version = "1.0.1"
+version = "1.0.3"
 description = "dati-registri"
 authors = ["OpenAPI Generator Community <techref@rentri.it>"]
 license = "NoLicense"
