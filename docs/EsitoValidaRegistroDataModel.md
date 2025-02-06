@@ -2,7 +2,6 @@
 
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **identificativo_registro** | **str** | Identificativo del registro | [optional] 
@@ -38,7 +37,7 @@ json = "{}"
 # create an instance of EsitoValidaRegistroDataModel from a JSON string
 esito_valida_registro_data_model_instance = EsitoValidaRegistroDataModel.from_json(json)
 # print the JSON string representation of the object
-print(EsitoValidaRegistroDataModel.to_json())
+print EsitoValidaRegistroDataModel.to_json()
 
 # convert the object into a dict
 esito_valida_registro_data_model_dict = esito_valida_registro_data_model_instance.to_dict()

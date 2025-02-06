@@ -14,8 +14,9 @@
 
 
 import unittest
+import datetime
 
-from rentri_dati_registri.models.operatore_identificativo_registro_movimenti_post_request_inner import OperatoreIdentificativoRegistroMovimentiPostRequestInner
+from rentri_dati_registri.models.operatore_identificativo_registro_movimenti_post_request_inner import OperatoreIdentificativoRegistroMovimentiPostRequestInner  # noqa: E501
 
 class TestOperatoreIdentificativoRegistroMovimentiPostRequestInner(unittest.TestCase):
     """OperatoreIdentificativoRegistroMovimentiPostRequestInner unit test stubs"""
@@ -28,12 +29,12 @@ class TestOperatoreIdentificativoRegistroMovimentiPostRequestInner(unittest.Test
 
     def make_instance(self, include_optional) -> OperatoreIdentificativoRegistroMovimentiPostRequestInner:
         """Test OperatoreIdentificativoRegistroMovimentiPostRequestInner
-            include_optional is a boolean, when False only required
+            include_option is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
         # uncomment below to create an instance of `OperatoreIdentificativoRegistroMovimentiPostRequestInner`
         """
-        model = OperatoreIdentificativoRegistroMovimentiPostRequestInner()
+        model = OperatoreIdentificativoRegistroMovimentiPostRequestInner()  # noqa: E501
         if include_optional:
             return OperatoreIdentificativoRegistroMovimentiPostRequestInner(
                 riferimenti = rentri_dati_registri.models.dati_riferimenti_base_model.DatiRiferimentiBaseModel(

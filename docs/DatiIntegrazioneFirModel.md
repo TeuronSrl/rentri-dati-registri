@@ -3,7 +3,6 @@
 Integrazione FIR - Registro C/S
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **numero_fir** | **str** | Numero formulario | [optional] 
@@ -21,7 +20,7 @@ json = "{}"
 # create an instance of DatiIntegrazioneFirModel from a JSON string
 dati_integrazione_fir_model_instance = DatiIntegrazioneFirModel.from_json(json)
 # print the JSON string representation of the object
-print(DatiIntegrazioneFirModel.to_json())
+print DatiIntegrazioneFirModel.to_json()
 
 # convert the object into a dict
 dati_integrazione_fir_model_dict = dati_integrazione_fir_model_instance.to_dict()

@@ -14,8 +14,9 @@
 
 
 import unittest
+import datetime
 
-from rentri_dati_registri.models.stati_fisici import StatiFisici
+from rentri_dati_registri.models.stati_fisici import StatiFisici  # noqa: E501
 
 class TestStatiFisici(unittest.TestCase):
     """StatiFisici unit test stubs"""

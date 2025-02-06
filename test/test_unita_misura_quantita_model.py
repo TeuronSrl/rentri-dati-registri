@@ -14,8 +14,9 @@
 
 
 import unittest
+import datetime
 
-from rentri_dati_registri.models.unita_misura_quantita_model import UnitaMisuraQuantitaModel
+from rentri_dati_registri.models.unita_misura_quantita_model import UnitaMisuraQuantitaModel  # noqa: E501
 
 class TestUnitaMisuraQuantitaModel(unittest.TestCase):
     """UnitaMisuraQuantitaModel unit test stubs"""
@@ -28,12 +29,12 @@ class TestUnitaMisuraQuantitaModel(unittest.TestCase):
 
     def make_instance(self, include_optional) -> UnitaMisuraQuantitaModel:
         """Test UnitaMisuraQuantitaModel
-            include_optional is a boolean, when False only required
+            include_option is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
         # uncomment below to create an instance of `UnitaMisuraQuantitaModel`
         """
-        model = UnitaMisuraQuantitaModel()
+        model = UnitaMisuraQuantitaModel()  # noqa: E501
         if include_optional:
             return UnitaMisuraQuantitaModel(
                 valore = 1.337,

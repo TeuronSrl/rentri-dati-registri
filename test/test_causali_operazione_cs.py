@@ -14,8 +14,9 @@
 
 
 import unittest
+import datetime
 
-from rentri_dati_registri.models.causali_operazione_cs import CausaliOperazioneCs
+from rentri_dati_registri.models.causali_operazione_cs import CausaliOperazioneCs  # noqa: E501
 
 class TestCausaliOperazioneCs(unittest.TestCase):
     """CausaliOperazioneCs unit test stubs"""

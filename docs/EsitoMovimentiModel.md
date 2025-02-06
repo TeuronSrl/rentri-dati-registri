@@ -3,7 +3,6 @@
 Esito trasmissione della registrazione
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **esito** | [**EsitoMovimentiDataModel**](EsitoMovimentiDataModel.md) | Dati dell&#39;esito della registrazione | [optional] 
@@ -22,7 +21,7 @@ json = "{}"
 # create an instance of EsitoMovimentiModel from a JSON string
 esito_movimenti_model_instance = EsitoMovimentiModel.from_json(json)
 # print the JSON string representation of the object
-print(EsitoMovimentiModel.to_json())
+print EsitoMovimentiModel.to_json()
 
 # convert the object into a dict
 esito_movimenti_model_dict = esito_movimenti_model_instance.to_dict()

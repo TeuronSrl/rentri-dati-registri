@@ -14,8 +14,9 @@
 
 
 import unittest
+import datetime
 
-from rentri_dati_registri.models.materiali import Materiali
+from rentri_dati_registri.models.materiali import Materiali  # noqa: E501
 
 class TestMateriali(unittest.TestCase):
     """Materiali unit test stubs"""

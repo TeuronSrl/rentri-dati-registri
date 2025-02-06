@@ -3,7 +3,6 @@
 Dati di identificazione della registrazione con anno/progressivo e identificativo rilasciato dal RENTRI (modello utilizzato in output)
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **anno** | **int** | Anno di riferimento della registrazione | [optional] 
@@ -20,7 +19,7 @@ json = "{}"
 # create an instance of IdentificativoMovimentoCompletoModel from a JSON string
 identificativo_movimento_completo_model_instance = IdentificativoMovimentoCompletoModel.from_json(json)
 # print the JSON string representation of the object
-print(IdentificativoMovimentoCompletoModel.to_json())
+print IdentificativoMovimentoCompletoModel.to_json()
 
 # convert the object into a dict
 identificativo_movimento_completo_model_dict = identificativo_movimento_completo_model_instance.to_dict()

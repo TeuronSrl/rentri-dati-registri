@@ -15,7 +15,7 @@
 
 import unittest
 
-from rentri_dati_registri.api.operatore_api import OperatoreApi
+from rentri_dati_registri.api.operatore_api import OperatoreApi  # noqa: E501
 
 
 class TestOperatoreApi(unittest.TestCase):
@@ -25,68 +25,68 @@ class TestOperatoreApi(unittest.TestCase):
         self.api = OperatoreApi()
 
     def tearDown(self) -> None:
-        pass
+        self.api.api_client.close()
 
     def test_operatore_identificativo_registro_movimenti_count_get(self) -> None:
         """Test case for operatore_identificativo_registro_movimenti_count_get
 
-        Conteggio registrazioni
+        Conteggio registrazioni  # noqa: E501
         """
         pass
 
     def test_operatore_identificativo_registro_movimenti_get(self) -> None:
         """Test case for operatore_identificativo_registro_movimenti_get
 
-        Elenco registrazioni
+        Elenco registrazioni  # noqa: E501
         """
         pass
 
     def test_operatore_identificativo_registro_movimenti_post(self) -> None:
         """Test case for operatore_identificativo_registro_movimenti_post
 
-        🔁[ASYNC] Trasmissione delle registrazioni
+        🔁[ASYNC] Trasmissione delle registrazioni  # noqa: E501
         """
         pass
 
     def test_operatore_identificativo_registro_movimento_anno_progressivo_get(self) -> None:
         """Test case for operatore_identificativo_registro_movimento_anno_progressivo_get
 
-        Dettaglio registrazione per anno e numero
+        Dettaglio registrazione per anno e numero  # noqa: E501
         """
         pass
 
     def test_operatore_identificativo_registro_movimento_identificativo_movimento_get(self) -> None:
         """Test case for operatore_identificativo_registro_movimento_identificativo_movimento_get
 
-        Dettaglio registrazione per identificativo
+        Dettaglio registrazione per identificativo  # noqa: E501
         """
         pass
 
     def test_operatore_identificativo_registro_valida_post(self) -> None:
         """Test case for operatore_identificativo_registro_valida_post
 
-        🔁[ASYNC] Verifica il registro informatico locale
+        🔁[ASYNC] Verifica il registro informatico locale  # noqa: E501
         """
         pass
 
     def test_operatore_transazioni_movimenti_num_iscr_sito_get(self) -> None:
         """Test case for operatore_transazioni_movimenti_num_iscr_sito_get
 
-        Elenco transazioni
+        Elenco transazioni  # noqa: E501
         """
         pass
 
     def test_operatore_transazioni_movimenti_num_iscr_sito_identificativo_transazione_get(self) -> None:
         """Test case for operatore_transazioni_movimenti_num_iscr_sito_identificativo_transazione_get
 
-        Dettaglio transazione
+        Dettaglio transazione  # noqa: E501
         """
         pass
 
     def test_operatore_transazioni_movimenti_num_iscr_sito_identificativo_transazione_request_get(self) -> None:
         """Test case for operatore_transazioni_movimenti_num_iscr_sito_identificativo_transazione_request_get
 
-        Request transazione
+        Request transazione  # noqa: E501
         """
         pass
 

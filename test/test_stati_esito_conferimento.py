@@ -14,8 +14,9 @@
 
 
 import unittest
+import datetime
 
-from rentri_dati_registri.models.stati_esito_conferimento import StatiEsitoConferimento
+from rentri_dati_registri.models.stati_esito_conferimento import StatiEsitoConferimento  # noqa: E501
 
 class TestStatiEsitoConferimento(unittest.TestCase):
     """StatiEsitoConferimento unit test stubs"""

@@ -14,8 +14,9 @@
 
 
 import unittest
+import datetime
 
-from rentri_dati_registri.models.dati_riferimenti_base_model_riferimento_operazione_inner import DatiRiferimentiBaseModelRiferimentoOperazioneInner
+from rentri_dati_registri.models.dati_riferimenti_base_model_riferimento_operazione_inner import DatiRiferimentiBaseModelRiferimentoOperazioneInner  # noqa: E501
 
 class TestDatiRiferimentiBaseModelRiferimentoOperazioneInner(unittest.TestCase):
     """DatiRiferimentiBaseModelRiferimentoOperazioneInner unit test stubs"""
@@ -28,12 +29,12 @@ class TestDatiRiferimentiBaseModelRiferimentoOperazioneInner(unittest.TestCase):
 
     def make_instance(self, include_optional) -> DatiRiferimentiBaseModelRiferimentoOperazioneInner:
         """Test DatiRiferimentiBaseModelRiferimentoOperazioneInner
-            include_optional is a boolean, when False only required
+            include_option is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
         # uncomment below to create an instance of `DatiRiferimentiBaseModelRiferimentoOperazioneInner`
         """
-        model = DatiRiferimentiBaseModelRiferimentoOperazioneInner()
+        model = DatiRiferimentiBaseModelRiferimentoOperazioneInner()  # noqa: E501
         if include_optional:
             return DatiRiferimentiBaseModelRiferimentoOperazioneInner(
                 anno = 1980,

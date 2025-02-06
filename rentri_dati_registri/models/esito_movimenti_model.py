@@ -18,96 +18,79 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
-from typing import Any, ClassVar, Dict, List, Optional
+
+from typing import List, Optional
+from pydantic import BaseModel, Field, StrictBool, StrictStr, conlist
 from rentri_dati_registri.models.esito_messaggio_model import EsitoMessaggioModel
 from rentri_dati_registri.models.esito_movimenti_data_model import EsitoMovimentiDataModel
-from typing import Optional, Set
-from typing_extensions import Self
 
 class EsitoMovimentiModel(BaseModel):
     """
-    Esito trasmissione della registrazione
-    """ # noqa: E501
+    Esito trasmissione della registrazione  # noqa: E501
+    """
     esito: Optional[EsitoMovimentiDataModel] = Field(default=None, description="Dati dell'esito della registrazione")
     transazione_id: Optional[StrictStr] = Field(default=None, description="Identificativo della transazione asincrona")
-    validazione: Optional[List[EsitoMessaggioModel]] = Field(default=None, description="Messaggi di validazione")
+    validazione: Optional[conlist(EsitoMessaggioModel)] = Field(default=None, description="Messaggi di validazione")
     errore: Optional[StrictBool] = None
     tempo_elaborazione: Optional[StrictStr] = None
-    __properties: ClassVar[List[str]] = ["transazione_id", "validazione", "errore", "tempo_elaborazione"]
+    __properties = ["transazione_id", "validazione", "errore", "tempo_elaborazione"]
 
-    model_config = ConfigDict(
-        populate_by_name=True,
-        validate_assignment=True,
-        protected_namespaces=(),
-    )
-
+    class Config:
+        """Pydantic configuration"""
+        allow_population_by_field_name = True
+        validate_assignment = True
 
     def to_str(self) -> str:
         """Returns the string representation of the model using alias"""
-        return pprint.pformat(self.model_dump(by_alias=True))
+        return pprint.pformat(self.dict(by_alias=True))
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> EsitoMovimentiModel:
         """Create an instance of EsitoMovimentiModel from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
-    def to_dict(self) -> Dict[str, Any]:
-        """Return the dictionary representation of the model using alias.
-
-        This has the following differences from calling pydantic's
-        `self.model_dump(by_alias=True)`:
-
-        * `None` is only added to the output dict for nullable fields that
-          were set at model initialization. Other fields with value `None`
-          are ignored.
-        * OpenAPI `readOnly` fields are excluded.
-        """
-        excluded_fields: Set[str] = set([
-            "errore",
-        ])
-
-        _dict = self.model_dump(
-            by_alias=True,
-            exclude=excluded_fields,
-            exclude_none=True,
-        )
+    def to_dict(self):
+        """Returns the dictionary representation of the model using alias"""
+        _dict = self.dict(by_alias=True,
+                          exclude={
+                            "errore",
+                          },
+                          exclude_none=True)
         # override the default output from pydantic by calling `to_dict()` of each item in validazione (list)
         _items = []
         if self.validazione:
-            for _item_validazione in self.validazione:
-                if _item_validazione:
-                    _items.append(_item_validazione.to_dict())
+            for _item in self.validazione:
+                if _item:
+                    _items.append(_item.to_dict())
             _dict['validazione'] = _items
         # set to None if validazione (nullable) is None
-        # and model_fields_set contains the field
-        if self.validazione is None and "validazione" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.validazione is None and "validazione" in self.__fields_set__:
             _dict['validazione'] = None
 
         # set to None if tempo_elaborazione (nullable) is None
-        # and model_fields_set contains the field
-        if self.tempo_elaborazione is None and "tempo_elaborazione" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.tempo_elaborazione is None and "tempo_elaborazione" in self.__fields_set__:
             _dict['tempo_elaborazione'] = None
 
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: dict) -> EsitoMovimentiModel:
         """Create an instance of EsitoMovimentiModel from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
-            return cls.model_validate(obj)
+            return EsitoMovimentiModel.parse_obj(obj)
 
-        _obj = cls.model_validate({
+        _obj = EsitoMovimentiModel.parse_obj({
             "transazione_id": obj.get("transazione_id"),
-            "validazione": [EsitoMessaggioModel.from_dict(_item) for _item in obj["validazione"]] if obj.get("validazione") is not None else None,
+            "validazione": [EsitoMessaggioModel.from_dict(_item) for _item in obj.get("validazione")] if obj.get("validazione") is not None else None,
             "errore": obj.get("errore"),
             "tempo_elaborazione": obj.get("tempo_elaborazione")
         })

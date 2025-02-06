@@ -2,7 +2,6 @@
 
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **esito** | [**EsitoValidaRegistroDataModel**](EsitoValidaRegistroDataModel.md) | Dati dell&#39;esito validazione | [optional] 
@@ -21,7 +20,7 @@ json = "{}"
 # create an instance of TransazioneIdResultGet200Response from a JSON string
 transazione_id_result_get200_response_instance = TransazioneIdResultGet200Response.from_json(json)
 # print the JSON string representation of the object
-print(TransazioneIdResultGet200Response.to_json())
+print TransazioneIdResultGet200Response.to_json()
 
 # convert the object into a dict
 transazione_id_result_get200_response_dict = transazione_id_result_get200_response_instance.to_dict()

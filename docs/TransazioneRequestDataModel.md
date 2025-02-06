@@ -2,7 +2,6 @@
 
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **claims** | **str** |  | [optional] 
@@ -19,7 +18,7 @@ json = "{}"
 # create an instance of TransazioneRequestDataModel from a JSON string
 transazione_request_data_model_instance = TransazioneRequestDataModel.from_json(json)
 # print the JSON string representation of the object
-print(TransazioneRequestDataModel.to_json())
+print TransazioneRequestDataModel.to_json()
 
 # convert the object into a dict
 transazione_request_data_model_dict = transazione_request_data_model_instance.to_dict()

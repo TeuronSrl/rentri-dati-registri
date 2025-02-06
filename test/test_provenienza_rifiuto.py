@@ -14,8 +14,9 @@
 
 
 import unittest
+import datetime
 
-from rentri_dati_registri.models.provenienza_rifiuto import ProvenienzaRifiuto
+from rentri_dati_registri.models.provenienza_rifiuto import ProvenienzaRifiuto  # noqa: E501
 
 class TestProvenienzaRifiuto(unittest.TestCase):
     """ProvenienzaRifiuto unit test stubs"""

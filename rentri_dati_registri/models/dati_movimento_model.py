@@ -18,9 +18,9 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictBool
-from typing import Any, ClassVar, Dict, List, Optional
-from typing_extensions import Annotated
+
+from typing import List, Optional
+from pydantic import BaseModel, Field, StrictBool, conlist, constr
 from rentri_dati_registri.models.dati_destinatario_model import DatiDestinatarioModel
 from rentri_dati_registri.models.dati_esito_model import DatiEsitoModel
 from rentri_dati_registri.models.dati_integrazione_fir_model import DatiIntegrazioneFirModel
@@ -30,13 +30,11 @@ from rentri_dati_registri.models.dati_produttore_model import DatiProduttoreMode
 from rentri_dati_registri.models.dati_riferimenti_completo_model import DatiRiferimentiCompletoModel
 from rentri_dati_registri.models.dati_rifiuto_model import DatiRifiutoModel
 from rentri_dati_registri.models.dati_trasportatore_model import DatiTrasportatoreModel
-from typing import Optional, Set
-from typing_extensions import Self
 
 class DatiMovimentoModel(BaseModel):
     """
-    Dati della registrazione (modello utilizzato in output)
-    """ # noqa: E501
+    Dati della registrazione (modello utilizzato in output)  # noqa: E501
+    """
     riferimenti: Optional[DatiRiferimentiCompletoModel] = Field(default=None, description="Riferimenti operazione")
     rifiuto: Optional[DatiRifiutoModel] = Field(default=None, description="Identificazione del rifiuto.  Richiesto solamente se causale_operazione è diversa da \"M\".")
     materiali: Optional[DatiMaterialiModel] = Field(default=None, description="Materiali (solo impianti).  Richiesto solamente se causale_operazione è uguale a \"M\".")
@@ -46,51 +44,36 @@ class DatiMovimentoModel(BaseModel):
     trasportatore: Optional[DatiTrasportatoreModel] = Field(default=None, description="Trasportatore")
     destinatario: Optional[DatiDestinatarioModel] = Field(default=None, description="Destinatario")
     intermediario: Optional[DatiIntermediarioModel] = Field(default=None, description="Intermediario     ⚠️ Deprecato: utilizzare \"Intermediari\"")
-    intermediari: Optional[List[DatiIntermediarioModel]] = Field(default=None, description="Intermediari")
-    annotazioni: Optional[Annotated[str, Field(strict=True, max_length=500)]] = Field(default=None, description="Annotazioni generiche")
+    intermediari: Optional[conlist(DatiIntermediarioModel)] = Field(default=None, description="Intermediari")
+    annotazioni: Optional[constr(strict=True, max_length=500)] = Field(default=None, description="Annotazioni generiche")
     annullato: Optional[StrictBool] = Field(default=None, description="Indica se il movimento è annullato")
     rettificato: Optional[StrictBool] = Field(default=None, description="Indica se il movimento è rettificato")
-    __properties: ClassVar[List[str]] = ["riferimenti", "rifiuto", "materiali", "integrazione_fir", "esito", "produttore", "trasportatore", "destinatario", "intermediario", "intermediari", "annotazioni", "annullato", "rettificato"]
+    __properties = ["riferimenti", "rifiuto", "materiali", "integrazione_fir", "esito", "produttore", "trasportatore", "destinatario", "intermediario", "intermediari", "annotazioni", "annullato", "rettificato"]
 
-    model_config = ConfigDict(
-        populate_by_name=True,
-        validate_assignment=True,
-        protected_namespaces=(),
-    )
-
+    class Config:
+        """Pydantic configuration"""
+        allow_population_by_field_name = True
+        validate_assignment = True
 
     def to_str(self) -> str:
         """Returns the string representation of the model using alias"""
-        return pprint.pformat(self.model_dump(by_alias=True))
+        return pprint.pformat(self.dict(by_alias=True))
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> DatiMovimentoModel:
         """Create an instance of DatiMovimentoModel from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
-    def to_dict(self) -> Dict[str, Any]:
-        """Return the dictionary representation of the model using alias.
-
-        This has the following differences from calling pydantic's
-        `self.model_dump(by_alias=True)`:
-
-        * `None` is only added to the output dict for nullable fields that
-          were set at model initialization. Other fields with value `None`
-          are ignored.
-        """
-        excluded_fields: Set[str] = set([
-        ])
-
-        _dict = self.model_dump(
-            by_alias=True,
-            exclude=excluded_fields,
-            exclude_none=True,
-        )
+    def to_dict(self):
+        """Returns the dictionary representation of the model using alias"""
+        _dict = self.dict(by_alias=True,
+                          exclude={
+                          },
+                          exclude_none=True)
         # override the default output from pydantic by calling `to_dict()` of riferimenti
         if self.riferimenti:
             _dict['riferimenti'] = self.riferimenti.to_dict()
@@ -121,89 +104,87 @@ class DatiMovimentoModel(BaseModel):
         # override the default output from pydantic by calling `to_dict()` of each item in intermediari (list)
         _items = []
         if self.intermediari:
-            for _item_intermediari in self.intermediari:
-                if _item_intermediari:
-                    _items.append(_item_intermediari.to_dict())
+            for _item in self.intermediari:
+                if _item:
+                    _items.append(_item.to_dict())
             _dict['intermediari'] = _items
         # set to None if riferimenti (nullable) is None
-        # and model_fields_set contains the field
-        if self.riferimenti is None and "riferimenti" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.riferimenti is None and "riferimenti" in self.__fields_set__:
             _dict['riferimenti'] = None
 
         # set to None if rifiuto (nullable) is None
-        # and model_fields_set contains the field
-        if self.rifiuto is None and "rifiuto" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.rifiuto is None and "rifiuto" in self.__fields_set__:
             _dict['rifiuto'] = None
 
         # set to None if materiali (nullable) is None
-        # and model_fields_set contains the field
-        if self.materiali is None and "materiali" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.materiali is None and "materiali" in self.__fields_set__:
             _dict['materiali'] = None
 
         # set to None if integrazione_fir (nullable) is None
-        # and model_fields_set contains the field
-        if self.integrazione_fir is None and "integrazione_fir" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.integrazione_fir is None and "integrazione_fir" in self.__fields_set__:
             _dict['integrazione_fir'] = None
 
         # set to None if esito (nullable) is None
-        # and model_fields_set contains the field
-        if self.esito is None and "esito" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.esito is None and "esito" in self.__fields_set__:
             _dict['esito'] = None
 
         # set to None if produttore (nullable) is None
-        # and model_fields_set contains the field
-        if self.produttore is None and "produttore" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.produttore is None and "produttore" in self.__fields_set__:
             _dict['produttore'] = None
 
         # set to None if trasportatore (nullable) is None
-        # and model_fields_set contains the field
-        if self.trasportatore is None and "trasportatore" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.trasportatore is None and "trasportatore" in self.__fields_set__:
             _dict['trasportatore'] = None
 
         # set to None if destinatario (nullable) is None
-        # and model_fields_set contains the field
-        if self.destinatario is None and "destinatario" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.destinatario is None and "destinatario" in self.__fields_set__:
             _dict['destinatario'] = None
 
         # set to None if intermediario (nullable) is None
-        # and model_fields_set contains the field
-        if self.intermediario is None and "intermediario" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.intermediario is None and "intermediario" in self.__fields_set__:
             _dict['intermediario'] = None
 
         # set to None if intermediari (nullable) is None
-        # and model_fields_set contains the field
-        if self.intermediari is None and "intermediari" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.intermediari is None and "intermediari" in self.__fields_set__:
             _dict['intermediari'] = None
 
         # set to None if annotazioni (nullable) is None
-        # and model_fields_set contains the field
-        if self.annotazioni is None and "annotazioni" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.annotazioni is None and "annotazioni" in self.__fields_set__:
             _dict['annotazioni'] = None
 
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: dict) -> DatiMovimentoModel:
         """Create an instance of DatiMovimentoModel from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
-            return cls.model_validate(obj)
-        
-        
+            return DatiMovimentoModel.parse_obj(obj)
 
-        _obj = cls.model_validate({
-            "riferimenti": DatiRiferimentiCompletoModel.from_dict(obj["riferimenti"]) if obj.get("riferimenti") not in (None, {}) else None,
-            "rifiuto": DatiRifiutoModel.from_dict(obj["rifiuto"]) if obj.get("rifiuto") not in (None, {}) else None,
-            "materiali": DatiMaterialiModel.from_dict(obj["materiali"]) if obj.get("materiali") not in (None, {}) else None,
-            "integrazione_fir": DatiIntegrazioneFirModel.from_dict(obj["integrazione_fir"]) if obj.get("integrazione_fir") not in (None, {}) else None,
-            "esito": DatiEsitoModel.from_dict(obj["esito"]) if obj.get("esito") not in (None, {}) else None,
-            "produttore": DatiProduttoreModel.from_dict(obj["produttore"]) if obj.get("produttore") not in (None, {}) else None,
-            "trasportatore": DatiTrasportatoreModel.from_dict(obj["trasportatore"]) if obj.get("trasportatore") not in (None, {}) else None,
-            "destinatario": DatiDestinatarioModel.from_dict(obj["destinatario"]) if obj.get("destinatario") not in (None, {}) else None,
-            "intermediario": DatiIntermediarioModel.from_dict(obj["intermediario"]) if obj.get("intermediario") not in (None, {}) else None,
-            "intermediari": [DatiIntermediarioModel.from_dict(_item) for _item in obj["intermediari"]] if obj.get("intermediari") not in (None, {}) else None,
+        _obj = DatiMovimentoModel.parse_obj({
+            "riferimenti": DatiRiferimentiCompletoModel.from_dict(obj.get("riferimenti")) if obj.get("riferimenti") is not None else None,
+            "rifiuto": DatiRifiutoModel.from_dict(obj.get("rifiuto")) if obj.get("rifiuto") is not None else None,
+            "materiali": DatiMaterialiModel.from_dict(obj.get("materiali")) if obj.get("materiali") is not None else None,
+            "integrazione_fir": DatiIntegrazioneFirModel.from_dict(obj.get("integrazione_fir")) if obj.get("integrazione_fir") is not None else None,
+            "esito": DatiEsitoModel.from_dict(obj.get("esito")) if obj.get("esito") is not None else None,
+            "produttore": DatiProduttoreModel.from_dict(obj.get("produttore")) if obj.get("produttore") is not None else None,
+            "trasportatore": DatiTrasportatoreModel.from_dict(obj.get("trasportatore")) if obj.get("trasportatore") is not None else None,
+            "destinatario": DatiDestinatarioModel.from_dict(obj.get("destinatario")) if obj.get("destinatario") is not None else None,
+            "intermediario": DatiIntermediarioModel.from_dict(obj.get("intermediario")) if obj.get("intermediario") is not None else None,
+            "intermediari": [DatiIntermediarioModel.from_dict(_item) for _item in obj.get("intermediari")] if obj.get("intermediari") is not None else None,
             "annotazioni": obj.get("annotazioni"),
             "annullato": obj.get("annullato"),
             "rettificato": obj.get("rettificato")

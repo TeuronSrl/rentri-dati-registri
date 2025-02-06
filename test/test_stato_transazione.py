@@ -14,8 +14,9 @@
 
 
 import unittest
+import datetime
 
-from rentri_dati_registri.models.stato_transazione import StatoTransazione
+from rentri_dati_registri.models.stato_transazione import StatoTransazione  # noqa: E501
 
 class TestStatoTransazione(unittest.TestCase):
     """StatoTransazione unit test stubs"""

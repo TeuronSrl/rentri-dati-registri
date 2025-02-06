@@ -3,7 +3,6 @@
 Indirizzo
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **citta** | [**IndirizzoModelCitta**](IndirizzoModelCitta.md) |  | 
@@ -21,7 +20,7 @@ json = "{}"
 # create an instance of IndirizzoModel from a JSON string
 indirizzo_model_instance = IndirizzoModel.from_json(json)
 # print the JSON string representation of the object
-print(IndirizzoModel.to_json())
+print IndirizzoModel.to_json()
 
 # convert the object into a dict
 indirizzo_model_dict = indirizzo_model_instance.to_dict()

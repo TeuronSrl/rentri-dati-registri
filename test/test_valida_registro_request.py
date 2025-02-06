@@ -14,8 +14,9 @@
 
 
 import unittest
+import datetime
 
-from rentri_dati_registri.models.valida_registro_request import ValidaRegistroRequest
+from rentri_dati_registri.models.valida_registro_request import ValidaRegistroRequest  # noqa: E501
 
 class TestValidaRegistroRequest(unittest.TestCase):
     """ValidaRegistroRequest unit test stubs"""
@@ -28,12 +29,12 @@ class TestValidaRegistroRequest(unittest.TestCase):
 
     def make_instance(self, include_optional) -> ValidaRegistroRequest:
         """Test ValidaRegistroRequest
-            include_optional is a boolean, when False only required
+            include_option is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
         # uncomment below to create an instance of `ValidaRegistroRequest`
         """
-        model = ValidaRegistroRequest()
+        model = ValidaRegistroRequest()  # noqa: E501
         if include_optional:
             return ValidaRegistroRequest(
                 file_content = 'YQ==',

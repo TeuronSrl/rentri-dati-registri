@@ -14,8 +14,9 @@
 
 
 import unittest
+import datetime
 
-from rentri_dati_registri.models.tipo_transazione import TipoTransazione
+from rentri_dati_registri.models.tipo_transazione import TipoTransazione  # noqa: E501
 
 class TestTipoTransazione(unittest.TestCase):
     """TipoTransazione unit test stubs"""

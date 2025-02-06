@@ -2,7 +2,6 @@
 
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **transazione_id** | **str** | Identificativo della transazione asincrona | [optional] 
@@ -20,7 +19,7 @@ json = "{}"
 # create an instance of EsitoMovimentiBaseModel from a JSON string
 esito_movimenti_base_model_instance = EsitoMovimentiBaseModel.from_json(json)
 # print the JSON string representation of the object
-print(EsitoMovimentiBaseModel.to_json())
+print EsitoMovimentiBaseModel.to_json()
 
 # convert the object into a dict
 esito_movimenti_base_model_dict = esito_movimenti_base_model_instance.to_dict()

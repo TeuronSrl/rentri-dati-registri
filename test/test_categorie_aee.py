@@ -14,8 +14,9 @@
 
 
 import unittest
+import datetime
 
-from rentri_dati_registri.models.categorie_aee import CategorieAee
+from rentri_dati_registri.models.categorie_aee import CategorieAee  # noqa: E501
 
 class TestCategorieAee(unittest.TestCase):
     """CategorieAee unit test stubs"""

@@ -13,10 +13,13 @@
 """  # noqa: E501
 
 
-from __future__ import annotations
 import json
-from enum import Enum
-from typing_extensions import Self
+import pprint
+import re  # noqa: F401
+from aenum import Enum, no_arg
+
+
+
 
 
 class StatiFisici(str, Enum):
@@ -34,8 +37,8 @@ class StatiFisici(str, Enum):
     VS = 'VS'
 
     @classmethod
-    def from_json(cls, json_str: str) -> Self:
+    def from_json(cls, json_str: str) -> StatiFisici:
         """Create an instance of StatiFisici from a JSON string"""
-        return cls(json.loads(json_str))
+        return StatiFisici(json.loads(json_str))
 
 

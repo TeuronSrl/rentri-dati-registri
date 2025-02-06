@@ -3,7 +3,6 @@
 Riferimenti dell'operazione (modello utilizzato in output)
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **numero_registrazione** | [**IdentificativoMovimentoCompletoModel**](IdentificativoMovimentoCompletoModel.md) | Numero registrazione della registrazione tramite anno e progressivo e identificativo rilasciato dal RENTRI | [optional] 
@@ -32,7 +31,7 @@ json = "{}"
 # create an instance of DatiRiferimentiCompletoModel from a JSON string
 dati_riferimenti_completo_model_instance = DatiRiferimentiCompletoModel.from_json(json)
 # print the JSON string representation of the object
-print(DatiRiferimentiCompletoModel.to_json())
+print DatiRiferimentiCompletoModel.to_json()
 
 # convert the object into a dict
 dati_riferimenti_completo_model_dict = dati_riferimenti_completo_model_instance.to_dict()

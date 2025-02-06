@@ -3,7 +3,6 @@
 Respingimento
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **tipo** | [**TipiRespingimento**](TipiRespingimento.md) | Tipologia di respingimento  Vedi API di codifica: &lt;i&gt;GET /codifiche/v1.0/tipi-respingimento&lt;/i&gt;&lt;p&gt;Valori ammessi:&lt;ul style&#x3D;\&quot;margin:0\&quot;&gt;&lt;li&gt;&lt;i&gt;T&lt;/i&gt; - Totale&lt;/li&gt;&lt;li&gt;&lt;i&gt;P&lt;/i&gt; - Parziale&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt; | 
@@ -21,7 +20,7 @@ json = "{}"
 # create an instance of DatiRespingimentoModel from a JSON string
 dati_respingimento_model_instance = DatiRespingimentoModel.from_json(json)
 # print the JSON string representation of the object
-print(DatiRespingimentoModel.to_json())
+print DatiRespingimentoModel.to_json()
 
 # convert the object into a dict
 dati_respingimento_model_dict = dati_respingimento_model_instance.to_dict()

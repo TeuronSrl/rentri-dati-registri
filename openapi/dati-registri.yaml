@@ -43,6 +43,8 @@ paths:
           headers:
             Retry-After:
               description: Indica quanto tempo il fruitore deve attendere prima di effettuare una nuova richiesta.
+              schema:
+                  type: string
   /{transazione_id}/result:
     get:
       summary: Esito transazione
@@ -81,6 +83,8 @@ paths:
           headers:
             Retry-After:
               description: Indica quanto tempo il fruitore deve attendere prima di effettuare una nuova richiesta.
+              schema:
+                  type: string
   /{transazione_id}/status:
     get:
       summary: Stato transazione
@@ -126,6 +130,8 @@ paths:
           headers:
             Retry-After:
               description: Indica quanto tempo il fruitore deve attendere prima di effettuare una nuova richiesta.
+              schema:
+                  type: string
   /operatore/{identificativo_registro}/movimenti:
     get:
       tags:
@@ -299,6 +305,8 @@ paths:
           headers:
             Retry-After:
               description: Indica quanto tempo il fruitore deve attendere prima di effettuare una nuova richiesta.
+              schema:
+                  type: string
     post:
       tags:
       - Operatore
@@ -374,6 +382,8 @@ paths:
           headers:
             Retry-After:
               description: Indica quanto tempo il fruitore deve attendere prima di effettuare una nuova richiesta.
+              schema:
+                  type: string
       callbacks:
         Trasmissione delle registrazioni:
           https://example.com:
@@ -520,6 +530,8 @@ paths:
           headers:
             Retry-After:
               description: Indica quanto tempo il fruitore deve attendere prima di effettuare una nuova richiesta.
+              schema:
+                  type: string
   /operatore/{identificativo_registro}/movimento/{anno}/{progressivo}:
     get:
       tags:
@@ -591,6 +603,8 @@ paths:
           headers:
             Retry-After:
               description: Indica quanto tempo il fruitore deve attendere prima di effettuare una nuova richiesta.
+              schema:
+                  type: string
   /operatore/{identificativo_registro}/movimento/{identificativo_movimento}:
     get:
       tags:
@@ -652,6 +666,8 @@ paths:
           headers:
             Retry-After:
               description: Indica quanto tempo il fruitore deve attendere prima di effettuare una nuova richiesta.
+              schema:
+                  type: string
   /operatore/{identificativo_registro}/valida:
     post:
       tags:
@@ -733,6 +749,8 @@ paths:
           headers:
             Retry-After:
               description: Indica quanto tempo il fruitore deve attendere prima di effettuare una nuova richiesta.
+              schema:
+                  type: string
       callbacks:
         Verifica il registro informatico locale:
           https://example.com:
@@ -858,6 +876,8 @@ paths:
           headers:
             Retry-After:
               description: Indica quanto tempo il fruitore deve attendere prima di effettuare una nuova richiesta.
+              schema:
+                  type: string
   /operatore/transazioni/movimenti/{num_iscr_sito}/{identificativo_transazione}:
     get:
       tags:
@@ -900,6 +920,8 @@ paths:
           headers:
             Retry-After:
               description: Indica quanto tempo il fruitore deve attendere prima di effettuare una nuova richiesta.
+              schema:
+                  type: string
   /operatore/transazioni/movimenti/{num_iscr_sito}/{identificativo_transazione}/request:
     get:
       tags:
@@ -942,6 +964,8 @@ paths:
           headers:
             Retry-After:
               description: Indica quanto tempo il fruitore deve attendere prima di effettuare una nuova richiesta.
+              schema:
+                  type: string
   /soggetto-delegato/{identificativo_registro}/movimenti:
     get:
       tags:
@@ -1115,6 +1139,8 @@ paths:
           headers:
             Retry-After:
               description: Indica quanto tempo il fruitore deve attendere prima di effettuare una nuova richiesta.
+              schema:
+                  type: string
     post:
       tags:
       - Soggetto delegato
@@ -1190,6 +1216,8 @@ paths:
           headers:
             Retry-After:
               description: Indica quanto tempo il fruitore deve attendere prima di effettuare una nuova richiesta.
+              schema:
+                  type: string
       callbacks:
         Trasmissione delle registrazioni:
           https://example.com:
@@ -1336,6 +1364,8 @@ paths:
           headers:
             Retry-After:
               description: Indica quanto tempo il fruitore deve attendere prima di effettuare una nuova richiesta.
+              schema:
+                  type: string
   /soggetto-delegato/{identificativo_registro}/movimento/{anno}/{progressivo}:
     get:
       tags:
@@ -1407,6 +1437,8 @@ paths:
           headers:
             Retry-After:
               description: Indica quanto tempo il fruitore deve attendere prima di effettuare una nuova richiesta.
+              schema:
+                  type: string
   /soggetto-delegato/{identificativo_registro}/movimento/{identificativo_movimento}:
     get:
       tags:
@@ -1468,6 +1500,8 @@ paths:
           headers:
             Retry-After:
               description: Indica quanto tempo il fruitore deve attendere prima di effettuare una nuova richiesta.
+              schema:
+                  type: string
   /soggetto-delegato/{identificativo_registro}/valida:
     post:
       tags:
@@ -1549,6 +1583,8 @@ paths:
           headers:
             Retry-After:
               description: Indica quanto tempo il fruitore deve attendere prima di effettuare una nuova richiesta.
+              schema:
+                  type: string
       callbacks:
         Verifica il registro informatico locale:
           https://example.com:
@@ -1680,6 +1716,8 @@ paths:
           headers:
             Retry-After:
               description: Indica quanto tempo il fruitore deve attendere prima di effettuare una nuova richiesta.
+              schema:
+                  type: string
   /soggetto-delegato/{num_iscr_ass}/transazioni/movimenti/{num_iscr_sito}/{identificativo_transazione}:
     get:
       tags:
@@ -1728,6 +1766,8 @@ paths:
           headers:
             Retry-After:
               description: Indica quanto tempo il fruitore deve attendere prima di effettuare una nuova richiesta.
+              schema:
+                  type: string
   /soggetto-delegato/{num_iscr_ass}/transazioni/movimenti/{num_iscr_sito}/{identificativo_transazione}/request:
     get:
       tags:
@@ -1776,6 +1816,8 @@ paths:
           headers:
             Retry-After:
               description: Indica quanto tempo il fruitore deve attendere prima di effettuare una nuova richiesta.
+              schema:
+                  type: string
   /status:
     get:
       summary: Stato API
@@ -1794,6 +1836,8 @@ paths:
           headers:
             Retry-After:
               description: Indica quanto tempo il fruitore deve attendere prima di effettuare una nuova richiesta.
+              schema:
+                  type: string
 components:
   schemas:
     AnnoProgressivoMovimentoModel:
@@ -1922,7 +1966,7 @@ components:
         nazione_id:
           maxLength: 2
           minLength: 1
-          pattern: ^(?!.*(?i)it).*$
+          pattern: ^(?!.*[Ii][Tt]).*$
           type: string
           description: >-
             Codice ISO 3166-1 alpha-2 della nazione, in caso di "IT" è possibile omettere.

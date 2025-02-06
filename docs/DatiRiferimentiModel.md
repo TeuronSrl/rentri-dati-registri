@@ -3,7 +3,6 @@
 Riferimenti dell'operazione
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **numero_registrazione** | [**AnnoProgressivoMovimentoModel**](AnnoProgressivoMovimentoModel.md) | Numero registrazione della registrazione tramite anno e progressivo | 
@@ -23,7 +22,7 @@ json = "{}"
 # create an instance of DatiRiferimentiModel from a JSON string
 dati_riferimenti_model_instance = DatiRiferimentiModel.from_json(json)
 # print the JSON string representation of the object
-print(DatiRiferimentiModel.to_json())
+print DatiRiferimentiModel.to_json()
 
 # convert the object into a dict
 dati_riferimenti_model_dict = dati_riferimenti_model_instance.to_dict()

@@ -12,15 +12,20 @@
     Do not edit the class manually.
 """  # noqa: E501
 
-import warnings
-from pydantic import validate_call, Field, StrictFloat, StrictStr, StrictInt
-from typing import Any, Dict, List, Optional, Tuple, Union
-from typing_extensions import Annotated
 
-from datetime import datetime
-from pydantic import Field, StrictBool, StrictInt, StrictStr, field_validator
-from typing import Any, List, Optional
+import re  # noqa: F401
+import io
+import warnings
+
+from pydantic import validate_arguments, ValidationError
+
 from typing_extensions import Annotated
+from datetime import datetime
+
+from pydantic import Field, StrictBool, StrictInt, StrictStr, conint, conlist, constr, validator
+
+from typing import Any, List, Optional
+
 from rentri_dati_registri.models.caratteristiche_pericolo import CaratteristichePericolo
 from rentri_dati_registri.models.causali_operazione import CausaliOperazione
 from rentri_dati_registri.models.dati_movimento_model import DatiMovimentoModel
@@ -32,9 +37,12 @@ from rentri_dati_registri.models.transazione_model import TransazioneModel
 from rentri_dati_registri.models.transazione_request_model import TransazioneRequestModel
 from rentri_dati_registri.models.valida_registro_request import ValidaRegistroRequest
 
-from rentri_dati_registri.api_client import ApiClient, RequestSerialized
+from rentri_dati_registri.api_client import ApiClient
 from rentri_dati_registri.api_response import ApiResponse
-from rentri_dati_registri.rest import RESTResponseType
+from rentri_dati_registri.exceptions import (  # noqa: F401
+    ApiTypeError,
+    ApiValueError
+)
 
 
 class SoggettoDelegatoApi:
@@ -49,43 +57,16 @@ class SoggettoDelegatoApi:
             api_client = ApiClient.get_default()
         self.api_client = api_client
 
+    @validate_arguments
+    def soggetto_delegato_identificativo_registro_movimenti_count_get(self, identificativo_registro : Annotated[constr(strict=True, max_length=11), Field(..., description="Identificativo del Registro.")], identificativi_movimento : Optional[conlist(StrictStr)] = None, anno : Optional[conint(strict=True, le=2050, ge=1980)] = None, progressivo : Optional[conint(strict=True, le=2147483647, ge=1)] = None, alla_data : Annotated[Optional[datetime], Field(description="Data di validità (formato ISO 8601 UTC)")] = None, anno_data_registrazione : Optional[StrictInt] = None, data_registrazione_da : Annotated[Optional[datetime], Field(description="Dalla data (formato ISO 8601 UTC)")] = None, data_registrazione_a : Annotated[Optional[datetime], Field(description="Alla data (formato ISO 8601 UTC)")] = None, causali_operazione : Optional[conlist(CausaliOperazione)] = None, codice_eer : Optional[constr(strict=True, max_length=8)] = None, caratteristiche_pericolo : Optional[conlist(CaratteristichePericolo)] = None, stato_fisico : Optional[Any] = None, unita_misura : Optional[Any] = None, stato_esito_conferimento : Optional[Any] = None, annullato : Optional[StrictBool] = None, rettificato : Optional[StrictBool] = None, incompleto : Optional[StrictBool] = None, **kwargs) -> int:  # noqa: E501
+        """Conteggio registrazioni  # noqa: E501
 
-    @validate_call
-    def soggetto_delegato_identificativo_registro_movimenti_count_get(
-        self,
-        identificativo_registro: Annotated[str, Field(strict=True, max_length=11, description="Identificativo del Registro.")],
-        identificativi_movimento: Optional[List[StrictStr]] = None,
-        anno: Optional[Annotated[int, Field(le=2050, strict=True, ge=1980)]] = None,
-        progressivo: Optional[Annotated[int, Field(le=2147483647, strict=True, ge=1)]] = None,
-        alla_data: Annotated[Optional[datetime], Field(description="Data di validità (formato ISO 8601 UTC)")] = None,
-        anno_data_registrazione: Optional[StrictInt] = None,
-        data_registrazione_da: Annotated[Optional[datetime], Field(description="Dalla data (formato ISO 8601 UTC)")] = None,
-        data_registrazione_a: Annotated[Optional[datetime], Field(description="Alla data (formato ISO 8601 UTC)")] = None,
-        causali_operazione: Optional[List[CausaliOperazione]] = None,
-        codice_eer: Optional[Annotated[str, Field(strict=True, max_length=8)]] = None,
-        caratteristiche_pericolo: Optional[List[CaratteristichePericolo]] = None,
-        stato_fisico: Optional[Any] = None,
-        unita_misura: Optional[Any] = None,
-        stato_esito_conferimento: Optional[Any] = None,
-        annullato: Optional[StrictBool] = None,
-        rettificato: Optional[StrictBool] = None,
-        incompleto: Optional[StrictBool] = None,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> int:
-        """Conteggio registrazioni
+        Ottiene il conteggio delle registrazioni relative associate ad un Registro, filtrate in base ai criteri specificati.  Specificando un valore per il filtro \"allaData\", si ottiene il conteggio delle registrazioni trasmesse fino a quella data.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>  # noqa: E501
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
 
-        Ottiene il conteggio delle registrazioni relative associate ad un Registro, filtrate in base ai criteri specificati.  Specificando un valore per il filtro \"allaData\", si ottiene il conteggio delle registrazioni trasmesse fino a quella data.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>
+        >>> thread = api.soggetto_delegato_identificativo_registro_movimenti_count_get(identificativo_registro, identificativi_movimento, anno, progressivo, alla_data, anno_data_registrazione, data_registrazione_da, data_registrazione_a, causali_operazione, codice_eer, caratteristiche_pericolo, stato_fisico, unita_misura, stato_esito_conferimento, annullato, rettificato, incompleto, async_req=True)
+        >>> result = thread.get()
 
         :param identificativo_registro: Identificativo del Registro. (required)
         :type identificativo_registro: str
@@ -121,106 +102,33 @@ class SoggettoDelegatoApi:
         :type rettificato: bool
         :param incompleto:
         :type incompleto: bool
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
+        :param async_req: Whether to execute the request asynchronously.
+        :type async_req: bool, optional
+        :param _request_timeout: timeout setting for this request.
+               If one number provided, it will be total request
+               timeout. It can also be a pair (tuple) of
+               (connection, read) timeouts.
         :return: Returns the result object.
-        """ # noqa: E501
+                 If the method is called asynchronously,
+                 returns the request thread.
+        :rtype: int
+        """
+        kwargs['_return_http_data_only'] = True
+        if '_preload_content' in kwargs:
+            message = "Error! Please call the soggetto_delegato_identificativo_registro_movimenti_count_get_with_http_info method with `_preload_content` instead and obtain raw data from ApiResponse.raw_data"  # noqa: E501
+            raise ValueError(message)
+        return self.soggetto_delegato_identificativo_registro_movimenti_count_get_with_http_info(identificativo_registro, identificativi_movimento, anno, progressivo, alla_data, anno_data_registrazione, data_registrazione_da, data_registrazione_a, causali_operazione, codice_eer, caratteristiche_pericolo, stato_fisico, unita_misura, stato_esito_conferimento, annullato, rettificato, incompleto, **kwargs)  # noqa: E501
 
-        _param = self._soggetto_delegato_identificativo_registro_movimenti_count_get_serialize(
-            identificativo_registro=identificativo_registro,
-            identificativi_movimento=identificativi_movimento,
-            anno=anno,
-            progressivo=progressivo,
-            alla_data=alla_data,
-            anno_data_registrazione=anno_data_registrazione,
-            data_registrazione_da=data_registrazione_da,
-            data_registrazione_a=data_registrazione_a,
-            causali_operazione=causali_operazione,
-            codice_eer=codice_eer,
-            caratteristiche_pericolo=caratteristiche_pericolo,
-            stato_fisico=stato_fisico,
-            unita_misura=unita_misura,
-            stato_esito_conferimento=stato_esito_conferimento,
-            annullato=annullato,
-            rettificato=rettificato,
-            incompleto=incompleto,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
+    @validate_arguments
+    def soggetto_delegato_identificativo_registro_movimenti_count_get_with_http_info(self, identificativo_registro : Annotated[constr(strict=True, max_length=11), Field(..., description="Identificativo del Registro.")], identificativi_movimento : Optional[conlist(StrictStr)] = None, anno : Optional[conint(strict=True, le=2050, ge=1980)] = None, progressivo : Optional[conint(strict=True, le=2147483647, ge=1)] = None, alla_data : Annotated[Optional[datetime], Field(description="Data di validità (formato ISO 8601 UTC)")] = None, anno_data_registrazione : Optional[StrictInt] = None, data_registrazione_da : Annotated[Optional[datetime], Field(description="Dalla data (formato ISO 8601 UTC)")] = None, data_registrazione_a : Annotated[Optional[datetime], Field(description="Alla data (formato ISO 8601 UTC)")] = None, causali_operazione : Optional[conlist(CausaliOperazione)] = None, codice_eer : Optional[constr(strict=True, max_length=8)] = None, caratteristiche_pericolo : Optional[conlist(CaratteristichePericolo)] = None, stato_fisico : Optional[Any] = None, unita_misura : Optional[Any] = None, stato_esito_conferimento : Optional[Any] = None, annullato : Optional[StrictBool] = None, rettificato : Optional[StrictBool] = None, incompleto : Optional[StrictBool] = None, **kwargs) -> ApiResponse:  # noqa: E501
+        """Conteggio registrazioni  # noqa: E501
 
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "int",
-            '403': None,
-            '404': None,
-            '500': "ProblemDetails",
-            '429': None,
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        ).data
+        Ottiene il conteggio delle registrazioni relative associate ad un Registro, filtrate in base ai criteri specificati.  Specificando un valore per il filtro \"allaData\", si ottiene il conteggio delle registrazioni trasmesse fino a quella data.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>  # noqa: E501
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
 
-
-    @validate_call
-    def soggetto_delegato_identificativo_registro_movimenti_count_get_with_http_info(
-        self,
-        identificativo_registro: Annotated[str, Field(strict=True, max_length=11, description="Identificativo del Registro.")],
-        identificativi_movimento: Optional[List[StrictStr]] = None,
-        anno: Optional[Annotated[int, Field(le=2050, strict=True, ge=1980)]] = None,
-        progressivo: Optional[Annotated[int, Field(le=2147483647, strict=True, ge=1)]] = None,
-        alla_data: Annotated[Optional[datetime], Field(description="Data di validità (formato ISO 8601 UTC)")] = None,
-        anno_data_registrazione: Optional[StrictInt] = None,
-        data_registrazione_da: Annotated[Optional[datetime], Field(description="Dalla data (formato ISO 8601 UTC)")] = None,
-        data_registrazione_a: Annotated[Optional[datetime], Field(description="Alla data (formato ISO 8601 UTC)")] = None,
-        causali_operazione: Optional[List[CausaliOperazione]] = None,
-        codice_eer: Optional[Annotated[str, Field(strict=True, max_length=8)]] = None,
-        caratteristiche_pericolo: Optional[List[CaratteristichePericolo]] = None,
-        stato_fisico: Optional[Any] = None,
-        unita_misura: Optional[Any] = None,
-        stato_esito_conferimento: Optional[Any] = None,
-        annullato: Optional[StrictBool] = None,
-        rettificato: Optional[StrictBool] = None,
-        incompleto: Optional[StrictBool] = None,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[int]:
-        """Conteggio registrazioni
-
-        Ottiene il conteggio delle registrazioni relative associate ad un Registro, filtrate in base ai criteri specificati.  Specificando un valore per il filtro \"allaData\", si ottiene il conteggio delle registrazioni trasmesse fino a quella data.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>
+        >>> thread = api.soggetto_delegato_identificativo_registro_movimenti_count_get_with_http_info(identificativo_registro, identificativi_movimento, anno, progressivo, alla_data, anno_data_registrazione, data_registrazione_da, data_registrazione_a, causali_operazione, codice_eer, caratteristiche_pericolo, stato_fisico, unita_misura, stato_esito_conferimento, annullato, rettificato, incompleto, async_req=True)
+        >>> result = thread.get()
 
         :param identificativo_registro: Identificativo del Registro. (required)
         :type identificativo_registro: str
@@ -256,414 +164,193 @@ class SoggettoDelegatoApi:
         :type rettificato: bool
         :param incompleto:
         :type incompleto: bool
+        :param async_req: Whether to execute the request asynchronously.
+        :type async_req: bool, optional
+        :param _preload_content: if False, the ApiResponse.data will
+                                 be set to none and raw_data will store the
+                                 HTTP response body without reading/decoding.
+                                 Default is True.
+        :type _preload_content: bool, optional
+        :param _return_http_data_only: response data instead of ApiResponse
+                                       object with status code, headers, etc
+        :type _return_http_data_only: bool, optional
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
                                  (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
         :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
+                              request; this effectively ignores the authentication
+                              in the spec for a single request.
         :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
+        :type _content_type: string, optional: force content-type for the request
         :return: Returns the result object.
-        """ # noqa: E501
+                 If the method is called asynchronously,
+                 returns the request thread.
+        :rtype: tuple(int, status_code(int), headers(HTTPHeaderDict))
+        """
 
-        _param = self._soggetto_delegato_identificativo_registro_movimenti_count_get_serialize(
-            identificativo_registro=identificativo_registro,
-            identificativi_movimento=identificativi_movimento,
-            anno=anno,
-            progressivo=progressivo,
-            alla_data=alla_data,
-            anno_data_registrazione=anno_data_registrazione,
-            data_registrazione_da=data_registrazione_da,
-            data_registrazione_a=data_registrazione_a,
-            causali_operazione=causali_operazione,
-            codice_eer=codice_eer,
-            caratteristiche_pericolo=caratteristiche_pericolo,
-            stato_fisico=stato_fisico,
-            unita_misura=unita_misura,
-            stato_esito_conferimento=stato_esito_conferimento,
-            annullato=annullato,
-            rettificato=rettificato,
-            incompleto=incompleto,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
+        _params = locals()
 
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "int",
-            '403': None,
-            '404': None,
-            '500': "ProblemDetails",
-            '429': None,
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        )
-
-
-    @validate_call
-    def soggetto_delegato_identificativo_registro_movimenti_count_get_without_preload_content(
-        self,
-        identificativo_registro: Annotated[str, Field(strict=True, max_length=11, description="Identificativo del Registro.")],
-        identificativi_movimento: Optional[List[StrictStr]] = None,
-        anno: Optional[Annotated[int, Field(le=2050, strict=True, ge=1980)]] = None,
-        progressivo: Optional[Annotated[int, Field(le=2147483647, strict=True, ge=1)]] = None,
-        alla_data: Annotated[Optional[datetime], Field(description="Data di validità (formato ISO 8601 UTC)")] = None,
-        anno_data_registrazione: Optional[StrictInt] = None,
-        data_registrazione_da: Annotated[Optional[datetime], Field(description="Dalla data (formato ISO 8601 UTC)")] = None,
-        data_registrazione_a: Annotated[Optional[datetime], Field(description="Alla data (formato ISO 8601 UTC)")] = None,
-        causali_operazione: Optional[List[CausaliOperazione]] = None,
-        codice_eer: Optional[Annotated[str, Field(strict=True, max_length=8)]] = None,
-        caratteristiche_pericolo: Optional[List[CaratteristichePericolo]] = None,
-        stato_fisico: Optional[Any] = None,
-        unita_misura: Optional[Any] = None,
-        stato_esito_conferimento: Optional[Any] = None,
-        annullato: Optional[StrictBool] = None,
-        rettificato: Optional[StrictBool] = None,
-        incompleto: Optional[StrictBool] = None,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
+        _all_params = [
+            'identificativo_registro',
+            'identificativi_movimento',
+            'anno',
+            'progressivo',
+            'alla_data',
+            'anno_data_registrazione',
+            'data_registrazione_da',
+            'data_registrazione_a',
+            'causali_operazione',
+            'codice_eer',
+            'caratteristiche_pericolo',
+            'stato_fisico',
+            'unita_misura',
+            'stato_esito_conferimento',
+            'annullato',
+            'rettificato',
+            'incompleto'
+        ]
+        _all_params.extend(
+            [
+                'async_req',
+                '_return_http_data_only',
+                '_preload_content',
+                '_request_timeout',
+                '_request_auth',
+                '_content_type',
+                '_headers'
             ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> RESTResponseType:
-        """Conteggio registrazioni
-
-        Ottiene il conteggio delle registrazioni relative associate ad un Registro, filtrate in base ai criteri specificati.  Specificando un valore per il filtro \"allaData\", si ottiene il conteggio delle registrazioni trasmesse fino a quella data.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>
-
-        :param identificativo_registro: Identificativo del Registro. (required)
-        :type identificativo_registro: str
-        :param identificativi_movimento:
-        :type identificativi_movimento: List[str]
-        :param anno:
-        :type anno: int
-        :param progressivo:
-        :type progressivo: int
-        :param alla_data: Data di validità (formato ISO 8601 UTC)
-        :type alla_data: datetime
-        :param anno_data_registrazione:
-        :type anno_data_registrazione: int
-        :param data_registrazione_da: Dalla data (formato ISO 8601 UTC)
-        :type data_registrazione_da: datetime
-        :param data_registrazione_a: Alla data (formato ISO 8601 UTC)
-        :type data_registrazione_a: datetime
-        :param causali_operazione:
-        :type causali_operazione: List[CausaliOperazione]
-        :param codice_eer:
-        :type codice_eer: str
-        :param caratteristiche_pericolo:
-        :type caratteristiche_pericolo: List[CaratteristichePericolo]
-        :param stato_fisico:
-        :type stato_fisico: StatiFisici
-        :param unita_misura:
-        :type unita_misura: UnitaMisura
-        :param stato_esito_conferimento:
-        :type stato_esito_conferimento: StatiEsitoConferimento
-        :param annullato:
-        :type annullato: bool
-        :param rettificato:
-        :type rettificato: bool
-        :param incompleto:
-        :type incompleto: bool
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._soggetto_delegato_identificativo_registro_movimenti_count_get_serialize(
-            identificativo_registro=identificativo_registro,
-            identificativi_movimento=identificativi_movimento,
-            anno=anno,
-            progressivo=progressivo,
-            alla_data=alla_data,
-            anno_data_registrazione=anno_data_registrazione,
-            data_registrazione_da=data_registrazione_da,
-            data_registrazione_a=data_registrazione_a,
-            causali_operazione=causali_operazione,
-            codice_eer=codice_eer,
-            caratteristiche_pericolo=caratteristiche_pericolo,
-            stato_fisico=stato_fisico,
-            unita_misura=unita_misura,
-            stato_esito_conferimento=stato_esito_conferimento,
-            annullato=annullato,
-            rettificato=rettificato,
-            incompleto=incompleto,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
         )
 
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "int",
-            '403': None,
-            '404': None,
-            '500': "ProblemDetails",
-            '429': None,
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        return response_data.response
+        # validate the arguments
+        for _key, _val in _params['kwargs'].items():
+            if _key not in _all_params:
+                raise ApiTypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method soggetto_delegato_identificativo_registro_movimenti_count_get" % _key
+                )
+            _params[_key] = _val
+        del _params['kwargs']
 
-
-    def _soggetto_delegato_identificativo_registro_movimenti_count_get_serialize(
-        self,
-        identificativo_registro,
-        identificativi_movimento,
-        anno,
-        progressivo,
-        alla_data,
-        anno_data_registrazione,
-        data_registrazione_da,
-        data_registrazione_a,
-        causali_operazione,
-        codice_eer,
-        caratteristiche_pericolo,
-        stato_fisico,
-        unita_misura,
-        stato_esito_conferimento,
-        annullato,
-        rettificato,
-        incompleto,
-        _request_auth,
-        _content_type,
-        _headers,
-        _host_index,
-    ) -> RequestSerialized:
-
-        _host = None
-
-        _collection_formats: Dict[str, str] = {
-            'identificativi_movimento': 'multi',
-            'causali_operazione': 'multi',
-            'caratteristiche_pericolo': 'multi',
-        }
-
-        _path_params: Dict[str, str] = {}
-        _query_params: List[Tuple[str, str]] = []
-        _header_params: Dict[str, Optional[str]] = _headers or {}
-        _form_params: List[Tuple[str, str]] = []
-        _files: Dict[
-            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
-        ] = {}
-        _body_params: Optional[bytes] = None
+        _collection_formats = {}
 
         # process the path parameters
-        if identificativo_registro is not None:
-            _path_params['identificativo_registro'] = identificativo_registro
+        _path_params = {}
+        if _params['identificativo_registro'] is not None:
+            _path_params['identificativo_registro'] = _params['identificativo_registro']
+
+
         # process the query parameters
-        if identificativi_movimento is not None:
-            
-            _query_params.append(('identificativi_movimento', identificativi_movimento))
-            
-        if anno is not None:
-            
-            _query_params.append(('anno', anno))
-            
-        if progressivo is not None:
-            
-            _query_params.append(('progressivo', progressivo))
-            
-        if alla_data is not None:
-            if isinstance(alla_data, datetime):
-                _query_params.append(
-                    (
-                        'alla_data',
-                        alla_data.strftime(
-                            self.api_client.configuration.datetime_format
-                        )
-                    )
-                )
+        _query_params = []
+        if _params.get('identificativi_movimento') is not None:  # noqa: E501
+            _query_params.append(('identificativi_movimento', _params['identificativi_movimento']))
+            _collection_formats['identificativi_movimento'] = 'multi'
+
+        if _params.get('anno') is not None:  # noqa: E501
+            _query_params.append(('anno', _params['anno']))
+
+        if _params.get('progressivo') is not None:  # noqa: E501
+            _query_params.append(('progressivo', _params['progressivo']))
+
+        if _params.get('alla_data') is not None:  # noqa: E501
+            if isinstance(_params['alla_data'], datetime):
+                _query_params.append(('alla_data', _params['alla_data'].strftime(self.api_client.configuration.datetime_format)))
             else:
-                _query_params.append(('alla_data', alla_data))
-            
-        if anno_data_registrazione is not None:
-            
-            _query_params.append(('anno_data_registrazione', anno_data_registrazione))
-            
-        if data_registrazione_da is not None:
-            if isinstance(data_registrazione_da, datetime):
-                _query_params.append(
-                    (
-                        'data_registrazione_da',
-                        data_registrazione_da.strftime(
-                            self.api_client.configuration.datetime_format
-                        )
-                    )
-                )
+                _query_params.append(('alla_data', _params['alla_data']))
+
+        if _params.get('anno_data_registrazione') is not None:  # noqa: E501
+            _query_params.append(('anno_data_registrazione', _params['anno_data_registrazione']))
+
+        if _params.get('data_registrazione_da') is not None:  # noqa: E501
+            if isinstance(_params['data_registrazione_da'], datetime):
+                _query_params.append(('data_registrazione_da', _params['data_registrazione_da'].strftime(self.api_client.configuration.datetime_format)))
             else:
-                _query_params.append(('data_registrazione_da', data_registrazione_da))
-            
-        if data_registrazione_a is not None:
-            if isinstance(data_registrazione_a, datetime):
-                _query_params.append(
-                    (
-                        'data_registrazione_a',
-                        data_registrazione_a.strftime(
-                            self.api_client.configuration.datetime_format
-                        )
-                    )
-                )
+                _query_params.append(('data_registrazione_da', _params['data_registrazione_da']))
+
+        if _params.get('data_registrazione_a') is not None:  # noqa: E501
+            if isinstance(_params['data_registrazione_a'], datetime):
+                _query_params.append(('data_registrazione_a', _params['data_registrazione_a'].strftime(self.api_client.configuration.datetime_format)))
             else:
-                _query_params.append(('data_registrazione_a', data_registrazione_a))
-            
-        if causali_operazione is not None:
-            
-            _query_params.append(('causali_operazione', causali_operazione))
-            
-        if codice_eer is not None:
-            
-            _query_params.append(('codice_eer', codice_eer))
-            
-        if caratteristiche_pericolo is not None:
-            
-            _query_params.append(('caratteristiche_pericolo', caratteristiche_pericolo))
-            
-        if stato_fisico is not None:
-            
-            _query_params.append(('stato_fisico', stato_fisico.value))
-            
-        if unita_misura is not None:
-            
-            _query_params.append(('unita_misura', unita_misura.value))
-            
-        if stato_esito_conferimento is not None:
-            
-            _query_params.append(('stato_esito_conferimento', stato_esito_conferimento.value))
-            
-        if annullato is not None:
-            
-            _query_params.append(('annullato', annullato))
-            
-        if rettificato is not None:
-            
-            _query_params.append(('rettificato', rettificato))
-            
-        if incompleto is not None:
-            
-            _query_params.append(('incompleto', incompleto))
-            
+                _query_params.append(('data_registrazione_a', _params['data_registrazione_a']))
+
+        if _params.get('causali_operazione') is not None:  # noqa: E501
+            _query_params.append(('causali_operazione', _params['causali_operazione']))
+            _collection_formats['causali_operazione'] = 'multi'
+
+        if _params.get('codice_eer') is not None:  # noqa: E501
+            _query_params.append(('codice_eer', _params['codice_eer']))
+
+        if _params.get('caratteristiche_pericolo') is not None:  # noqa: E501
+            _query_params.append(('caratteristiche_pericolo', _params['caratteristiche_pericolo']))
+            _collection_formats['caratteristiche_pericolo'] = 'multi'
+
+        if _params.get('stato_fisico') is not None:  # noqa: E501
+            _query_params.append(('stato_fisico', _params['stato_fisico'].value))
+
+        if _params.get('unita_misura') is not None:  # noqa: E501
+            _query_params.append(('unita_misura', _params['unita_misura'].value))
+
+        if _params.get('stato_esito_conferimento') is not None:  # noqa: E501
+            _query_params.append(('stato_esito_conferimento', _params['stato_esito_conferimento'].value))
+
+        if _params.get('annullato') is not None:  # noqa: E501
+            _query_params.append(('annullato', _params['annullato']))
+
+        if _params.get('rettificato') is not None:  # noqa: E501
+            _query_params.append(('rettificato', _params['rettificato']))
+
+        if _params.get('incompleto') is not None:  # noqa: E501
+            _query_params.append(('incompleto', _params['incompleto']))
+
         # process the header parameters
+        _header_params = dict(_params.get('_headers', {}))
         # process the form parameters
+        _form_params = []
+        _files = {}
         # process the body parameter
-
-
+        _body_params = None
         # set the HTTP header `Accept`
-        if 'Accept' not in _header_params:
-            _header_params['Accept'] = self.api_client.select_header_accept(
-                [
-                    'application/json', 
-                    'application/problem+json'
-                ]
-            )
-
+        _header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json', 'application/problem+json'])  # noqa: E501
 
         # authentication setting
-        _auth_settings: List[str] = [
-            'Bearer'
-        ]
+        _auth_settings = ['Bearer']  # noqa: E501
 
-        return self.api_client.param_serialize(
-            method='GET',
-            resource_path='/soggetto-delegato/{identificativo_registro}/movimenti/count',
-            path_params=_path_params,
-            query_params=_query_params,
-            header_params=_header_params,
+        _response_types_map = {
+            '200': "int",
+            '403': None,
+            '404': None,
+            '500': "ProblemDetails",
+            '429': None,
+        }
+
+        return self.api_client.call_api(
+            '/soggetto-delegato/{identificativo_registro}/movimenti/count', 'GET',
+            _path_params,
+            _query_params,
+            _header_params,
             body=_body_params,
             post_params=_form_params,
             files=_files,
+            response_types_map=_response_types_map,
             auth_settings=_auth_settings,
+            async_req=_params.get('async_req'),
+            _return_http_data_only=_params.get('_return_http_data_only'),  # noqa: E501
+            _preload_content=_params.get('_preload_content', True),
+            _request_timeout=_params.get('_request_timeout'),
             collection_formats=_collection_formats,
-            _host=_host,
-            _request_auth=_request_auth
-        )
+            _request_auth=_params.get('_request_auth'))
 
+    @validate_arguments
+    def soggetto_delegato_identificativo_registro_movimenti_get(self, identificativo_registro : Annotated[constr(strict=True, max_length=11), Field(..., description="Identificativo del Registro.")], identificativi_movimento : Optional[conlist(StrictStr)] = None, anno : Optional[conint(strict=True, le=2050, ge=1980)] = None, progressivo : Optional[conint(strict=True, le=2147483647, ge=1)] = None, alla_data : Annotated[Optional[datetime], Field(description="Data di validità (formato ISO 8601 UTC)")] = None, anno_data_registrazione : Optional[StrictInt] = None, data_registrazione_da : Annotated[Optional[datetime], Field(description="Dalla data (formato ISO 8601 UTC)")] = None, data_registrazione_a : Annotated[Optional[datetime], Field(description="Alla data (formato ISO 8601 UTC)")] = None, causali_operazione : Optional[conlist(CausaliOperazione)] = None, codice_eer : Optional[constr(strict=True, max_length=8)] = None, caratteristiche_pericolo : Optional[conlist(CaratteristichePericolo)] = None, stato_fisico : Optional[Any] = None, unita_misura : Optional[Any] = None, stato_esito_conferimento : Optional[Any] = None, annullato : Optional[StrictBool] = None, rettificato : Optional[StrictBool] = None, incompleto : Optional[StrictBool] = None, paging_page : Annotated[Optional[conint(strict=True, le=2147483647, ge=1)], Field(description="Valore per l'header Paging-Page.")] = None, paging_page_size : Annotated[Optional[conint(strict=True, le=1000, ge=1)], Field(description="Valore per l'header Paging-PageSize.")] = None, **kwargs) -> List[DatiMovimentoModel]:  # noqa: E501
+        """Elenco registrazioni  # noqa: E501
 
+        Ottiene l'elenco delle registrazioni relative ad un Registro, filtrate in base ai criteri specificati.  Specificando un valore per il filtro \"allaData\", si ottiene l'elenco delle registrazioni trasmesse fino a quella data.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>  # noqa: E501
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
 
-
-    @validate_call
-    def soggetto_delegato_identificativo_registro_movimenti_get(
-        self,
-        identificativo_registro: Annotated[str, Field(strict=True, max_length=11, description="Identificativo del Registro.")],
-        identificativi_movimento: Optional[List[StrictStr]] = None,
-        anno: Optional[Annotated[int, Field(le=2050, strict=True, ge=1980)]] = None,
-        progressivo: Optional[Annotated[int, Field(le=2147483647, strict=True, ge=1)]] = None,
-        alla_data: Annotated[Optional[datetime], Field(description="Data di validità (formato ISO 8601 UTC)")] = None,
-        anno_data_registrazione: Optional[StrictInt] = None,
-        data_registrazione_da: Annotated[Optional[datetime], Field(description="Dalla data (formato ISO 8601 UTC)")] = None,
-        data_registrazione_a: Annotated[Optional[datetime], Field(description="Alla data (formato ISO 8601 UTC)")] = None,
-        causali_operazione: Optional[List[CausaliOperazione]] = None,
-        codice_eer: Optional[Annotated[str, Field(strict=True, max_length=8)]] = None,
-        caratteristiche_pericolo: Optional[List[CaratteristichePericolo]] = None,
-        stato_fisico: Optional[Any] = None,
-        unita_misura: Optional[Any] = None,
-        stato_esito_conferimento: Optional[Any] = None,
-        annullato: Optional[StrictBool] = None,
-        rettificato: Optional[StrictBool] = None,
-        incompleto: Optional[StrictBool] = None,
-        paging_page: Annotated[Optional[Annotated[int, Field(le=2147483647, strict=True, ge=1)]], Field(description="Valore per l'header Paging-Page.")] = None,
-        paging_page_size: Annotated[Optional[Annotated[int, Field(le=1000, strict=True, ge=1)]], Field(description="Valore per l'header Paging-PageSize.")] = None,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> List[DatiMovimentoModel]:
-        """Elenco registrazioni
-
-        Ottiene l'elenco delle registrazioni relative ad un Registro, filtrate in base ai criteri specificati.  Specificando un valore per il filtro \"allaData\", si ottiene l'elenco delle registrazioni trasmesse fino a quella data.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>
+        >>> thread = api.soggetto_delegato_identificativo_registro_movimenti_get(identificativo_registro, identificativi_movimento, anno, progressivo, alla_data, anno_data_registrazione, data_registrazione_da, data_registrazione_a, causali_operazione, codice_eer, caratteristiche_pericolo, stato_fisico, unita_misura, stato_esito_conferimento, annullato, rettificato, incompleto, paging_page, paging_page_size, async_req=True)
+        >>> result = thread.get()
 
         :param identificativo_registro: Identificativo del Registro. (required)
         :type identificativo_registro: str
@@ -703,110 +390,33 @@ class SoggettoDelegatoApi:
         :type paging_page: int
         :param paging_page_size: Valore per l'header Paging-PageSize.
         :type paging_page_size: int
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
+        :param async_req: Whether to execute the request asynchronously.
+        :type async_req: bool, optional
+        :param _request_timeout: timeout setting for this request.
+               If one number provided, it will be total request
+               timeout. It can also be a pair (tuple) of
+               (connection, read) timeouts.
         :return: Returns the result object.
-        """ # noqa: E501
+                 If the method is called asynchronously,
+                 returns the request thread.
+        :rtype: List[DatiMovimentoModel]
+        """
+        kwargs['_return_http_data_only'] = True
+        if '_preload_content' in kwargs:
+            message = "Error! Please call the soggetto_delegato_identificativo_registro_movimenti_get_with_http_info method with `_preload_content` instead and obtain raw data from ApiResponse.raw_data"  # noqa: E501
+            raise ValueError(message)
+        return self.soggetto_delegato_identificativo_registro_movimenti_get_with_http_info(identificativo_registro, identificativi_movimento, anno, progressivo, alla_data, anno_data_registrazione, data_registrazione_da, data_registrazione_a, causali_operazione, codice_eer, caratteristiche_pericolo, stato_fisico, unita_misura, stato_esito_conferimento, annullato, rettificato, incompleto, paging_page, paging_page_size, **kwargs)  # noqa: E501
 
-        _param = self._soggetto_delegato_identificativo_registro_movimenti_get_serialize(
-            identificativo_registro=identificativo_registro,
-            identificativi_movimento=identificativi_movimento,
-            anno=anno,
-            progressivo=progressivo,
-            alla_data=alla_data,
-            anno_data_registrazione=anno_data_registrazione,
-            data_registrazione_da=data_registrazione_da,
-            data_registrazione_a=data_registrazione_a,
-            causali_operazione=causali_operazione,
-            codice_eer=codice_eer,
-            caratteristiche_pericolo=caratteristiche_pericolo,
-            stato_fisico=stato_fisico,
-            unita_misura=unita_misura,
-            stato_esito_conferimento=stato_esito_conferimento,
-            annullato=annullato,
-            rettificato=rettificato,
-            incompleto=incompleto,
-            paging_page=paging_page,
-            paging_page_size=paging_page_size,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
+    @validate_arguments
+    def soggetto_delegato_identificativo_registro_movimenti_get_with_http_info(self, identificativo_registro : Annotated[constr(strict=True, max_length=11), Field(..., description="Identificativo del Registro.")], identificativi_movimento : Optional[conlist(StrictStr)] = None, anno : Optional[conint(strict=True, le=2050, ge=1980)] = None, progressivo : Optional[conint(strict=True, le=2147483647, ge=1)] = None, alla_data : Annotated[Optional[datetime], Field(description="Data di validità (formato ISO 8601 UTC)")] = None, anno_data_registrazione : Optional[StrictInt] = None, data_registrazione_da : Annotated[Optional[datetime], Field(description="Dalla data (formato ISO 8601 UTC)")] = None, data_registrazione_a : Annotated[Optional[datetime], Field(description="Alla data (formato ISO 8601 UTC)")] = None, causali_operazione : Optional[conlist(CausaliOperazione)] = None, codice_eer : Optional[constr(strict=True, max_length=8)] = None, caratteristiche_pericolo : Optional[conlist(CaratteristichePericolo)] = None, stato_fisico : Optional[Any] = None, unita_misura : Optional[Any] = None, stato_esito_conferimento : Optional[Any] = None, annullato : Optional[StrictBool] = None, rettificato : Optional[StrictBool] = None, incompleto : Optional[StrictBool] = None, paging_page : Annotated[Optional[conint(strict=True, le=2147483647, ge=1)], Field(description="Valore per l'header Paging-Page.")] = None, paging_page_size : Annotated[Optional[conint(strict=True, le=1000, ge=1)], Field(description="Valore per l'header Paging-PageSize.")] = None, **kwargs) -> ApiResponse:  # noqa: E501
+        """Elenco registrazioni  # noqa: E501
 
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "List[DatiMovimentoModel]",
-            '403': None,
-            '404': None,
-            '500': "ProblemDetails",
-            '429': None,
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        ).data
+        Ottiene l'elenco delle registrazioni relative ad un Registro, filtrate in base ai criteri specificati.  Specificando un valore per il filtro \"allaData\", si ottiene l'elenco delle registrazioni trasmesse fino a quella data.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>  # noqa: E501
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
 
-
-    @validate_call
-    def soggetto_delegato_identificativo_registro_movimenti_get_with_http_info(
-        self,
-        identificativo_registro: Annotated[str, Field(strict=True, max_length=11, description="Identificativo del Registro.")],
-        identificativi_movimento: Optional[List[StrictStr]] = None,
-        anno: Optional[Annotated[int, Field(le=2050, strict=True, ge=1980)]] = None,
-        progressivo: Optional[Annotated[int, Field(le=2147483647, strict=True, ge=1)]] = None,
-        alla_data: Annotated[Optional[datetime], Field(description="Data di validità (formato ISO 8601 UTC)")] = None,
-        anno_data_registrazione: Optional[StrictInt] = None,
-        data_registrazione_da: Annotated[Optional[datetime], Field(description="Dalla data (formato ISO 8601 UTC)")] = None,
-        data_registrazione_a: Annotated[Optional[datetime], Field(description="Alla data (formato ISO 8601 UTC)")] = None,
-        causali_operazione: Optional[List[CausaliOperazione]] = None,
-        codice_eer: Optional[Annotated[str, Field(strict=True, max_length=8)]] = None,
-        caratteristiche_pericolo: Optional[List[CaratteristichePericolo]] = None,
-        stato_fisico: Optional[Any] = None,
-        unita_misura: Optional[Any] = None,
-        stato_esito_conferimento: Optional[Any] = None,
-        annullato: Optional[StrictBool] = None,
-        rettificato: Optional[StrictBool] = None,
-        incompleto: Optional[StrictBool] = None,
-        paging_page: Annotated[Optional[Annotated[int, Field(le=2147483647, strict=True, ge=1)]], Field(description="Valore per l'header Paging-Page.")] = None,
-        paging_page_size: Annotated[Optional[Annotated[int, Field(le=1000, strict=True, ge=1)]], Field(description="Valore per l'header Paging-PageSize.")] = None,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[List[DatiMovimentoModel]]:
-        """Elenco registrazioni
-
-        Ottiene l'elenco delle registrazioni relative ad un Registro, filtrate in base ai criteri specificati.  Specificando un valore per il filtro \"allaData\", si ottiene l'elenco delle registrazioni trasmesse fino a quella data.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>
+        >>> thread = api.soggetto_delegato_identificativo_registro_movimenti_get_with_http_info(identificativo_registro, identificativi_movimento, anno, progressivo, alla_data, anno_data_registrazione, data_registrazione_da, data_registrazione_a, causali_operazione, codice_eer, caratteristiche_pericolo, stato_fisico, unita_misura, stato_esito_conferimento, annullato, rettificato, incompleto, paging_page, paging_page_size, async_req=True)
+        >>> result = thread.get()
 
         :param identificativo_registro: Identificativo del Registro. (required)
         :type identificativo_registro: str
@@ -846,414 +456,201 @@ class SoggettoDelegatoApi:
         :type paging_page: int
         :param paging_page_size: Valore per l'header Paging-PageSize.
         :type paging_page_size: int
+        :param async_req: Whether to execute the request asynchronously.
+        :type async_req: bool, optional
+        :param _preload_content: if False, the ApiResponse.data will
+                                 be set to none and raw_data will store the
+                                 HTTP response body without reading/decoding.
+                                 Default is True.
+        :type _preload_content: bool, optional
+        :param _return_http_data_only: response data instead of ApiResponse
+                                       object with status code, headers, etc
+        :type _return_http_data_only: bool, optional
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
                                  (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
         :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
+                              request; this effectively ignores the authentication
+                              in the spec for a single request.
         :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
+        :type _content_type: string, optional: force content-type for the request
         :return: Returns the result object.
-        """ # noqa: E501
+                 If the method is called asynchronously,
+                 returns the request thread.
+        :rtype: tuple(List[DatiMovimentoModel], status_code(int), headers(HTTPHeaderDict))
+        """
 
-        _param = self._soggetto_delegato_identificativo_registro_movimenti_get_serialize(
-            identificativo_registro=identificativo_registro,
-            identificativi_movimento=identificativi_movimento,
-            anno=anno,
-            progressivo=progressivo,
-            alla_data=alla_data,
-            anno_data_registrazione=anno_data_registrazione,
-            data_registrazione_da=data_registrazione_da,
-            data_registrazione_a=data_registrazione_a,
-            causali_operazione=causali_operazione,
-            codice_eer=codice_eer,
-            caratteristiche_pericolo=caratteristiche_pericolo,
-            stato_fisico=stato_fisico,
-            unita_misura=unita_misura,
-            stato_esito_conferimento=stato_esito_conferimento,
-            annullato=annullato,
-            rettificato=rettificato,
-            incompleto=incompleto,
-            paging_page=paging_page,
-            paging_page_size=paging_page_size,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
+        _params = locals()
 
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "List[DatiMovimentoModel]",
-            '403': None,
-            '404': None,
-            '500': "ProblemDetails",
-            '429': None,
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        )
-
-
-    @validate_call
-    def soggetto_delegato_identificativo_registro_movimenti_get_without_preload_content(
-        self,
-        identificativo_registro: Annotated[str, Field(strict=True, max_length=11, description="Identificativo del Registro.")],
-        identificativi_movimento: Optional[List[StrictStr]] = None,
-        anno: Optional[Annotated[int, Field(le=2050, strict=True, ge=1980)]] = None,
-        progressivo: Optional[Annotated[int, Field(le=2147483647, strict=True, ge=1)]] = None,
-        alla_data: Annotated[Optional[datetime], Field(description="Data di validità (formato ISO 8601 UTC)")] = None,
-        anno_data_registrazione: Optional[StrictInt] = None,
-        data_registrazione_da: Annotated[Optional[datetime], Field(description="Dalla data (formato ISO 8601 UTC)")] = None,
-        data_registrazione_a: Annotated[Optional[datetime], Field(description="Alla data (formato ISO 8601 UTC)")] = None,
-        causali_operazione: Optional[List[CausaliOperazione]] = None,
-        codice_eer: Optional[Annotated[str, Field(strict=True, max_length=8)]] = None,
-        caratteristiche_pericolo: Optional[List[CaratteristichePericolo]] = None,
-        stato_fisico: Optional[Any] = None,
-        unita_misura: Optional[Any] = None,
-        stato_esito_conferimento: Optional[Any] = None,
-        annullato: Optional[StrictBool] = None,
-        rettificato: Optional[StrictBool] = None,
-        incompleto: Optional[StrictBool] = None,
-        paging_page: Annotated[Optional[Annotated[int, Field(le=2147483647, strict=True, ge=1)]], Field(description="Valore per l'header Paging-Page.")] = None,
-        paging_page_size: Annotated[Optional[Annotated[int, Field(le=1000, strict=True, ge=1)]], Field(description="Valore per l'header Paging-PageSize.")] = None,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
+        _all_params = [
+            'identificativo_registro',
+            'identificativi_movimento',
+            'anno',
+            'progressivo',
+            'alla_data',
+            'anno_data_registrazione',
+            'data_registrazione_da',
+            'data_registrazione_a',
+            'causali_operazione',
+            'codice_eer',
+            'caratteristiche_pericolo',
+            'stato_fisico',
+            'unita_misura',
+            'stato_esito_conferimento',
+            'annullato',
+            'rettificato',
+            'incompleto',
+            'paging_page',
+            'paging_page_size'
+        ]
+        _all_params.extend(
+            [
+                'async_req',
+                '_return_http_data_only',
+                '_preload_content',
+                '_request_timeout',
+                '_request_auth',
+                '_content_type',
+                '_headers'
             ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> RESTResponseType:
-        """Elenco registrazioni
-
-        Ottiene l'elenco delle registrazioni relative ad un Registro, filtrate in base ai criteri specificati.  Specificando un valore per il filtro \"allaData\", si ottiene l'elenco delle registrazioni trasmesse fino a quella data.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>
-
-        :param identificativo_registro: Identificativo del Registro. (required)
-        :type identificativo_registro: str
-        :param identificativi_movimento:
-        :type identificativi_movimento: List[str]
-        :param anno:
-        :type anno: int
-        :param progressivo:
-        :type progressivo: int
-        :param alla_data: Data di validità (formato ISO 8601 UTC)
-        :type alla_data: datetime
-        :param anno_data_registrazione:
-        :type anno_data_registrazione: int
-        :param data_registrazione_da: Dalla data (formato ISO 8601 UTC)
-        :type data_registrazione_da: datetime
-        :param data_registrazione_a: Alla data (formato ISO 8601 UTC)
-        :type data_registrazione_a: datetime
-        :param causali_operazione:
-        :type causali_operazione: List[CausaliOperazione]
-        :param codice_eer:
-        :type codice_eer: str
-        :param caratteristiche_pericolo:
-        :type caratteristiche_pericolo: List[CaratteristichePericolo]
-        :param stato_fisico:
-        :type stato_fisico: StatiFisici
-        :param unita_misura:
-        :type unita_misura: UnitaMisura
-        :param stato_esito_conferimento:
-        :type stato_esito_conferimento: StatiEsitoConferimento
-        :param annullato:
-        :type annullato: bool
-        :param rettificato:
-        :type rettificato: bool
-        :param incompleto:
-        :type incompleto: bool
-        :param paging_page: Valore per l'header Paging-Page.
-        :type paging_page: int
-        :param paging_page_size: Valore per l'header Paging-PageSize.
-        :type paging_page_size: int
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._soggetto_delegato_identificativo_registro_movimenti_get_serialize(
-            identificativo_registro=identificativo_registro,
-            identificativi_movimento=identificativi_movimento,
-            anno=anno,
-            progressivo=progressivo,
-            alla_data=alla_data,
-            anno_data_registrazione=anno_data_registrazione,
-            data_registrazione_da=data_registrazione_da,
-            data_registrazione_a=data_registrazione_a,
-            causali_operazione=causali_operazione,
-            codice_eer=codice_eer,
-            caratteristiche_pericolo=caratteristiche_pericolo,
-            stato_fisico=stato_fisico,
-            unita_misura=unita_misura,
-            stato_esito_conferimento=stato_esito_conferimento,
-            annullato=annullato,
-            rettificato=rettificato,
-            incompleto=incompleto,
-            paging_page=paging_page,
-            paging_page_size=paging_page_size,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
         )
 
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "List[DatiMovimentoModel]",
-            '403': None,
-            '404': None,
-            '500': "ProblemDetails",
-            '429': None,
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        return response_data.response
+        # validate the arguments
+        for _key, _val in _params['kwargs'].items():
+            if _key not in _all_params:
+                raise ApiTypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method soggetto_delegato_identificativo_registro_movimenti_get" % _key
+                )
+            _params[_key] = _val
+        del _params['kwargs']
 
-
-    def _soggetto_delegato_identificativo_registro_movimenti_get_serialize(
-        self,
-        identificativo_registro,
-        identificativi_movimento,
-        anno,
-        progressivo,
-        alla_data,
-        anno_data_registrazione,
-        data_registrazione_da,
-        data_registrazione_a,
-        causali_operazione,
-        codice_eer,
-        caratteristiche_pericolo,
-        stato_fisico,
-        unita_misura,
-        stato_esito_conferimento,
-        annullato,
-        rettificato,
-        incompleto,
-        paging_page,
-        paging_page_size,
-        _request_auth,
-        _content_type,
-        _headers,
-        _host_index,
-    ) -> RequestSerialized:
-
-        _host = None
-
-        _collection_formats: Dict[str, str] = {
-            'identificativi_movimento': 'multi',
-            'causali_operazione': 'multi',
-            'caratteristiche_pericolo': 'multi',
-        }
-
-        _path_params: Dict[str, str] = {}
-        _query_params: List[Tuple[str, str]] = []
-        _header_params: Dict[str, Optional[str]] = _headers or {}
-        _form_params: List[Tuple[str, str]] = []
-        _files: Dict[
-            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
-        ] = {}
-        _body_params: Optional[bytes] = None
+        _collection_formats = {}
 
         # process the path parameters
-        if identificativo_registro is not None:
-            _path_params['identificativo_registro'] = identificativo_registro
+        _path_params = {}
+        if _params['identificativo_registro'] is not None:
+            _path_params['identificativo_registro'] = _params['identificativo_registro']
+
+
         # process the query parameters
-        if identificativi_movimento is not None:
-            
-            _query_params.append(('identificativi_movimento', identificativi_movimento))
-            
-        if anno is not None:
-            
-            _query_params.append(('anno', anno))
-            
-        if progressivo is not None:
-            
-            _query_params.append(('progressivo', progressivo))
-            
-        if alla_data is not None:
-            if isinstance(alla_data, datetime):
-                _query_params.append(
-                    (
-                        'alla_data',
-                        alla_data.strftime(
-                            self.api_client.configuration.datetime_format
-                        )
-                    )
-                )
+        _query_params = []
+        if _params.get('identificativi_movimento') is not None:  # noqa: E501
+            _query_params.append(('identificativi_movimento', _params['identificativi_movimento']))
+            _collection_formats['identificativi_movimento'] = 'multi'
+
+        if _params.get('anno') is not None:  # noqa: E501
+            _query_params.append(('anno', _params['anno']))
+
+        if _params.get('progressivo') is not None:  # noqa: E501
+            _query_params.append(('progressivo', _params['progressivo']))
+
+        if _params.get('alla_data') is not None:  # noqa: E501
+            if isinstance(_params['alla_data'], datetime):
+                _query_params.append(('alla_data', _params['alla_data'].strftime(self.api_client.configuration.datetime_format)))
             else:
-                _query_params.append(('alla_data', alla_data))
-            
-        if anno_data_registrazione is not None:
-            
-            _query_params.append(('anno_data_registrazione', anno_data_registrazione))
-            
-        if data_registrazione_da is not None:
-            if isinstance(data_registrazione_da, datetime):
-                _query_params.append(
-                    (
-                        'data_registrazione_da',
-                        data_registrazione_da.strftime(
-                            self.api_client.configuration.datetime_format
-                        )
-                    )
-                )
+                _query_params.append(('alla_data', _params['alla_data']))
+
+        if _params.get('anno_data_registrazione') is not None:  # noqa: E501
+            _query_params.append(('anno_data_registrazione', _params['anno_data_registrazione']))
+
+        if _params.get('data_registrazione_da') is not None:  # noqa: E501
+            if isinstance(_params['data_registrazione_da'], datetime):
+                _query_params.append(('data_registrazione_da', _params['data_registrazione_da'].strftime(self.api_client.configuration.datetime_format)))
             else:
-                _query_params.append(('data_registrazione_da', data_registrazione_da))
-            
-        if data_registrazione_a is not None:
-            if isinstance(data_registrazione_a, datetime):
-                _query_params.append(
-                    (
-                        'data_registrazione_a',
-                        data_registrazione_a.strftime(
-                            self.api_client.configuration.datetime_format
-                        )
-                    )
-                )
+                _query_params.append(('data_registrazione_da', _params['data_registrazione_da']))
+
+        if _params.get('data_registrazione_a') is not None:  # noqa: E501
+            if isinstance(_params['data_registrazione_a'], datetime):
+                _query_params.append(('data_registrazione_a', _params['data_registrazione_a'].strftime(self.api_client.configuration.datetime_format)))
             else:
-                _query_params.append(('data_registrazione_a', data_registrazione_a))
-            
-        if causali_operazione is not None:
-            
-            _query_params.append(('causali_operazione', causali_operazione))
-            
-        if codice_eer is not None:
-            
-            _query_params.append(('codice_eer', codice_eer))
-            
-        if caratteristiche_pericolo is not None:
-            
-            _query_params.append(('caratteristiche_pericolo', caratteristiche_pericolo))
-            
-        if stato_fisico is not None:
-            
-            _query_params.append(('stato_fisico', stato_fisico.value))
-            
-        if unita_misura is not None:
-            
-            _query_params.append(('unita_misura', unita_misura.value))
-            
-        if stato_esito_conferimento is not None:
-            
-            _query_params.append(('stato_esito_conferimento', stato_esito_conferimento.value))
-            
-        if annullato is not None:
-            
-            _query_params.append(('annullato', annullato))
-            
-        if rettificato is not None:
-            
-            _query_params.append(('rettificato', rettificato))
-            
-        if incompleto is not None:
-            
-            _query_params.append(('incompleto', incompleto))
-            
+                _query_params.append(('data_registrazione_a', _params['data_registrazione_a']))
+
+        if _params.get('causali_operazione') is not None:  # noqa: E501
+            _query_params.append(('causali_operazione', _params['causali_operazione']))
+            _collection_formats['causali_operazione'] = 'multi'
+
+        if _params.get('codice_eer') is not None:  # noqa: E501
+            _query_params.append(('codice_eer', _params['codice_eer']))
+
+        if _params.get('caratteristiche_pericolo') is not None:  # noqa: E501
+            _query_params.append(('caratteristiche_pericolo', _params['caratteristiche_pericolo']))
+            _collection_formats['caratteristiche_pericolo'] = 'multi'
+
+        if _params.get('stato_fisico') is not None:  # noqa: E501
+            _query_params.append(('stato_fisico', _params['stato_fisico'].value))
+
+        if _params.get('unita_misura') is not None:  # noqa: E501
+            _query_params.append(('unita_misura', _params['unita_misura'].value))
+
+        if _params.get('stato_esito_conferimento') is not None:  # noqa: E501
+            _query_params.append(('stato_esito_conferimento', _params['stato_esito_conferimento'].value))
+
+        if _params.get('annullato') is not None:  # noqa: E501
+            _query_params.append(('annullato', _params['annullato']))
+
+        if _params.get('rettificato') is not None:  # noqa: E501
+            _query_params.append(('rettificato', _params['rettificato']))
+
+        if _params.get('incompleto') is not None:  # noqa: E501
+            _query_params.append(('incompleto', _params['incompleto']))
+
         # process the header parameters
-        if paging_page is not None:
-            _header_params['Paging-Page'] = paging_page
-        if paging_page_size is not None:
-            _header_params['Paging-PageSize'] = paging_page_size
+        _header_params = dict(_params.get('_headers', {}))
+        if _params['paging_page'] is not None:
+            _header_params['Paging-Page'] = _params['paging_page']
+
+        if _params['paging_page_size'] is not None:
+            _header_params['Paging-PageSize'] = _params['paging_page_size']
+
         # process the form parameters
+        _form_params = []
+        _files = {}
         # process the body parameter
-
-
+        _body_params = None
         # set the HTTP header `Accept`
-        if 'Accept' not in _header_params:
-            _header_params['Accept'] = self.api_client.select_header_accept(
-                [
-                    'application/json', 
-                    'application/problem+json'
-                ]
-            )
-
+        _header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json', 'application/problem+json'])  # noqa: E501
 
         # authentication setting
-        _auth_settings: List[str] = [
-            'Bearer'
-        ]
+        _auth_settings = ['Bearer']  # noqa: E501
 
-        return self.api_client.param_serialize(
-            method='GET',
-            resource_path='/soggetto-delegato/{identificativo_registro}/movimenti',
-            path_params=_path_params,
-            query_params=_query_params,
-            header_params=_header_params,
+        _response_types_map = {
+            '200': "List[DatiMovimentoModel]",
+            '403': None,
+            '404': None,
+            '500': "ProblemDetails",
+            '429': None,
+        }
+
+        return self.api_client.call_api(
+            '/soggetto-delegato/{identificativo_registro}/movimenti', 'GET',
+            _path_params,
+            _query_params,
+            _header_params,
             body=_body_params,
             post_params=_form_params,
             files=_files,
+            response_types_map=_response_types_map,
             auth_settings=_auth_settings,
+            async_req=_params.get('async_req'),
+            _return_http_data_only=_params.get('_return_http_data_only'),  # noqa: E501
+            _preload_content=_params.get('_preload_content', True),
+            _request_timeout=_params.get('_request_timeout'),
             collection_formats=_collection_formats,
-            _host=_host,
-            _request_auth=_request_auth
-        )
+            _request_auth=_params.get('_request_auth'))
 
+    @validate_arguments
+    def soggetto_delegato_identificativo_registro_movimenti_post(self, identificativo_registro : Annotated[constr(strict=True, max_length=11), Field(..., description="Identificativo del Registro a cui fanno riferimento le registrazioni.")], operatore_identificativo_registro_movimenti_post_request_inner : Annotated[conlist(OperatoreIdentificativoRegistroMovimentiPostRequestInner, max_items=1000, min_items=1), Field(..., description="Elenco delle registrazioni (nuovi, rettifiche, annullamenti).")], x_reply_to : Annotated[Optional[StrictStr], Field(description="URL a cui il fruitore riceverà la notifica al termine dell'elaborazione (modalità push).")] = None, **kwargs) -> TransazioneModel:  # noqa: E501
+        """🔁[ASYNC] Trasmissione delle registrazioni  # noqa: E501
 
+        Acquisisce la richiesta di trasmissione di registrazioni (nuove, rettifiche, annullamenti) relative ad un Registro.  Con l'identificativo della transazione restituito è possibile consultare lo stato di avanzamento dell'elaborazione e richiederne l'esito.  Ogni richiesta accetta un numero massimo di 1000 registrazioni.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre un codice di stato 422) anche in ambiente di produzione.</i><hr/><br/>Se viene specificato un URL nell'header X-ReplyTo, al termine dell'elaborazione dei dati, il fruitore riceverà una notifica con l'esito dell'elaborazione all'URL specificato.  # noqa: E501
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
 
-
-    @validate_call
-    def soggetto_delegato_identificativo_registro_movimenti_post(
-        self,
-        identificativo_registro: Annotated[str, Field(strict=True, max_length=11, description="Identificativo del Registro a cui fanno riferimento le registrazioni.")],
-        operatore_identificativo_registro_movimenti_post_request_inner: Annotated[List[OperatoreIdentificativoRegistroMovimentiPostRequestInner], Field(min_length=1, max_length=1000, description="Elenco delle registrazioni (nuovi, rettifiche, annullamenti).")],
-        x_reply_to: Annotated[Optional[StrictStr], Field(description="URL a cui il fruitore riceverà la notifica al termine dell'elaborazione (modalità push).")] = None,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> TransazioneModel:
-        """🔁[ASYNC] Trasmissione delle registrazioni
-
-        Acquisisce la richiesta di trasmissione di registrazioni (nuove, rettifiche, annullamenti) relative ad un Registro.  Con l'identificativo della transazione restituito è possibile consultare lo stato di avanzamento dell'elaborazione e richiederne l'esito.  Ogni richiesta accetta un numero massimo di 1000 registrazioni.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre un codice di stato 422) anche in ambiente di produzione.</i><hr/><br/>Se viene specificato un URL nell'header X-ReplyTo, al termine dell'elaborazione dei dati, il fruitore riceverà una notifica con l'esito dell'elaborazione all'URL specificato.
+        >>> thread = api.soggetto_delegato_identificativo_registro_movimenti_post(identificativo_registro, operatore_identificativo_registro_movimenti_post_request_inner, x_reply_to, async_req=True)
+        >>> result = thread.get()
 
         :param identificativo_registro: Identificativo del Registro a cui fanno riferimento le registrazioni. (required)
         :type identificativo_registro: str
@@ -1261,79 +658,33 @@ class SoggettoDelegatoApi:
         :type operatore_identificativo_registro_movimenti_post_request_inner: List[OperatoreIdentificativoRegistroMovimentiPostRequestInner]
         :param x_reply_to: URL a cui il fruitore riceverà la notifica al termine dell'elaborazione (modalità push).
         :type x_reply_to: str
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
+        :param async_req: Whether to execute the request asynchronously.
+        :type async_req: bool, optional
+        :param _request_timeout: timeout setting for this request.
+               If one number provided, it will be total request
+               timeout. It can also be a pair (tuple) of
+               (connection, read) timeouts.
         :return: Returns the result object.
-        """ # noqa: E501
+                 If the method is called asynchronously,
+                 returns the request thread.
+        :rtype: TransazioneModel
+        """
+        kwargs['_return_http_data_only'] = True
+        if '_preload_content' in kwargs:
+            message = "Error! Please call the soggetto_delegato_identificativo_registro_movimenti_post_with_http_info method with `_preload_content` instead and obtain raw data from ApiResponse.raw_data"  # noqa: E501
+            raise ValueError(message)
+        return self.soggetto_delegato_identificativo_registro_movimenti_post_with_http_info(identificativo_registro, operatore_identificativo_registro_movimenti_post_request_inner, x_reply_to, **kwargs)  # noqa: E501
 
-        _param = self._soggetto_delegato_identificativo_registro_movimenti_post_serialize(
-            identificativo_registro=identificativo_registro,
-            operatore_identificativo_registro_movimenti_post_request_inner=operatore_identificativo_registro_movimenti_post_request_inner,
-            x_reply_to=x_reply_to,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
+    @validate_arguments
+    def soggetto_delegato_identificativo_registro_movimenti_post_with_http_info(self, identificativo_registro : Annotated[constr(strict=True, max_length=11), Field(..., description="Identificativo del Registro a cui fanno riferimento le registrazioni.")], operatore_identificativo_registro_movimenti_post_request_inner : Annotated[conlist(OperatoreIdentificativoRegistroMovimentiPostRequestInner, max_items=1000, min_items=1), Field(..., description="Elenco delle registrazioni (nuovi, rettifiche, annullamenti).")], x_reply_to : Annotated[Optional[StrictStr], Field(description="URL a cui il fruitore riceverà la notifica al termine dell'elaborazione (modalità push).")] = None, **kwargs) -> ApiResponse:  # noqa: E501
+        """🔁[ASYNC] Trasmissione delle registrazioni  # noqa: E501
 
-        _response_types_map: Dict[str, Optional[str]] = {
-            '202': "TransazioneModel",
-            '400': "ProblemDetails",
-            '403': None,
-            '404': None,
-            '500': "ProblemDetails",
-            '429': None,
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        ).data
+        Acquisisce la richiesta di trasmissione di registrazioni (nuove, rettifiche, annullamenti) relative ad un Registro.  Con l'identificativo della transazione restituito è possibile consultare lo stato di avanzamento dell'elaborazione e richiederne l'esito.  Ogni richiesta accetta un numero massimo di 1000 registrazioni.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre un codice di stato 422) anche in ambiente di produzione.</i><hr/><br/>Se viene specificato un URL nell'header X-ReplyTo, al termine dell'elaborazione dei dati, il fruitore riceverà una notifica con l'esito dell'elaborazione all'URL specificato.  # noqa: E501
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
 
-
-    @validate_call
-    def soggetto_delegato_identificativo_registro_movimenti_post_with_http_info(
-        self,
-        identificativo_registro: Annotated[str, Field(strict=True, max_length=11, description="Identificativo del Registro a cui fanno riferimento le registrazioni.")],
-        operatore_identificativo_registro_movimenti_post_request_inner: Annotated[List[OperatoreIdentificativoRegistroMovimentiPostRequestInner], Field(min_length=1, max_length=1000, description="Elenco delle registrazioni (nuovi, rettifiche, annullamenti).")],
-        x_reply_to: Annotated[Optional[StrictStr], Field(description="URL a cui il fruitore riceverà la notifica al termine dell'elaborazione (modalità push).")] = None,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[TransazioneModel]:
-        """🔁[ASYNC] Trasmissione delle registrazioni
-
-        Acquisisce la richiesta di trasmissione di registrazioni (nuove, rettifiche, annullamenti) relative ad un Registro.  Con l'identificativo della transazione restituito è possibile consultare lo stato di avanzamento dell'elaborazione e richiederne l'esito.  Ogni richiesta accetta un numero massimo di 1000 registrazioni.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre un codice di stato 422) anche in ambiente di produzione.</i><hr/><br/>Se viene specificato un URL nell'header X-ReplyTo, al termine dell'elaborazione dei dati, il fruitore riceverà una notifica con l'esito dell'elaborazione all'URL specificato.
+        >>> thread = api.soggetto_delegato_identificativo_registro_movimenti_post_with_http_info(identificativo_registro, operatore_identificativo_registro_movimenti_post_request_inner, x_reply_to, async_req=True)
+        >>> result = thread.get()
 
         :param identificativo_registro: Identificativo del Registro a cui fanno riferimento le registrazioni. (required)
         :type identificativo_registro: str
@@ -1341,242 +692,133 @@ class SoggettoDelegatoApi:
         :type operatore_identificativo_registro_movimenti_post_request_inner: List[OperatoreIdentificativoRegistroMovimentiPostRequestInner]
         :param x_reply_to: URL a cui il fruitore riceverà la notifica al termine dell'elaborazione (modalità push).
         :type x_reply_to: str
+        :param async_req: Whether to execute the request asynchronously.
+        :type async_req: bool, optional
+        :param _preload_content: if False, the ApiResponse.data will
+                                 be set to none and raw_data will store the
+                                 HTTP response body without reading/decoding.
+                                 Default is True.
+        :type _preload_content: bool, optional
+        :param _return_http_data_only: response data instead of ApiResponse
+                                       object with status code, headers, etc
+        :type _return_http_data_only: bool, optional
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
                                  (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
         :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
+                              request; this effectively ignores the authentication
+                              in the spec for a single request.
         :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
+        :type _content_type: string, optional: force content-type for the request
         :return: Returns the result object.
-        """ # noqa: E501
+                 If the method is called asynchronously,
+                 returns the request thread.
+        :rtype: tuple(TransazioneModel, status_code(int), headers(HTTPHeaderDict))
+        """
 
-        _param = self._soggetto_delegato_identificativo_registro_movimenti_post_serialize(
-            identificativo_registro=identificativo_registro,
-            operatore_identificativo_registro_movimenti_post_request_inner=operatore_identificativo_registro_movimenti_post_request_inner,
-            x_reply_to=x_reply_to,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
+        _params = locals()
 
-        _response_types_map: Dict[str, Optional[str]] = {
-            '202': "TransazioneModel",
-            '400': "ProblemDetails",
-            '403': None,
-            '404': None,
-            '500': "ProblemDetails",
-            '429': None,
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        )
-
-
-    @validate_call
-    def soggetto_delegato_identificativo_registro_movimenti_post_without_preload_content(
-        self,
-        identificativo_registro: Annotated[str, Field(strict=True, max_length=11, description="Identificativo del Registro a cui fanno riferimento le registrazioni.")],
-        operatore_identificativo_registro_movimenti_post_request_inner: Annotated[List[OperatoreIdentificativoRegistroMovimentiPostRequestInner], Field(min_length=1, max_length=1000, description="Elenco delle registrazioni (nuovi, rettifiche, annullamenti).")],
-        x_reply_to: Annotated[Optional[StrictStr], Field(description="URL a cui il fruitore riceverà la notifica al termine dell'elaborazione (modalità push).")] = None,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
+        _all_params = [
+            'identificativo_registro',
+            'operatore_identificativo_registro_movimenti_post_request_inner',
+            'x_reply_to'
+        ]
+        _all_params.extend(
+            [
+                'async_req',
+                '_return_http_data_only',
+                '_preload_content',
+                '_request_timeout',
+                '_request_auth',
+                '_content_type',
+                '_headers'
             ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> RESTResponseType:
-        """🔁[ASYNC] Trasmissione delle registrazioni
-
-        Acquisisce la richiesta di trasmissione di registrazioni (nuove, rettifiche, annullamenti) relative ad un Registro.  Con l'identificativo della transazione restituito è possibile consultare lo stato di avanzamento dell'elaborazione e richiederne l'esito.  Ogni richiesta accetta un numero massimo di 1000 registrazioni.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre un codice di stato 422) anche in ambiente di produzione.</i><hr/><br/>Se viene specificato un URL nell'header X-ReplyTo, al termine dell'elaborazione dei dati, il fruitore riceverà una notifica con l'esito dell'elaborazione all'URL specificato.
-
-        :param identificativo_registro: Identificativo del Registro a cui fanno riferimento le registrazioni. (required)
-        :type identificativo_registro: str
-        :param operatore_identificativo_registro_movimenti_post_request_inner: Elenco delle registrazioni (nuovi, rettifiche, annullamenti). (required)
-        :type operatore_identificativo_registro_movimenti_post_request_inner: List[OperatoreIdentificativoRegistroMovimentiPostRequestInner]
-        :param x_reply_to: URL a cui il fruitore riceverà la notifica al termine dell'elaborazione (modalità push).
-        :type x_reply_to: str
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._soggetto_delegato_identificativo_registro_movimenti_post_serialize(
-            identificativo_registro=identificativo_registro,
-            operatore_identificativo_registro_movimenti_post_request_inner=operatore_identificativo_registro_movimenti_post_request_inner,
-            x_reply_to=x_reply_to,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
         )
 
-        _response_types_map: Dict[str, Optional[str]] = {
-            '202': "TransazioneModel",
-            '400': "ProblemDetails",
-            '403': None,
-            '404': None,
-            '500': "ProblemDetails",
-            '429': None,
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        return response_data.response
+        # validate the arguments
+        for _key, _val in _params['kwargs'].items():
+            if _key not in _all_params:
+                raise ApiTypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method soggetto_delegato_identificativo_registro_movimenti_post" % _key
+                )
+            _params[_key] = _val
+        del _params['kwargs']
 
-
-    def _soggetto_delegato_identificativo_registro_movimenti_post_serialize(
-        self,
-        identificativo_registro,
-        operatore_identificativo_registro_movimenti_post_request_inner,
-        x_reply_to,
-        _request_auth,
-        _content_type,
-        _headers,
-        _host_index,
-    ) -> RequestSerialized:
-
-        _host = None
-
-        _collection_formats: Dict[str, str] = {
-            'OperatoreIdentificativoRegistroMovimentiPostRequestInner': '',
-        }
-
-        _path_params: Dict[str, str] = {}
-        _query_params: List[Tuple[str, str]] = []
-        _header_params: Dict[str, Optional[str]] = _headers or {}
-        _form_params: List[Tuple[str, str]] = []
-        _files: Dict[
-            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
-        ] = {}
-        _body_params: Optional[bytes] = None
+        _collection_formats = {}
 
         # process the path parameters
-        if identificativo_registro is not None:
-            _path_params['identificativo_registro'] = identificativo_registro
-        # process the query parameters
-        # process the header parameters
-        if x_reply_to is not None:
-            _header_params['X-ReplyTo'] = x_reply_to
-        # process the form parameters
-        # process the body parameter
-        if operatore_identificativo_registro_movimenti_post_request_inner is not None:
-            _body_params = operatore_identificativo_registro_movimenti_post_request_inner
+        _path_params = {}
+        if _params['identificativo_registro'] is not None:
+            _path_params['identificativo_registro'] = _params['identificativo_registro']
 
+
+        # process the query parameters
+        _query_params = []
+        # process the header parameters
+        _header_params = dict(_params.get('_headers', {}))
+        if _params['x_reply_to'] is not None:
+            _header_params['X-ReplyTo'] = _params['x_reply_to']
+
+        # process the form parameters
+        _form_params = []
+        _files = {}
+        # process the body parameter
+        _body_params = None
+        if _params['operatore_identificativo_registro_movimenti_post_request_inner'] is not None:
+            _body_params = _params['operatore_identificativo_registro_movimenti_post_request_inner']
 
         # set the HTTP header `Accept`
-        if 'Accept' not in _header_params:
-            _header_params['Accept'] = self.api_client.select_header_accept(
-                [
-                    'application/json', 
-                    'application/problem+json'
-                ]
-            )
+        _header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json', 'application/problem+json'])  # noqa: E501
 
         # set the HTTP header `Content-Type`
-        if _content_type:
-            _header_params['Content-Type'] = _content_type
-        else:
-            _default_content_type = (
-                self.api_client.select_header_content_type(
-                    [
-                        'application/json'
-                    ]
-                )
-            )
-            if _default_content_type is not None:
-                _header_params['Content-Type'] = _default_content_type
+        _content_types_list = _params.get('_content_type',
+            self.api_client.select_header_content_type(
+                ['application/json']))
+        if _content_types_list:
+                _header_params['Content-Type'] = _content_types_list
 
         # authentication setting
-        _auth_settings: List[str] = [
-            'Bearer'
-        ]
+        _auth_settings = ['Bearer']  # noqa: E501
 
-        return self.api_client.param_serialize(
-            method='POST',
-            resource_path='/soggetto-delegato/{identificativo_registro}/movimenti',
-            path_params=_path_params,
-            query_params=_query_params,
-            header_params=_header_params,
+        _response_types_map = {
+            '202': "TransazioneModel",
+            '400': "ProblemDetails",
+            '403': None,
+            '404': None,
+            '500': "ProblemDetails",
+            '429': None,
+        }
+
+        return self.api_client.call_api(
+            '/soggetto-delegato/{identificativo_registro}/movimenti', 'POST',
+            _path_params,
+            _query_params,
+            _header_params,
             body=_body_params,
             post_params=_form_params,
             files=_files,
+            response_types_map=_response_types_map,
             auth_settings=_auth_settings,
+            async_req=_params.get('async_req'),
+            _return_http_data_only=_params.get('_return_http_data_only'),  # noqa: E501
+            _preload_content=_params.get('_preload_content', True),
+            _request_timeout=_params.get('_request_timeout'),
             collection_formats=_collection_formats,
-            _host=_host,
-            _request_auth=_request_auth
-        )
+            _request_auth=_params.get('_request_auth'))
 
+    @validate_arguments
+    def soggetto_delegato_identificativo_registro_movimento_anno_progressivo_get(self, identificativo_registro : Annotated[constr(strict=True, max_length=11), Field(..., description="Identificativo del Registro.")], anno : Annotated[conint(strict=True, le=2050, ge=1980), Field(..., description="Anno della registrazione da recuperare.")], progressivo : Annotated[conint(strict=True, le=2147483647, ge=1), Field(..., description="Progressivo della registrazione da recuperare.")], alla_data : Annotated[Optional[datetime], Field(description="Data di validità dei dati (formato ISO 8601 UTC).")] = None, variazioni : Annotated[Optional[StrictBool], Field(description="Indica se recuperare anche la storia della registrazione (tutte le sue variazioni).")] = None, **kwargs) -> MovimentoDettaglioModel:  # noqa: E501
+        """Dettaglio registrazione per anno e numero  # noqa: E501
 
+        Ottiene il dettaglio di una registrazione specificando anno/numero registrazione.  Specificando un valore per il filtro \"allaData\", si ottiene il dettaglio della registrazione a quella data.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>  # noqa: E501
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
 
-
-    @validate_call
-    def soggetto_delegato_identificativo_registro_movimento_anno_progressivo_get(
-        self,
-        identificativo_registro: Annotated[str, Field(strict=True, max_length=11, description="Identificativo del Registro.")],
-        anno: Annotated[int, Field(le=2050, strict=True, ge=1980, description="Anno della registrazione da recuperare.")],
-        progressivo: Annotated[int, Field(le=2147483647, strict=True, ge=1, description="Progressivo della registrazione da recuperare.")],
-        alla_data: Annotated[Optional[datetime], Field(description="Data di validità dei dati (formato ISO 8601 UTC).")] = None,
-        variazioni: Annotated[Optional[StrictBool], Field(description="Indica se recuperare anche la storia della registrazione (tutte le sue variazioni).")] = None,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> MovimentoDettaglioModel:
-        """Dettaglio registrazione per anno e numero
-
-        Ottiene il dettaglio di una registrazione specificando anno/numero registrazione.  Specificando un valore per il filtro \"allaData\", si ottiene il dettaglio della registrazione a quella data.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>
+        >>> thread = api.soggetto_delegato_identificativo_registro_movimento_anno_progressivo_get(identificativo_registro, anno, progressivo, alla_data, variazioni, async_req=True)
+        >>> result = thread.get()
 
         :param identificativo_registro: Identificativo del Registro. (required)
         :type identificativo_registro: str
@@ -1588,82 +830,33 @@ class SoggettoDelegatoApi:
         :type alla_data: datetime
         :param variazioni: Indica se recuperare anche la storia della registrazione (tutte le sue variazioni).
         :type variazioni: bool
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
+        :param async_req: Whether to execute the request asynchronously.
+        :type async_req: bool, optional
+        :param _request_timeout: timeout setting for this request.
+               If one number provided, it will be total request
+               timeout. It can also be a pair (tuple) of
+               (connection, read) timeouts.
         :return: Returns the result object.
-        """ # noqa: E501
+                 If the method is called asynchronously,
+                 returns the request thread.
+        :rtype: MovimentoDettaglioModel
+        """
+        kwargs['_return_http_data_only'] = True
+        if '_preload_content' in kwargs:
+            message = "Error! Please call the soggetto_delegato_identificativo_registro_movimento_anno_progressivo_get_with_http_info method with `_preload_content` instead and obtain raw data from ApiResponse.raw_data"  # noqa: E501
+            raise ValueError(message)
+        return self.soggetto_delegato_identificativo_registro_movimento_anno_progressivo_get_with_http_info(identificativo_registro, anno, progressivo, alla_data, variazioni, **kwargs)  # noqa: E501
 
-        _param = self._soggetto_delegato_identificativo_registro_movimento_anno_progressivo_get_serialize(
-            identificativo_registro=identificativo_registro,
-            anno=anno,
-            progressivo=progressivo,
-            alla_data=alla_data,
-            variazioni=variazioni,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
+    @validate_arguments
+    def soggetto_delegato_identificativo_registro_movimento_anno_progressivo_get_with_http_info(self, identificativo_registro : Annotated[constr(strict=True, max_length=11), Field(..., description="Identificativo del Registro.")], anno : Annotated[conint(strict=True, le=2050, ge=1980), Field(..., description="Anno della registrazione da recuperare.")], progressivo : Annotated[conint(strict=True, le=2147483647, ge=1), Field(..., description="Progressivo della registrazione da recuperare.")], alla_data : Annotated[Optional[datetime], Field(description="Data di validità dei dati (formato ISO 8601 UTC).")] = None, variazioni : Annotated[Optional[StrictBool], Field(description="Indica se recuperare anche la storia della registrazione (tutte le sue variazioni).")] = None, **kwargs) -> ApiResponse:  # noqa: E501
+        """Dettaglio registrazione per anno e numero  # noqa: E501
 
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "MovimentoDettaglioModel",
-            '403': None,
-            '404': None,
-            '500': "ProblemDetails",
-            '429': None,
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        ).data
+        Ottiene il dettaglio di una registrazione specificando anno/numero registrazione.  Specificando un valore per il filtro \"allaData\", si ottiene il dettaglio della registrazione a quella data.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>  # noqa: E501
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
 
-
-    @validate_call
-    def soggetto_delegato_identificativo_registro_movimento_anno_progressivo_get_with_http_info(
-        self,
-        identificativo_registro: Annotated[str, Field(strict=True, max_length=11, description="Identificativo del Registro.")],
-        anno: Annotated[int, Field(le=2050, strict=True, ge=1980, description="Anno della registrazione da recuperare.")],
-        progressivo: Annotated[int, Field(le=2147483647, strict=True, ge=1, description="Progressivo della registrazione da recuperare.")],
-        alla_data: Annotated[Optional[datetime], Field(description="Data di validità dei dati (formato ISO 8601 UTC).")] = None,
-        variazioni: Annotated[Optional[StrictBool], Field(description="Indica se recuperare anche la storia della registrazione (tutte le sue variazioni).")] = None,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[MovimentoDettaglioModel]:
-        """Dettaglio registrazione per anno e numero
-
-        Ottiene il dettaglio di una registrazione specificando anno/numero registrazione.  Specificando un valore per il filtro \"allaData\", si ottiene il dettaglio della registrazione a quella data.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>
+        >>> thread = api.soggetto_delegato_identificativo_registro_movimento_anno_progressivo_get_with_http_info(identificativo_registro, anno, progressivo, alla_data, variazioni, async_req=True)
+        >>> result = thread.get()
 
         :param identificativo_registro: Identificativo del Registro. (required)
         :type identificativo_registro: str
@@ -1675,254 +868,136 @@ class SoggettoDelegatoApi:
         :type alla_data: datetime
         :param variazioni: Indica se recuperare anche la storia della registrazione (tutte le sue variazioni).
         :type variazioni: bool
+        :param async_req: Whether to execute the request asynchronously.
+        :type async_req: bool, optional
+        :param _preload_content: if False, the ApiResponse.data will
+                                 be set to none and raw_data will store the
+                                 HTTP response body without reading/decoding.
+                                 Default is True.
+        :type _preload_content: bool, optional
+        :param _return_http_data_only: response data instead of ApiResponse
+                                       object with status code, headers, etc
+        :type _return_http_data_only: bool, optional
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
                                  (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
         :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
+                              request; this effectively ignores the authentication
+                              in the spec for a single request.
         :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
+        :type _content_type: string, optional: force content-type for the request
         :return: Returns the result object.
-        """ # noqa: E501
+                 If the method is called asynchronously,
+                 returns the request thread.
+        :rtype: tuple(MovimentoDettaglioModel, status_code(int), headers(HTTPHeaderDict))
+        """
 
-        _param = self._soggetto_delegato_identificativo_registro_movimento_anno_progressivo_get_serialize(
-            identificativo_registro=identificativo_registro,
-            anno=anno,
-            progressivo=progressivo,
-            alla_data=alla_data,
-            variazioni=variazioni,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
+        _params = locals()
 
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "MovimentoDettaglioModel",
-            '403': None,
-            '404': None,
-            '500': "ProblemDetails",
-            '429': None,
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        )
-
-
-    @validate_call
-    def soggetto_delegato_identificativo_registro_movimento_anno_progressivo_get_without_preload_content(
-        self,
-        identificativo_registro: Annotated[str, Field(strict=True, max_length=11, description="Identificativo del Registro.")],
-        anno: Annotated[int, Field(le=2050, strict=True, ge=1980, description="Anno della registrazione da recuperare.")],
-        progressivo: Annotated[int, Field(le=2147483647, strict=True, ge=1, description="Progressivo della registrazione da recuperare.")],
-        alla_data: Annotated[Optional[datetime], Field(description="Data di validità dei dati (formato ISO 8601 UTC).")] = None,
-        variazioni: Annotated[Optional[StrictBool], Field(description="Indica se recuperare anche la storia della registrazione (tutte le sue variazioni).")] = None,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
+        _all_params = [
+            'identificativo_registro',
+            'anno',
+            'progressivo',
+            'alla_data',
+            'variazioni'
+        ]
+        _all_params.extend(
+            [
+                'async_req',
+                '_return_http_data_only',
+                '_preload_content',
+                '_request_timeout',
+                '_request_auth',
+                '_content_type',
+                '_headers'
             ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> RESTResponseType:
-        """Dettaglio registrazione per anno e numero
-
-        Ottiene il dettaglio di una registrazione specificando anno/numero registrazione.  Specificando un valore per il filtro \"allaData\", si ottiene il dettaglio della registrazione a quella data.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>
-
-        :param identificativo_registro: Identificativo del Registro. (required)
-        :type identificativo_registro: str
-        :param anno: Anno della registrazione da recuperare. (required)
-        :type anno: int
-        :param progressivo: Progressivo della registrazione da recuperare. (required)
-        :type progressivo: int
-        :param alla_data: Data di validità dei dati (formato ISO 8601 UTC).
-        :type alla_data: datetime
-        :param variazioni: Indica se recuperare anche la storia della registrazione (tutte le sue variazioni).
-        :type variazioni: bool
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._soggetto_delegato_identificativo_registro_movimento_anno_progressivo_get_serialize(
-            identificativo_registro=identificativo_registro,
-            anno=anno,
-            progressivo=progressivo,
-            alla_data=alla_data,
-            variazioni=variazioni,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
         )
 
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "MovimentoDettaglioModel",
-            '403': None,
-            '404': None,
-            '500': "ProblemDetails",
-            '429': None,
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        return response_data.response
+        # validate the arguments
+        for _key, _val in _params['kwargs'].items():
+            if _key not in _all_params:
+                raise ApiTypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method soggetto_delegato_identificativo_registro_movimento_anno_progressivo_get" % _key
+                )
+            _params[_key] = _val
+        del _params['kwargs']
 
-
-    def _soggetto_delegato_identificativo_registro_movimento_anno_progressivo_get_serialize(
-        self,
-        identificativo_registro,
-        anno,
-        progressivo,
-        alla_data,
-        variazioni,
-        _request_auth,
-        _content_type,
-        _headers,
-        _host_index,
-    ) -> RequestSerialized:
-
-        _host = None
-
-        _collection_formats: Dict[str, str] = {
-        }
-
-        _path_params: Dict[str, str] = {}
-        _query_params: List[Tuple[str, str]] = []
-        _header_params: Dict[str, Optional[str]] = _headers or {}
-        _form_params: List[Tuple[str, str]] = []
-        _files: Dict[
-            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
-        ] = {}
-        _body_params: Optional[bytes] = None
+        _collection_formats = {}
 
         # process the path parameters
-        if identificativo_registro is not None:
-            _path_params['identificativo_registro'] = identificativo_registro
-        if anno is not None:
-            _path_params['anno'] = anno
-        if progressivo is not None:
-            _path_params['progressivo'] = progressivo
+        _path_params = {}
+        if _params['identificativo_registro'] is not None:
+            _path_params['identificativo_registro'] = _params['identificativo_registro']
+
+        if _params['anno'] is not None:
+            _path_params['anno'] = _params['anno']
+
+        if _params['progressivo'] is not None:
+            _path_params['progressivo'] = _params['progressivo']
+
+
         # process the query parameters
-        if alla_data is not None:
-            if isinstance(alla_data, datetime):
-                _query_params.append(
-                    (
-                        'alla_data',
-                        alla_data.strftime(
-                            self.api_client.configuration.datetime_format
-                        )
-                    )
-                )
+        _query_params = []
+        if _params.get('alla_data') is not None:  # noqa: E501
+            if isinstance(_params['alla_data'], datetime):
+                _query_params.append(('alla_data', _params['alla_data'].strftime(self.api_client.configuration.datetime_format)))
             else:
-                _query_params.append(('alla_data', alla_data))
-            
-        if variazioni is not None:
-            
-            _query_params.append(('variazioni', variazioni))
-            
+                _query_params.append(('alla_data', _params['alla_data']))
+
+        if _params.get('variazioni') is not None:  # noqa: E501
+            _query_params.append(('variazioni', _params['variazioni']))
+
         # process the header parameters
+        _header_params = dict(_params.get('_headers', {}))
         # process the form parameters
+        _form_params = []
+        _files = {}
         # process the body parameter
-
-
+        _body_params = None
         # set the HTTP header `Accept`
-        if 'Accept' not in _header_params:
-            _header_params['Accept'] = self.api_client.select_header_accept(
-                [
-                    'application/json', 
-                    'application/problem+json'
-                ]
-            )
-
+        _header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json', 'application/problem+json'])  # noqa: E501
 
         # authentication setting
-        _auth_settings: List[str] = [
-            'Bearer'
-        ]
+        _auth_settings = ['Bearer']  # noqa: E501
 
-        return self.api_client.param_serialize(
-            method='GET',
-            resource_path='/soggetto-delegato/{identificativo_registro}/movimento/{anno}/{progressivo}',
-            path_params=_path_params,
-            query_params=_query_params,
-            header_params=_header_params,
+        _response_types_map = {
+            '200': "MovimentoDettaglioModel",
+            '403': None,
+            '404': None,
+            '500': "ProblemDetails",
+            '429': None,
+        }
+
+        return self.api_client.call_api(
+            '/soggetto-delegato/{identificativo_registro}/movimento/{anno}/{progressivo}', 'GET',
+            _path_params,
+            _query_params,
+            _header_params,
             body=_body_params,
             post_params=_form_params,
             files=_files,
+            response_types_map=_response_types_map,
             auth_settings=_auth_settings,
+            async_req=_params.get('async_req'),
+            _return_http_data_only=_params.get('_return_http_data_only'),  # noqa: E501
+            _preload_content=_params.get('_preload_content', True),
+            _request_timeout=_params.get('_request_timeout'),
             collection_formats=_collection_formats,
-            _host=_host,
-            _request_auth=_request_auth
-        )
+            _request_auth=_params.get('_request_auth'))
 
+    @validate_arguments
+    def soggetto_delegato_identificativo_registro_movimento_identificativo_movimento_get(self, identificativo_registro : Annotated[constr(strict=True, max_length=11), Field(..., description="Identificativo del Registro.")], identificativo_movimento : Annotated[constr(strict=True, max_length=20), Field(..., description="Identificativo della registrazione da recuperare.")], alla_data : Annotated[Optional[datetime], Field(description="Data di validità dei dati (formato ISO 8601 UTC).")] = None, variazioni : Annotated[Optional[StrictBool], Field(description="Indica se recuperare anche la storia della registrazione (tutte le sue variazioni).")] = None, **kwargs) -> MovimentoDettaglioModel:  # noqa: E501
+        """Dettaglio registrazione per identificativo  # noqa: E501
 
+        Ottiene il dettaglio di una registrazione specificando l'identificativo assegnato dal RENTRI al momento della trasmissione.  Specificando un valore per il filtro \"allaData\", si ottiene il dettaglio della registrazione a quella data.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>  # noqa: E501
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
 
-
-    @validate_call
-    def soggetto_delegato_identificativo_registro_movimento_identificativo_movimento_get(
-        self,
-        identificativo_registro: Annotated[str, Field(strict=True, max_length=11, description="Identificativo del Registro.")],
-        identificativo_movimento: Annotated[str, Field(strict=True, max_length=20, description="Identificativo della registrazione da recuperare.")],
-        alla_data: Annotated[Optional[datetime], Field(description="Data di validità dei dati (formato ISO 8601 UTC).")] = None,
-        variazioni: Annotated[Optional[StrictBool], Field(description="Indica se recuperare anche la storia della registrazione (tutte le sue variazioni).")] = None,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> MovimentoDettaglioModel:
-        """Dettaglio registrazione per identificativo
-
-        Ottiene il dettaglio di una registrazione specificando l'identificativo assegnato dal RENTRI al momento della trasmissione.  Specificando un valore per il filtro \"allaData\", si ottiene il dettaglio della registrazione a quella data.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>
+        >>> thread = api.soggetto_delegato_identificativo_registro_movimento_identificativo_movimento_get(identificativo_registro, identificativo_movimento, alla_data, variazioni, async_req=True)
+        >>> result = thread.get()
 
         :param identificativo_registro: Identificativo del Registro. (required)
         :type identificativo_registro: str
@@ -1932,80 +1007,33 @@ class SoggettoDelegatoApi:
         :type alla_data: datetime
         :param variazioni: Indica se recuperare anche la storia della registrazione (tutte le sue variazioni).
         :type variazioni: bool
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
+        :param async_req: Whether to execute the request asynchronously.
+        :type async_req: bool, optional
+        :param _request_timeout: timeout setting for this request.
+               If one number provided, it will be total request
+               timeout. It can also be a pair (tuple) of
+               (connection, read) timeouts.
         :return: Returns the result object.
-        """ # noqa: E501
+                 If the method is called asynchronously,
+                 returns the request thread.
+        :rtype: MovimentoDettaglioModel
+        """
+        kwargs['_return_http_data_only'] = True
+        if '_preload_content' in kwargs:
+            message = "Error! Please call the soggetto_delegato_identificativo_registro_movimento_identificativo_movimento_get_with_http_info method with `_preload_content` instead and obtain raw data from ApiResponse.raw_data"  # noqa: E501
+            raise ValueError(message)
+        return self.soggetto_delegato_identificativo_registro_movimento_identificativo_movimento_get_with_http_info(identificativo_registro, identificativo_movimento, alla_data, variazioni, **kwargs)  # noqa: E501
 
-        _param = self._soggetto_delegato_identificativo_registro_movimento_identificativo_movimento_get_serialize(
-            identificativo_registro=identificativo_registro,
-            identificativo_movimento=identificativo_movimento,
-            alla_data=alla_data,
-            variazioni=variazioni,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
+    @validate_arguments
+    def soggetto_delegato_identificativo_registro_movimento_identificativo_movimento_get_with_http_info(self, identificativo_registro : Annotated[constr(strict=True, max_length=11), Field(..., description="Identificativo del Registro.")], identificativo_movimento : Annotated[constr(strict=True, max_length=20), Field(..., description="Identificativo della registrazione da recuperare.")], alla_data : Annotated[Optional[datetime], Field(description="Data di validità dei dati (formato ISO 8601 UTC).")] = None, variazioni : Annotated[Optional[StrictBool], Field(description="Indica se recuperare anche la storia della registrazione (tutte le sue variazioni).")] = None, **kwargs) -> ApiResponse:  # noqa: E501
+        """Dettaglio registrazione per identificativo  # noqa: E501
 
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "MovimentoDettaglioModel",
-            '403': None,
-            '404': None,
-            '500': "ProblemDetails",
-            '429': None,
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        ).data
+        Ottiene il dettaglio di una registrazione specificando l'identificativo assegnato dal RENTRI al momento della trasmissione.  Specificando un valore per il filtro \"allaData\", si ottiene il dettaglio della registrazione a quella data.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>  # noqa: E501
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
 
-
-    @validate_call
-    def soggetto_delegato_identificativo_registro_movimento_identificativo_movimento_get_with_http_info(
-        self,
-        identificativo_registro: Annotated[str, Field(strict=True, max_length=11, description="Identificativo del Registro.")],
-        identificativo_movimento: Annotated[str, Field(strict=True, max_length=20, description="Identificativo della registrazione da recuperare.")],
-        alla_data: Annotated[Optional[datetime], Field(description="Data di validità dei dati (formato ISO 8601 UTC).")] = None,
-        variazioni: Annotated[Optional[StrictBool], Field(description="Indica se recuperare anche la storia della registrazione (tutte le sue variazioni).")] = None,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[MovimentoDettaglioModel]:
-        """Dettaglio registrazione per identificativo
-
-        Ottiene il dettaglio di una registrazione specificando l'identificativo assegnato dal RENTRI al momento della trasmissione.  Specificando un valore per il filtro \"allaData\", si ottiene il dettaglio della registrazione a quella data.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>
+        >>> thread = api.soggetto_delegato_identificativo_registro_movimento_identificativo_movimento_get_with_http_info(identificativo_registro, identificativo_movimento, alla_data, variazioni, async_req=True)
+        >>> result = thread.get()
 
         :param identificativo_registro: Identificativo del Registro. (required)
         :type identificativo_registro: str
@@ -2015,245 +1043,132 @@ class SoggettoDelegatoApi:
         :type alla_data: datetime
         :param variazioni: Indica se recuperare anche la storia della registrazione (tutte le sue variazioni).
         :type variazioni: bool
+        :param async_req: Whether to execute the request asynchronously.
+        :type async_req: bool, optional
+        :param _preload_content: if False, the ApiResponse.data will
+                                 be set to none and raw_data will store the
+                                 HTTP response body without reading/decoding.
+                                 Default is True.
+        :type _preload_content: bool, optional
+        :param _return_http_data_only: response data instead of ApiResponse
+                                       object with status code, headers, etc
+        :type _return_http_data_only: bool, optional
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
                                  (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
         :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
+                              request; this effectively ignores the authentication
+                              in the spec for a single request.
         :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
+        :type _content_type: string, optional: force content-type for the request
         :return: Returns the result object.
-        """ # noqa: E501
+                 If the method is called asynchronously,
+                 returns the request thread.
+        :rtype: tuple(MovimentoDettaglioModel, status_code(int), headers(HTTPHeaderDict))
+        """
 
-        _param = self._soggetto_delegato_identificativo_registro_movimento_identificativo_movimento_get_serialize(
-            identificativo_registro=identificativo_registro,
-            identificativo_movimento=identificativo_movimento,
-            alla_data=alla_data,
-            variazioni=variazioni,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
+        _params = locals()
 
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "MovimentoDettaglioModel",
-            '403': None,
-            '404': None,
-            '500': "ProblemDetails",
-            '429': None,
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        )
-
-
-    @validate_call
-    def soggetto_delegato_identificativo_registro_movimento_identificativo_movimento_get_without_preload_content(
-        self,
-        identificativo_registro: Annotated[str, Field(strict=True, max_length=11, description="Identificativo del Registro.")],
-        identificativo_movimento: Annotated[str, Field(strict=True, max_length=20, description="Identificativo della registrazione da recuperare.")],
-        alla_data: Annotated[Optional[datetime], Field(description="Data di validità dei dati (formato ISO 8601 UTC).")] = None,
-        variazioni: Annotated[Optional[StrictBool], Field(description="Indica se recuperare anche la storia della registrazione (tutte le sue variazioni).")] = None,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
+        _all_params = [
+            'identificativo_registro',
+            'identificativo_movimento',
+            'alla_data',
+            'variazioni'
+        ]
+        _all_params.extend(
+            [
+                'async_req',
+                '_return_http_data_only',
+                '_preload_content',
+                '_request_timeout',
+                '_request_auth',
+                '_content_type',
+                '_headers'
             ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> RESTResponseType:
-        """Dettaglio registrazione per identificativo
-
-        Ottiene il dettaglio di una registrazione specificando l'identificativo assegnato dal RENTRI al momento della trasmissione.  Specificando un valore per il filtro \"allaData\", si ottiene il dettaglio della registrazione a quella data.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>
-
-        :param identificativo_registro: Identificativo del Registro. (required)
-        :type identificativo_registro: str
-        :param identificativo_movimento: Identificativo della registrazione da recuperare. (required)
-        :type identificativo_movimento: str
-        :param alla_data: Data di validità dei dati (formato ISO 8601 UTC).
-        :type alla_data: datetime
-        :param variazioni: Indica se recuperare anche la storia della registrazione (tutte le sue variazioni).
-        :type variazioni: bool
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._soggetto_delegato_identificativo_registro_movimento_identificativo_movimento_get_serialize(
-            identificativo_registro=identificativo_registro,
-            identificativo_movimento=identificativo_movimento,
-            alla_data=alla_data,
-            variazioni=variazioni,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
         )
 
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "MovimentoDettaglioModel",
-            '403': None,
-            '404': None,
-            '500': "ProblemDetails",
-            '429': None,
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        return response_data.response
-
-
-    def _soggetto_delegato_identificativo_registro_movimento_identificativo_movimento_get_serialize(
-        self,
-        identificativo_registro,
-        identificativo_movimento,
-        alla_data,
-        variazioni,
-        _request_auth,
-        _content_type,
-        _headers,
-        _host_index,
-    ) -> RequestSerialized:
-
-        _host = None
-
-        _collection_formats: Dict[str, str] = {
-        }
-
-        _path_params: Dict[str, str] = {}
-        _query_params: List[Tuple[str, str]] = []
-        _header_params: Dict[str, Optional[str]] = _headers or {}
-        _form_params: List[Tuple[str, str]] = []
-        _files: Dict[
-            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
-        ] = {}
-        _body_params: Optional[bytes] = None
-
-        # process the path parameters
-        if identificativo_registro is not None:
-            _path_params['identificativo_registro'] = identificativo_registro
-        if identificativo_movimento is not None:
-            _path_params['identificativo_movimento'] = identificativo_movimento
-        # process the query parameters
-        if alla_data is not None:
-            if isinstance(alla_data, datetime):
-                _query_params.append(
-                    (
-                        'alla_data',
-                        alla_data.strftime(
-                            self.api_client.configuration.datetime_format
-                        )
-                    )
+        # validate the arguments
+        for _key, _val in _params['kwargs'].items():
+            if _key not in _all_params:
+                raise ApiTypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method soggetto_delegato_identificativo_registro_movimento_identificativo_movimento_get" % _key
                 )
+            _params[_key] = _val
+        del _params['kwargs']
+
+        _collection_formats = {}
+
+        # process the path parameters
+        _path_params = {}
+        if _params['identificativo_registro'] is not None:
+            _path_params['identificativo_registro'] = _params['identificativo_registro']
+
+        if _params['identificativo_movimento'] is not None:
+            _path_params['identificativo_movimento'] = _params['identificativo_movimento']
+
+
+        # process the query parameters
+        _query_params = []
+        if _params.get('alla_data') is not None:  # noqa: E501
+            if isinstance(_params['alla_data'], datetime):
+                _query_params.append(('alla_data', _params['alla_data'].strftime(self.api_client.configuration.datetime_format)))
             else:
-                _query_params.append(('alla_data', alla_data))
-            
-        if variazioni is not None:
-            
-            _query_params.append(('variazioni', variazioni))
-            
+                _query_params.append(('alla_data', _params['alla_data']))
+
+        if _params.get('variazioni') is not None:  # noqa: E501
+            _query_params.append(('variazioni', _params['variazioni']))
+
         # process the header parameters
+        _header_params = dict(_params.get('_headers', {}))
         # process the form parameters
+        _form_params = []
+        _files = {}
         # process the body parameter
-
-
+        _body_params = None
         # set the HTTP header `Accept`
-        if 'Accept' not in _header_params:
-            _header_params['Accept'] = self.api_client.select_header_accept(
-                [
-                    'application/json', 
-                    'application/problem+json'
-                ]
-            )
-
+        _header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json', 'application/problem+json'])  # noqa: E501
 
         # authentication setting
-        _auth_settings: List[str] = [
-            'Bearer'
-        ]
+        _auth_settings = ['Bearer']  # noqa: E501
 
-        return self.api_client.param_serialize(
-            method='GET',
-            resource_path='/soggetto-delegato/{identificativo_registro}/movimento/{identificativo_movimento}',
-            path_params=_path_params,
-            query_params=_query_params,
-            header_params=_header_params,
+        _response_types_map = {
+            '200': "MovimentoDettaglioModel",
+            '403': None,
+            '404': None,
+            '500': "ProblemDetails",
+            '429': None,
+        }
+
+        return self.api_client.call_api(
+            '/soggetto-delegato/{identificativo_registro}/movimento/{identificativo_movimento}', 'GET',
+            _path_params,
+            _query_params,
+            _header_params,
             body=_body_params,
             post_params=_form_params,
             files=_files,
+            response_types_map=_response_types_map,
             auth_settings=_auth_settings,
+            async_req=_params.get('async_req'),
+            _return_http_data_only=_params.get('_return_http_data_only'),  # noqa: E501
+            _preload_content=_params.get('_preload_content', True),
+            _request_timeout=_params.get('_request_timeout'),
             collection_formats=_collection_formats,
-            _host=_host,
-            _request_auth=_request_auth
-        )
+            _request_auth=_params.get('_request_auth'))
 
+    @validate_arguments
+    def soggetto_delegato_identificativo_registro_valida_post(self, identificativo_registro : Annotated[constr(strict=True, max_length=11), Field(..., description="Identificativo del Registro a cui fanno riferimento le registrazioni.")], valida_registro_request : Annotated[ValidaRegistroRequest, Field(..., description="Modello con il file XML da validare. E' permesso anche l'invio di un file XML zippato.")], x_reply_to : Annotated[Optional[StrictStr], Field(description="URL a cui il fruitore riceverà la notifica al termine dell'elaborazione (modalità push).")] = None, **kwargs) -> TransazioneModel:  # noqa: E501
+        """🔁[ASYNC] Verifica il registro informatico locale  # noqa: E501
 
+        Esegue la validazione strutturale del registro cronologico di carico e scarico digitale in formato XML secondo le specifiche tecniche.  Viene eseguita la validazione XSD e tutte le validazioni applicate nella trasmissione delle registrazioni al RENTRI ad  esclusione delle validazioni  in fase di elaborazione elencate in <i>/docs?page=registro-digitale#4-2-validazioni-aggiuntive-in-fase-di-elaborazione</i>.  Inoltre esegue il test di corrispondenza tra la versione locale e i dati già trasmessi al RENTRI.  Acquisisce la richiesta e fornisce in modo asincrono l’esito contenente alcune informazioni estrapolate dal file e la lista dei problemi di validazione divisi in 2 livelli:  <i>Errore</i> (problemi di validazione) e <i>Avvertimento</i> (problemi di non corrispondenza dei dati con quelli già trasmessi al RENTRI).  <hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre un codice di stato 422) anche in ambiente di produzione.</i><hr/><br/>Se viene specificato un URL nell'header X-ReplyTo, al termine dell'elaborazione dei dati, il fruitore riceverà una notifica con l'esito dell'elaborazione all'URL specificato.  # noqa: E501
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
 
-
-    @validate_call
-    def soggetto_delegato_identificativo_registro_valida_post(
-        self,
-        identificativo_registro: Annotated[str, Field(strict=True, max_length=11, description="Identificativo del Registro a cui fanno riferimento le registrazioni.")],
-        valida_registro_request: Annotated[ValidaRegistroRequest, Field(description="Modello con il file XML da validare. E' permesso anche l'invio di un file XML zippato.")],
-        x_reply_to: Annotated[Optional[StrictStr], Field(description="URL a cui il fruitore riceverà la notifica al termine dell'elaborazione (modalità push).")] = None,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> TransazioneModel:
-        """🔁[ASYNC] Verifica il registro informatico locale
-
-        Esegue la validazione strutturale del registro cronologico di carico e scarico digitale in formato XML secondo le specifiche tecniche.  Viene eseguita la validazione XSD e tutte le validazioni applicate nella trasmissione delle registrazioni al RENTRI ad  esclusione delle validazioni  in fase di elaborazione elencate in <i>/docs?page=registro-digitale#4-2-validazioni-aggiuntive-in-fase-di-elaborazione</i>.  Inoltre esegue il test di corrispondenza tra la versione locale e i dati già trasmessi al RENTRI.  Acquisisce la richiesta e fornisce in modo asincrono l’esito contenente alcune informazioni estrapolate dal file e la lista dei problemi di validazione divisi in 2 livelli:  <i>Errore</i> (problemi di validazione) e <i>Avvertimento</i> (problemi di non corrispondenza dei dati con quelli già trasmessi al RENTRI).  <hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre un codice di stato 422) anche in ambiente di produzione.</i><hr/><br/>Se viene specificato un URL nell'header X-ReplyTo, al termine dell'elaborazione dei dati, il fruitore riceverà una notifica con l'esito dell'elaborazione all'URL specificato.
+        >>> thread = api.soggetto_delegato_identificativo_registro_valida_post(identificativo_registro, valida_registro_request, x_reply_to, async_req=True)
+        >>> result = thread.get()
 
         :param identificativo_registro: Identificativo del Registro a cui fanno riferimento le registrazioni. (required)
         :type identificativo_registro: str
@@ -2261,79 +1176,33 @@ class SoggettoDelegatoApi:
         :type valida_registro_request: ValidaRegistroRequest
         :param x_reply_to: URL a cui il fruitore riceverà la notifica al termine dell'elaborazione (modalità push).
         :type x_reply_to: str
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
+        :param async_req: Whether to execute the request asynchronously.
+        :type async_req: bool, optional
+        :param _request_timeout: timeout setting for this request.
+               If one number provided, it will be total request
+               timeout. It can also be a pair (tuple) of
+               (connection, read) timeouts.
         :return: Returns the result object.
-        """ # noqa: E501
+                 If the method is called asynchronously,
+                 returns the request thread.
+        :rtype: TransazioneModel
+        """
+        kwargs['_return_http_data_only'] = True
+        if '_preload_content' in kwargs:
+            message = "Error! Please call the soggetto_delegato_identificativo_registro_valida_post_with_http_info method with `_preload_content` instead and obtain raw data from ApiResponse.raw_data"  # noqa: E501
+            raise ValueError(message)
+        return self.soggetto_delegato_identificativo_registro_valida_post_with_http_info(identificativo_registro, valida_registro_request, x_reply_to, **kwargs)  # noqa: E501
 
-        _param = self._soggetto_delegato_identificativo_registro_valida_post_serialize(
-            identificativo_registro=identificativo_registro,
-            valida_registro_request=valida_registro_request,
-            x_reply_to=x_reply_to,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
+    @validate_arguments
+    def soggetto_delegato_identificativo_registro_valida_post_with_http_info(self, identificativo_registro : Annotated[constr(strict=True, max_length=11), Field(..., description="Identificativo del Registro a cui fanno riferimento le registrazioni.")], valida_registro_request : Annotated[ValidaRegistroRequest, Field(..., description="Modello con il file XML da validare. E' permesso anche l'invio di un file XML zippato.")], x_reply_to : Annotated[Optional[StrictStr], Field(description="URL a cui il fruitore riceverà la notifica al termine dell'elaborazione (modalità push).")] = None, **kwargs) -> ApiResponse:  # noqa: E501
+        """🔁[ASYNC] Verifica il registro informatico locale  # noqa: E501
 
-        _response_types_map: Dict[str, Optional[str]] = {
-            '202': "TransazioneModel",
-            '400': "ProblemDetails",
-            '403': None,
-            '404': None,
-            '500': "ProblemDetails",
-            '429': None,
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        ).data
+        Esegue la validazione strutturale del registro cronologico di carico e scarico digitale in formato XML secondo le specifiche tecniche.  Viene eseguita la validazione XSD e tutte le validazioni applicate nella trasmissione delle registrazioni al RENTRI ad  esclusione delle validazioni  in fase di elaborazione elencate in <i>/docs?page=registro-digitale#4-2-validazioni-aggiuntive-in-fase-di-elaborazione</i>.  Inoltre esegue il test di corrispondenza tra la versione locale e i dati già trasmessi al RENTRI.  Acquisisce la richiesta e fornisce in modo asincrono l’esito contenente alcune informazioni estrapolate dal file e la lista dei problemi di validazione divisi in 2 livelli:  <i>Errore</i> (problemi di validazione) e <i>Avvertimento</i> (problemi di non corrispondenza dei dati con quelli già trasmessi al RENTRI).  <hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre un codice di stato 422) anche in ambiente di produzione.</i><hr/><br/>Se viene specificato un URL nell'header X-ReplyTo, al termine dell'elaborazione dei dati, il fruitore riceverà una notifica con l'esito dell'elaborazione all'URL specificato.  # noqa: E501
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
 
-
-    @validate_call
-    def soggetto_delegato_identificativo_registro_valida_post_with_http_info(
-        self,
-        identificativo_registro: Annotated[str, Field(strict=True, max_length=11, description="Identificativo del Registro a cui fanno riferimento le registrazioni.")],
-        valida_registro_request: Annotated[ValidaRegistroRequest, Field(description="Modello con il file XML da validare. E' permesso anche l'invio di un file XML zippato.")],
-        x_reply_to: Annotated[Optional[StrictStr], Field(description="URL a cui il fruitore riceverà la notifica al termine dell'elaborazione (modalità push).")] = None,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[TransazioneModel]:
-        """🔁[ASYNC] Verifica il registro informatico locale
-
-        Esegue la validazione strutturale del registro cronologico di carico e scarico digitale in formato XML secondo le specifiche tecniche.  Viene eseguita la validazione XSD e tutte le validazioni applicate nella trasmissione delle registrazioni al RENTRI ad  esclusione delle validazioni  in fase di elaborazione elencate in <i>/docs?page=registro-digitale#4-2-validazioni-aggiuntive-in-fase-di-elaborazione</i>.  Inoltre esegue il test di corrispondenza tra la versione locale e i dati già trasmessi al RENTRI.  Acquisisce la richiesta e fornisce in modo asincrono l’esito contenente alcune informazioni estrapolate dal file e la lista dei problemi di validazione divisi in 2 livelli:  <i>Errore</i> (problemi di validazione) e <i>Avvertimento</i> (problemi di non corrispondenza dei dati con quelli già trasmessi al RENTRI).  <hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre un codice di stato 422) anche in ambiente di produzione.</i><hr/><br/>Se viene specificato un URL nell'header X-ReplyTo, al termine dell'elaborazione dei dati, il fruitore riceverà una notifica con l'esito dell'elaborazione all'URL specificato.
+        >>> thread = api.soggetto_delegato_identificativo_registro_valida_post_with_http_info(identificativo_registro, valida_registro_request, x_reply_to, async_req=True)
+        >>> result = thread.get()
 
         :param identificativo_registro: Identificativo del Registro a cui fanno riferimento le registrazioni. (required)
         :type identificativo_registro: str
@@ -2341,643 +1210,341 @@ class SoggettoDelegatoApi:
         :type valida_registro_request: ValidaRegistroRequest
         :param x_reply_to: URL a cui il fruitore riceverà la notifica al termine dell'elaborazione (modalità push).
         :type x_reply_to: str
+        :param async_req: Whether to execute the request asynchronously.
+        :type async_req: bool, optional
+        :param _preload_content: if False, the ApiResponse.data will
+                                 be set to none and raw_data will store the
+                                 HTTP response body without reading/decoding.
+                                 Default is True.
+        :type _preload_content: bool, optional
+        :param _return_http_data_only: response data instead of ApiResponse
+                                       object with status code, headers, etc
+        :type _return_http_data_only: bool, optional
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
                                  (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
         :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
+                              request; this effectively ignores the authentication
+                              in the spec for a single request.
         :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
+        :type _content_type: string, optional: force content-type for the request
         :return: Returns the result object.
-        """ # noqa: E501
+                 If the method is called asynchronously,
+                 returns the request thread.
+        :rtype: tuple(TransazioneModel, status_code(int), headers(HTTPHeaderDict))
+        """
 
-        _param = self._soggetto_delegato_identificativo_registro_valida_post_serialize(
-            identificativo_registro=identificativo_registro,
-            valida_registro_request=valida_registro_request,
-            x_reply_to=x_reply_to,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
+        _params = locals()
 
-        _response_types_map: Dict[str, Optional[str]] = {
-            '202': "TransazioneModel",
-            '400': "ProblemDetails",
-            '403': None,
-            '404': None,
-            '500': "ProblemDetails",
-            '429': None,
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        )
-
-
-    @validate_call
-    def soggetto_delegato_identificativo_registro_valida_post_without_preload_content(
-        self,
-        identificativo_registro: Annotated[str, Field(strict=True, max_length=11, description="Identificativo del Registro a cui fanno riferimento le registrazioni.")],
-        valida_registro_request: Annotated[ValidaRegistroRequest, Field(description="Modello con il file XML da validare. E' permesso anche l'invio di un file XML zippato.")],
-        x_reply_to: Annotated[Optional[StrictStr], Field(description="URL a cui il fruitore riceverà la notifica al termine dell'elaborazione (modalità push).")] = None,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
+        _all_params = [
+            'identificativo_registro',
+            'valida_registro_request',
+            'x_reply_to'
+        ]
+        _all_params.extend(
+            [
+                'async_req',
+                '_return_http_data_only',
+                '_preload_content',
+                '_request_timeout',
+                '_request_auth',
+                '_content_type',
+                '_headers'
             ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> RESTResponseType:
-        """🔁[ASYNC] Verifica il registro informatico locale
-
-        Esegue la validazione strutturale del registro cronologico di carico e scarico digitale in formato XML secondo le specifiche tecniche.  Viene eseguita la validazione XSD e tutte le validazioni applicate nella trasmissione delle registrazioni al RENTRI ad  esclusione delle validazioni  in fase di elaborazione elencate in <i>/docs?page=registro-digitale#4-2-validazioni-aggiuntive-in-fase-di-elaborazione</i>.  Inoltre esegue il test di corrispondenza tra la versione locale e i dati già trasmessi al RENTRI.  Acquisisce la richiesta e fornisce in modo asincrono l’esito contenente alcune informazioni estrapolate dal file e la lista dei problemi di validazione divisi in 2 livelli:  <i>Errore</i> (problemi di validazione) e <i>Avvertimento</i> (problemi di non corrispondenza dei dati con quelli già trasmessi al RENTRI).  <hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre un codice di stato 422) anche in ambiente di produzione.</i><hr/><br/>Se viene specificato un URL nell'header X-ReplyTo, al termine dell'elaborazione dei dati, il fruitore riceverà una notifica con l'esito dell'elaborazione all'URL specificato.
-
-        :param identificativo_registro: Identificativo del Registro a cui fanno riferimento le registrazioni. (required)
-        :type identificativo_registro: str
-        :param valida_registro_request: Modello con il file XML da validare. E' permesso anche l'invio di un file XML zippato. (required)
-        :type valida_registro_request: ValidaRegistroRequest
-        :param x_reply_to: URL a cui il fruitore riceverà la notifica al termine dell'elaborazione (modalità push).
-        :type x_reply_to: str
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._soggetto_delegato_identificativo_registro_valida_post_serialize(
-            identificativo_registro=identificativo_registro,
-            valida_registro_request=valida_registro_request,
-            x_reply_to=x_reply_to,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
         )
 
-        _response_types_map: Dict[str, Optional[str]] = {
-            '202': "TransazioneModel",
-            '400': "ProblemDetails",
-            '403': None,
-            '404': None,
-            '500': "ProblemDetails",
-            '429': None,
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        return response_data.response
+        # validate the arguments
+        for _key, _val in _params['kwargs'].items():
+            if _key not in _all_params:
+                raise ApiTypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method soggetto_delegato_identificativo_registro_valida_post" % _key
+                )
+            _params[_key] = _val
+        del _params['kwargs']
 
-
-    def _soggetto_delegato_identificativo_registro_valida_post_serialize(
-        self,
-        identificativo_registro,
-        valida_registro_request,
-        x_reply_to,
-        _request_auth,
-        _content_type,
-        _headers,
-        _host_index,
-    ) -> RequestSerialized:
-
-        _host = None
-
-        _collection_formats: Dict[str, str] = {
-        }
-
-        _path_params: Dict[str, str] = {}
-        _query_params: List[Tuple[str, str]] = []
-        _header_params: Dict[str, Optional[str]] = _headers or {}
-        _form_params: List[Tuple[str, str]] = []
-        _files: Dict[
-            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
-        ] = {}
-        _body_params: Optional[bytes] = None
+        _collection_formats = {}
 
         # process the path parameters
-        if identificativo_registro is not None:
-            _path_params['identificativo_registro'] = identificativo_registro
-        # process the query parameters
-        # process the header parameters
-        if x_reply_to is not None:
-            _header_params['X-ReplyTo'] = x_reply_to
-        # process the form parameters
-        # process the body parameter
-        if valida_registro_request is not None:
-            _body_params = valida_registro_request
+        _path_params = {}
+        if _params['identificativo_registro'] is not None:
+            _path_params['identificativo_registro'] = _params['identificativo_registro']
 
+
+        # process the query parameters
+        _query_params = []
+        # process the header parameters
+        _header_params = dict(_params.get('_headers', {}))
+        if _params['x_reply_to'] is not None:
+            _header_params['X-ReplyTo'] = _params['x_reply_to']
+
+        # process the form parameters
+        _form_params = []
+        _files = {}
+        # process the body parameter
+        _body_params = None
+        if _params['valida_registro_request'] is not None:
+            _body_params = _params['valida_registro_request']
 
         # set the HTTP header `Accept`
-        if 'Accept' not in _header_params:
-            _header_params['Accept'] = self.api_client.select_header_accept(
-                [
-                    'application/json', 
-                    'application/problem+json'
-                ]
-            )
+        _header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json', 'application/problem+json'])  # noqa: E501
 
         # set the HTTP header `Content-Type`
-        if _content_type:
-            _header_params['Content-Type'] = _content_type
-        else:
-            _default_content_type = (
-                self.api_client.select_header_content_type(
-                    [
-                        'application/json'
-                    ]
+        _content_types_list = _params.get('_content_type',
+            self.api_client.select_header_content_type(
+                ['application/json']))
+        if _content_types_list:
+                _header_params['Content-Type'] = _content_types_list
+
+        # authentication setting
+        _auth_settings = ['Bearer']  # noqa: E501
+
+        _response_types_map = {
+            '202': "TransazioneModel",
+            '400': "ProblemDetails",
+            '403': None,
+            '404': None,
+            '500': "ProblemDetails",
+            '429': None,
+        }
+
+        return self.api_client.call_api(
+            '/soggetto-delegato/{identificativo_registro}/valida', 'POST',
+            _path_params,
+            _query_params,
+            _header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            response_types_map=_response_types_map,
+            auth_settings=_auth_settings,
+            async_req=_params.get('async_req'),
+            _return_http_data_only=_params.get('_return_http_data_only'),  # noqa: E501
+            _preload_content=_params.get('_preload_content', True),
+            _request_timeout=_params.get('_request_timeout'),
+            collection_formats=_collection_formats,
+            _request_auth=_params.get('_request_auth'))
+
+    @validate_arguments
+    def soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_get(self, num_iscr_ass : Annotated[StrictStr, Field(..., description="Numero iscrizione soggetto delegato rilasciato all'iscrizione.")], num_iscr_sito : Annotated[StrictStr, Field(..., description="Numero iscrizione unità locale rilasciato all'iscrizione.")], identificativo_registro : Annotated[Optional[StrictStr], Field(description="Identificativo del Registro.")] = None, anno : Annotated[Optional[StrictInt], Field(description="Anno di riferimento.")] = None, identificativo_transazione : Annotated[Optional[StrictStr], Field(description="Identificativo della transazione.")] = None, sorgente : Annotated[Optional[Any], Field(description="Sorgente della transazione.")] = None, solo_esito_positivo : Annotated[Optional[StrictBool], Field(description="Indica se recuperare solamente le transazioni che hanno avuto esito positivo.")] = None, paging_page : Annotated[Optional[conint(strict=True, le=2147483647, ge=1)], Field(description="Valore per l'header Paging-Page.")] = None, paging_page_size : Annotated[Optional[conint(strict=True, le=1000, ge=1)], Field(description="Valore per l'header Paging-PageSize.")] = None, **kwargs) -> List[InfoTransazioneModel]:  # noqa: E501
+        """Elenco transazioni  # noqa: E501
+
+        Ottiene l'elenco delle transazioni associate alle richieste di trasmissione delle registrazioni, realtive ad un'unità locale gestita da un soggetto delegato.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>  # noqa: E501
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+
+        >>> thread = api.soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_get(num_iscr_ass, num_iscr_sito, identificativo_registro, anno, identificativo_transazione, sorgente, solo_esito_positivo, paging_page, paging_page_size, async_req=True)
+        >>> result = thread.get()
+
+        :param num_iscr_ass: Numero iscrizione soggetto delegato rilasciato all'iscrizione. (required)
+        :type num_iscr_ass: str
+        :param num_iscr_sito: Numero iscrizione unità locale rilasciato all'iscrizione. (required)
+        :type num_iscr_sito: str
+        :param identificativo_registro: Identificativo del Registro.
+        :type identificativo_registro: str
+        :param anno: Anno di riferimento.
+        :type anno: int
+        :param identificativo_transazione: Identificativo della transazione.
+        :type identificativo_transazione: str
+        :param sorgente: Sorgente della transazione.
+        :type sorgente: SorgenteTransazione
+        :param solo_esito_positivo: Indica se recuperare solamente le transazioni che hanno avuto esito positivo.
+        :type solo_esito_positivo: bool
+        :param paging_page: Valore per l'header Paging-Page.
+        :type paging_page: int
+        :param paging_page_size: Valore per l'header Paging-PageSize.
+        :type paging_page_size: int
+        :param async_req: Whether to execute the request asynchronously.
+        :type async_req: bool, optional
+        :param _request_timeout: timeout setting for this request.
+               If one number provided, it will be total request
+               timeout. It can also be a pair (tuple) of
+               (connection, read) timeouts.
+        :return: Returns the result object.
+                 If the method is called asynchronously,
+                 returns the request thread.
+        :rtype: List[InfoTransazioneModel]
+        """
+        kwargs['_return_http_data_only'] = True
+        if '_preload_content' in kwargs:
+            message = "Error! Please call the soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_get_with_http_info method with `_preload_content` instead and obtain raw data from ApiResponse.raw_data"  # noqa: E501
+            raise ValueError(message)
+        return self.soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_get_with_http_info(num_iscr_ass, num_iscr_sito, identificativo_registro, anno, identificativo_transazione, sorgente, solo_esito_positivo, paging_page, paging_page_size, **kwargs)  # noqa: E501
+
+    @validate_arguments
+    def soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_get_with_http_info(self, num_iscr_ass : Annotated[StrictStr, Field(..., description="Numero iscrizione soggetto delegato rilasciato all'iscrizione.")], num_iscr_sito : Annotated[StrictStr, Field(..., description="Numero iscrizione unità locale rilasciato all'iscrizione.")], identificativo_registro : Annotated[Optional[StrictStr], Field(description="Identificativo del Registro.")] = None, anno : Annotated[Optional[StrictInt], Field(description="Anno di riferimento.")] = None, identificativo_transazione : Annotated[Optional[StrictStr], Field(description="Identificativo della transazione.")] = None, sorgente : Annotated[Optional[Any], Field(description="Sorgente della transazione.")] = None, solo_esito_positivo : Annotated[Optional[StrictBool], Field(description="Indica se recuperare solamente le transazioni che hanno avuto esito positivo.")] = None, paging_page : Annotated[Optional[conint(strict=True, le=2147483647, ge=1)], Field(description="Valore per l'header Paging-Page.")] = None, paging_page_size : Annotated[Optional[conint(strict=True, le=1000, ge=1)], Field(description="Valore per l'header Paging-PageSize.")] = None, **kwargs) -> ApiResponse:  # noqa: E501
+        """Elenco transazioni  # noqa: E501
+
+        Ottiene l'elenco delle transazioni associate alle richieste di trasmissione delle registrazioni, realtive ad un'unità locale gestita da un soggetto delegato.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>  # noqa: E501
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+
+        >>> thread = api.soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_get_with_http_info(num_iscr_ass, num_iscr_sito, identificativo_registro, anno, identificativo_transazione, sorgente, solo_esito_positivo, paging_page, paging_page_size, async_req=True)
+        >>> result = thread.get()
+
+        :param num_iscr_ass: Numero iscrizione soggetto delegato rilasciato all'iscrizione. (required)
+        :type num_iscr_ass: str
+        :param num_iscr_sito: Numero iscrizione unità locale rilasciato all'iscrizione. (required)
+        :type num_iscr_sito: str
+        :param identificativo_registro: Identificativo del Registro.
+        :type identificativo_registro: str
+        :param anno: Anno di riferimento.
+        :type anno: int
+        :param identificativo_transazione: Identificativo della transazione.
+        :type identificativo_transazione: str
+        :param sorgente: Sorgente della transazione.
+        :type sorgente: SorgenteTransazione
+        :param solo_esito_positivo: Indica se recuperare solamente le transazioni che hanno avuto esito positivo.
+        :type solo_esito_positivo: bool
+        :param paging_page: Valore per l'header Paging-Page.
+        :type paging_page: int
+        :param paging_page_size: Valore per l'header Paging-PageSize.
+        :type paging_page_size: int
+        :param async_req: Whether to execute the request asynchronously.
+        :type async_req: bool, optional
+        :param _preload_content: if False, the ApiResponse.data will
+                                 be set to none and raw_data will store the
+                                 HTTP response body without reading/decoding.
+                                 Default is True.
+        :type _preload_content: bool, optional
+        :param _return_http_data_only: response data instead of ApiResponse
+                                       object with status code, headers, etc
+        :type _return_http_data_only: bool, optional
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the authentication
+                              in the spec for a single request.
+        :type _request_auth: dict, optional
+        :type _content_type: string, optional: force content-type for the request
+        :return: Returns the result object.
+                 If the method is called asynchronously,
+                 returns the request thread.
+        :rtype: tuple(List[InfoTransazioneModel], status_code(int), headers(HTTPHeaderDict))
+        """
+
+        _params = locals()
+
+        _all_params = [
+            'num_iscr_ass',
+            'num_iscr_sito',
+            'identificativo_registro',
+            'anno',
+            'identificativo_transazione',
+            'sorgente',
+            'solo_esito_positivo',
+            'paging_page',
+            'paging_page_size'
+        ]
+        _all_params.extend(
+            [
+                'async_req',
+                '_return_http_data_only',
+                '_preload_content',
+                '_request_timeout',
+                '_request_auth',
+                '_content_type',
+                '_headers'
+            ]
+        )
+
+        # validate the arguments
+        for _key, _val in _params['kwargs'].items():
+            if _key not in _all_params:
+                raise ApiTypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_get" % _key
                 )
-            )
-            if _default_content_type is not None:
-                _header_params['Content-Type'] = _default_content_type
+            _params[_key] = _val
+        del _params['kwargs']
 
-        # authentication setting
-        _auth_settings: List[str] = [
-            'Bearer'
-        ]
-
-        return self.api_client.param_serialize(
-            method='POST',
-            resource_path='/soggetto-delegato/{identificativo_registro}/valida',
-            path_params=_path_params,
-            query_params=_query_params,
-            header_params=_header_params,
-            body=_body_params,
-            post_params=_form_params,
-            files=_files,
-            auth_settings=_auth_settings,
-            collection_formats=_collection_formats,
-            _host=_host,
-            _request_auth=_request_auth
-        )
-
-
-
-
-    @validate_call
-    def soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_get(
-        self,
-        num_iscr_ass: Annotated[StrictStr, Field(description="Numero iscrizione soggetto delegato rilasciato all'iscrizione.")],
-        num_iscr_sito: Annotated[StrictStr, Field(description="Numero iscrizione unità locale rilasciato all'iscrizione.")],
-        identificativo_registro: Annotated[Optional[StrictStr], Field(description="Identificativo del Registro.")] = None,
-        anno: Annotated[Optional[StrictInt], Field(description="Anno di riferimento.")] = None,
-        identificativo_transazione: Annotated[Optional[StrictStr], Field(description="Identificativo della transazione.")] = None,
-        sorgente: Annotated[Optional[Any], Field(description="Sorgente della transazione.")] = None,
-        solo_esito_positivo: Annotated[Optional[StrictBool], Field(description="Indica se recuperare solamente le transazioni che hanno avuto esito positivo.")] = None,
-        paging_page: Annotated[Optional[Annotated[int, Field(le=2147483647, strict=True, ge=1)]], Field(description="Valore per l'header Paging-Page.")] = None,
-        paging_page_size: Annotated[Optional[Annotated[int, Field(le=1000, strict=True, ge=1)]], Field(description="Valore per l'header Paging-PageSize.")] = None,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> List[InfoTransazioneModel]:
-        """Elenco transazioni
-
-        Ottiene l'elenco delle transazioni associate alle richieste di trasmissione delle registrazioni, realtive ad un'unità locale gestita da un soggetto delegato.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>
-
-        :param num_iscr_ass: Numero iscrizione soggetto delegato rilasciato all'iscrizione. (required)
-        :type num_iscr_ass: str
-        :param num_iscr_sito: Numero iscrizione unità locale rilasciato all'iscrizione. (required)
-        :type num_iscr_sito: str
-        :param identificativo_registro: Identificativo del Registro.
-        :type identificativo_registro: str
-        :param anno: Anno di riferimento.
-        :type anno: int
-        :param identificativo_transazione: Identificativo della transazione.
-        :type identificativo_transazione: str
-        :param sorgente: Sorgente della transazione.
-        :type sorgente: SorgenteTransazione
-        :param solo_esito_positivo: Indica se recuperare solamente le transazioni che hanno avuto esito positivo.
-        :type solo_esito_positivo: bool
-        :param paging_page: Valore per l'header Paging-Page.
-        :type paging_page: int
-        :param paging_page_size: Valore per l'header Paging-PageSize.
-        :type paging_page_size: int
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_get_serialize(
-            num_iscr_ass=num_iscr_ass,
-            num_iscr_sito=num_iscr_sito,
-            identificativo_registro=identificativo_registro,
-            anno=anno,
-            identificativo_transazione=identificativo_transazione,
-            sorgente=sorgente,
-            solo_esito_positivo=solo_esito_positivo,
-            paging_page=paging_page,
-            paging_page_size=paging_page_size,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
-
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "List[InfoTransazioneModel]",
-            '403': None,
-            '404': None,
-            '500': "ProblemDetails",
-            '429': None,
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        ).data
-
-
-    @validate_call
-    def soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_get_with_http_info(
-        self,
-        num_iscr_ass: Annotated[StrictStr, Field(description="Numero iscrizione soggetto delegato rilasciato all'iscrizione.")],
-        num_iscr_sito: Annotated[StrictStr, Field(description="Numero iscrizione unità locale rilasciato all'iscrizione.")],
-        identificativo_registro: Annotated[Optional[StrictStr], Field(description="Identificativo del Registro.")] = None,
-        anno: Annotated[Optional[StrictInt], Field(description="Anno di riferimento.")] = None,
-        identificativo_transazione: Annotated[Optional[StrictStr], Field(description="Identificativo della transazione.")] = None,
-        sorgente: Annotated[Optional[Any], Field(description="Sorgente della transazione.")] = None,
-        solo_esito_positivo: Annotated[Optional[StrictBool], Field(description="Indica se recuperare solamente le transazioni che hanno avuto esito positivo.")] = None,
-        paging_page: Annotated[Optional[Annotated[int, Field(le=2147483647, strict=True, ge=1)]], Field(description="Valore per l'header Paging-Page.")] = None,
-        paging_page_size: Annotated[Optional[Annotated[int, Field(le=1000, strict=True, ge=1)]], Field(description="Valore per l'header Paging-PageSize.")] = None,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[List[InfoTransazioneModel]]:
-        """Elenco transazioni
-
-        Ottiene l'elenco delle transazioni associate alle richieste di trasmissione delle registrazioni, realtive ad un'unità locale gestita da un soggetto delegato.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>
-
-        :param num_iscr_ass: Numero iscrizione soggetto delegato rilasciato all'iscrizione. (required)
-        :type num_iscr_ass: str
-        :param num_iscr_sito: Numero iscrizione unità locale rilasciato all'iscrizione. (required)
-        :type num_iscr_sito: str
-        :param identificativo_registro: Identificativo del Registro.
-        :type identificativo_registro: str
-        :param anno: Anno di riferimento.
-        :type anno: int
-        :param identificativo_transazione: Identificativo della transazione.
-        :type identificativo_transazione: str
-        :param sorgente: Sorgente della transazione.
-        :type sorgente: SorgenteTransazione
-        :param solo_esito_positivo: Indica se recuperare solamente le transazioni che hanno avuto esito positivo.
-        :type solo_esito_positivo: bool
-        :param paging_page: Valore per l'header Paging-Page.
-        :type paging_page: int
-        :param paging_page_size: Valore per l'header Paging-PageSize.
-        :type paging_page_size: int
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_get_serialize(
-            num_iscr_ass=num_iscr_ass,
-            num_iscr_sito=num_iscr_sito,
-            identificativo_registro=identificativo_registro,
-            anno=anno,
-            identificativo_transazione=identificativo_transazione,
-            sorgente=sorgente,
-            solo_esito_positivo=solo_esito_positivo,
-            paging_page=paging_page,
-            paging_page_size=paging_page_size,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
-
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "List[InfoTransazioneModel]",
-            '403': None,
-            '404': None,
-            '500': "ProblemDetails",
-            '429': None,
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        )
-
-
-    @validate_call
-    def soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_get_without_preload_content(
-        self,
-        num_iscr_ass: Annotated[StrictStr, Field(description="Numero iscrizione soggetto delegato rilasciato all'iscrizione.")],
-        num_iscr_sito: Annotated[StrictStr, Field(description="Numero iscrizione unità locale rilasciato all'iscrizione.")],
-        identificativo_registro: Annotated[Optional[StrictStr], Field(description="Identificativo del Registro.")] = None,
-        anno: Annotated[Optional[StrictInt], Field(description="Anno di riferimento.")] = None,
-        identificativo_transazione: Annotated[Optional[StrictStr], Field(description="Identificativo della transazione.")] = None,
-        sorgente: Annotated[Optional[Any], Field(description="Sorgente della transazione.")] = None,
-        solo_esito_positivo: Annotated[Optional[StrictBool], Field(description="Indica se recuperare solamente le transazioni che hanno avuto esito positivo.")] = None,
-        paging_page: Annotated[Optional[Annotated[int, Field(le=2147483647, strict=True, ge=1)]], Field(description="Valore per l'header Paging-Page.")] = None,
-        paging_page_size: Annotated[Optional[Annotated[int, Field(le=1000, strict=True, ge=1)]], Field(description="Valore per l'header Paging-PageSize.")] = None,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> RESTResponseType:
-        """Elenco transazioni
-
-        Ottiene l'elenco delle transazioni associate alle richieste di trasmissione delle registrazioni, realtive ad un'unità locale gestita da un soggetto delegato.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>
-
-        :param num_iscr_ass: Numero iscrizione soggetto delegato rilasciato all'iscrizione. (required)
-        :type num_iscr_ass: str
-        :param num_iscr_sito: Numero iscrizione unità locale rilasciato all'iscrizione. (required)
-        :type num_iscr_sito: str
-        :param identificativo_registro: Identificativo del Registro.
-        :type identificativo_registro: str
-        :param anno: Anno di riferimento.
-        :type anno: int
-        :param identificativo_transazione: Identificativo della transazione.
-        :type identificativo_transazione: str
-        :param sorgente: Sorgente della transazione.
-        :type sorgente: SorgenteTransazione
-        :param solo_esito_positivo: Indica se recuperare solamente le transazioni che hanno avuto esito positivo.
-        :type solo_esito_positivo: bool
-        :param paging_page: Valore per l'header Paging-Page.
-        :type paging_page: int
-        :param paging_page_size: Valore per l'header Paging-PageSize.
-        :type paging_page_size: int
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_get_serialize(
-            num_iscr_ass=num_iscr_ass,
-            num_iscr_sito=num_iscr_sito,
-            identificativo_registro=identificativo_registro,
-            anno=anno,
-            identificativo_transazione=identificativo_transazione,
-            sorgente=sorgente,
-            solo_esito_positivo=solo_esito_positivo,
-            paging_page=paging_page,
-            paging_page_size=paging_page_size,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
-
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "List[InfoTransazioneModel]",
-            '403': None,
-            '404': None,
-            '500': "ProblemDetails",
-            '429': None,
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        return response_data.response
-
-
-    def _soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_get_serialize(
-        self,
-        num_iscr_ass,
-        num_iscr_sito,
-        identificativo_registro,
-        anno,
-        identificativo_transazione,
-        sorgente,
-        solo_esito_positivo,
-        paging_page,
-        paging_page_size,
-        _request_auth,
-        _content_type,
-        _headers,
-        _host_index,
-    ) -> RequestSerialized:
-
-        _host = None
-
-        _collection_formats: Dict[str, str] = {
-        }
-
-        _path_params: Dict[str, str] = {}
-        _query_params: List[Tuple[str, str]] = []
-        _header_params: Dict[str, Optional[str]] = _headers or {}
-        _form_params: List[Tuple[str, str]] = []
-        _files: Dict[
-            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
-        ] = {}
-        _body_params: Optional[bytes] = None
+        _collection_formats = {}
 
         # process the path parameters
-        if num_iscr_ass is not None:
-            _path_params['num_iscr_ass'] = num_iscr_ass
-        if num_iscr_sito is not None:
-            _path_params['num_iscr_sito'] = num_iscr_sito
+        _path_params = {}
+        if _params['num_iscr_ass'] is not None:
+            _path_params['num_iscr_ass'] = _params['num_iscr_ass']
+
+        if _params['num_iscr_sito'] is not None:
+            _path_params['num_iscr_sito'] = _params['num_iscr_sito']
+
+
         # process the query parameters
-        if identificativo_registro is not None:
-            
-            _query_params.append(('identificativo_registro', identificativo_registro))
-            
-        if anno is not None:
-            
-            _query_params.append(('anno', anno))
-            
-        if identificativo_transazione is not None:
-            
-            _query_params.append(('identificativo_transazione', identificativo_transazione))
-            
-        if sorgente is not None:
-            
-            _query_params.append(('sorgente', sorgente.value))
-            
-        if solo_esito_positivo is not None:
-            
-            _query_params.append(('solo_esito_positivo', solo_esito_positivo))
-            
+        _query_params = []
+        if _params.get('identificativo_registro') is not None:  # noqa: E501
+            _query_params.append(('identificativo_registro', _params['identificativo_registro']))
+
+        if _params.get('anno') is not None:  # noqa: E501
+            _query_params.append(('anno', _params['anno']))
+
+        if _params.get('identificativo_transazione') is not None:  # noqa: E501
+            _query_params.append(('identificativo_transazione', _params['identificativo_transazione']))
+
+        if _params.get('sorgente') is not None:  # noqa: E501
+            _query_params.append(('sorgente', _params['sorgente'].value))
+
+        if _params.get('solo_esito_positivo') is not None:  # noqa: E501
+            _query_params.append(('solo_esito_positivo', _params['solo_esito_positivo']))
+
         # process the header parameters
-        if paging_page is not None:
-            _header_params['Paging-Page'] = paging_page
-        if paging_page_size is not None:
-            _header_params['Paging-PageSize'] = paging_page_size
+        _header_params = dict(_params.get('_headers', {}))
+        if _params['paging_page'] is not None:
+            _header_params['Paging-Page'] = _params['paging_page']
+
+        if _params['paging_page_size'] is not None:
+            _header_params['Paging-PageSize'] = _params['paging_page_size']
+
         # process the form parameters
+        _form_params = []
+        _files = {}
         # process the body parameter
-
-
+        _body_params = None
         # set the HTTP header `Accept`
-        if 'Accept' not in _header_params:
-            _header_params['Accept'] = self.api_client.select_header_accept(
-                [
-                    'application/json', 
-                    'application/problem+json'
-                ]
-            )
-
+        _header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json', 'application/problem+json'])  # noqa: E501
 
         # authentication setting
-        _auth_settings: List[str] = [
-            'Bearer'
-        ]
+        _auth_settings = ['Bearer']  # noqa: E501
 
-        return self.api_client.param_serialize(
-            method='GET',
-            resource_path='/soggetto-delegato/{num_iscr_ass}/transazioni/movimenti/{num_iscr_sito}',
-            path_params=_path_params,
-            query_params=_query_params,
-            header_params=_header_params,
+        _response_types_map = {
+            '200': "List[InfoTransazioneModel]",
+            '403': None,
+            '404': None,
+            '500': "ProblemDetails",
+            '429': None,
+        }
+
+        return self.api_client.call_api(
+            '/soggetto-delegato/{num_iscr_ass}/transazioni/movimenti/{num_iscr_sito}', 'GET',
+            _path_params,
+            _query_params,
+            _header_params,
             body=_body_params,
             post_params=_form_params,
             files=_files,
+            response_types_map=_response_types_map,
             auth_settings=_auth_settings,
+            async_req=_params.get('async_req'),
+            _return_http_data_only=_params.get('_return_http_data_only'),  # noqa: E501
+            _preload_content=_params.get('_preload_content', True),
+            _request_timeout=_params.get('_request_timeout'),
             collection_formats=_collection_formats,
-            _host=_host,
-            _request_auth=_request_auth
-        )
+            _request_auth=_params.get('_request_auth'))
 
+    @validate_arguments
+    def soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_identificativo_transazione_get(self, num_iscr_ass : Annotated[StrictStr, Field(..., description="Numero iscrizione soggetto delegato rilasciato all'iscrizione.")], num_iscr_sito : Annotated[StrictStr, Field(..., description="Numero iscrizione unità locale rilasciato all'iscrizione.")], identificativo_transazione : Annotated[StrictStr, Field(..., description="Identificativo della transazione da recuperare.")], **kwargs) -> InfoTransazioneDettaglioModel:  # noqa: E501
+        """Dettaglio transazione  # noqa: E501
 
+        Ottiene il dettaglio di una transazione specificando l'identificativo.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>  # noqa: E501
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
 
-
-    @validate_call
-    def soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_identificativo_transazione_get(
-        self,
-        num_iscr_ass: Annotated[StrictStr, Field(description="Numero iscrizione soggetto delegato rilasciato all'iscrizione.")],
-        num_iscr_sito: Annotated[StrictStr, Field(description="Numero iscrizione unità locale rilasciato all'iscrizione.")],
-        identificativo_transazione: Annotated[StrictStr, Field(description="Identificativo della transazione da recuperare.")],
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> InfoTransazioneDettaglioModel:
-        """Dettaglio transazione
-
-        Ottiene il dettaglio di una transazione specificando l'identificativo.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>
+        >>> thread = api.soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_identificativo_transazione_get(num_iscr_ass, num_iscr_sito, identificativo_transazione, async_req=True)
+        >>> result = thread.get()
 
         :param num_iscr_ass: Numero iscrizione soggetto delegato rilasciato all'iscrizione. (required)
         :type num_iscr_ass: str
@@ -2985,78 +1552,33 @@ class SoggettoDelegatoApi:
         :type num_iscr_sito: str
         :param identificativo_transazione: Identificativo della transazione da recuperare. (required)
         :type identificativo_transazione: str
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
+        :param async_req: Whether to execute the request asynchronously.
+        :type async_req: bool, optional
+        :param _request_timeout: timeout setting for this request.
+               If one number provided, it will be total request
+               timeout. It can also be a pair (tuple) of
+               (connection, read) timeouts.
         :return: Returns the result object.
-        """ # noqa: E501
+                 If the method is called asynchronously,
+                 returns the request thread.
+        :rtype: InfoTransazioneDettaglioModel
+        """
+        kwargs['_return_http_data_only'] = True
+        if '_preload_content' in kwargs:
+            message = "Error! Please call the soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_identificativo_transazione_get_with_http_info method with `_preload_content` instead and obtain raw data from ApiResponse.raw_data"  # noqa: E501
+            raise ValueError(message)
+        return self.soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_identificativo_transazione_get_with_http_info(num_iscr_ass, num_iscr_sito, identificativo_transazione, **kwargs)  # noqa: E501
 
-        _param = self._soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_identificativo_transazione_get_serialize(
-            num_iscr_ass=num_iscr_ass,
-            num_iscr_sito=num_iscr_sito,
-            identificativo_transazione=identificativo_transazione,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
+    @validate_arguments
+    def soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_identificativo_transazione_get_with_http_info(self, num_iscr_ass : Annotated[StrictStr, Field(..., description="Numero iscrizione soggetto delegato rilasciato all'iscrizione.")], num_iscr_sito : Annotated[StrictStr, Field(..., description="Numero iscrizione unità locale rilasciato all'iscrizione.")], identificativo_transazione : Annotated[StrictStr, Field(..., description="Identificativo della transazione da recuperare.")], **kwargs) -> ApiResponse:  # noqa: E501
+        """Dettaglio transazione  # noqa: E501
 
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "InfoTransazioneDettaglioModel",
-            '403': None,
-            '404': None,
-            '500': "ProblemDetails",
-            '429': None,
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        ).data
+        Ottiene il dettaglio di una transazione specificando l'identificativo.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>  # noqa: E501
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
 
-
-    @validate_call
-    def soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_identificativo_transazione_get_with_http_info(
-        self,
-        num_iscr_ass: Annotated[StrictStr, Field(description="Numero iscrizione soggetto delegato rilasciato all'iscrizione.")],
-        num_iscr_sito: Annotated[StrictStr, Field(description="Numero iscrizione unità locale rilasciato all'iscrizione.")],
-        identificativo_transazione: Annotated[StrictStr, Field(description="Identificativo della transazione da recuperare.")],
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[InfoTransazioneDettaglioModel]:
-        """Dettaglio transazione
-
-        Ottiene il dettaglio di una transazione specificando l'identificativo.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>
+        >>> thread = api.soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_identificativo_transazione_get_with_http_info(num_iscr_ass, num_iscr_sito, identificativo_transazione, async_req=True)
+        >>> result = thread.get()
 
         :param num_iscr_ass: Numero iscrizione soggetto delegato rilasciato all'iscrizione. (required)
         :type num_iscr_ass: str
@@ -3064,224 +1586,125 @@ class SoggettoDelegatoApi:
         :type num_iscr_sito: str
         :param identificativo_transazione: Identificativo della transazione da recuperare. (required)
         :type identificativo_transazione: str
+        :param async_req: Whether to execute the request asynchronously.
+        :type async_req: bool, optional
+        :param _preload_content: if False, the ApiResponse.data will
+                                 be set to none and raw_data will store the
+                                 HTTP response body without reading/decoding.
+                                 Default is True.
+        :type _preload_content: bool, optional
+        :param _return_http_data_only: response data instead of ApiResponse
+                                       object with status code, headers, etc
+        :type _return_http_data_only: bool, optional
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
                                  (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
         :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
+                              request; this effectively ignores the authentication
+                              in the spec for a single request.
         :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
+        :type _content_type: string, optional: force content-type for the request
         :return: Returns the result object.
-        """ # noqa: E501
+                 If the method is called asynchronously,
+                 returns the request thread.
+        :rtype: tuple(InfoTransazioneDettaglioModel, status_code(int), headers(HTTPHeaderDict))
+        """
 
-        _param = self._soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_identificativo_transazione_get_serialize(
-            num_iscr_ass=num_iscr_ass,
-            num_iscr_sito=num_iscr_sito,
-            identificativo_transazione=identificativo_transazione,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
+        _params = locals()
+
+        _all_params = [
+            'num_iscr_ass',
+            'num_iscr_sito',
+            'identificativo_transazione'
+        ]
+        _all_params.extend(
+            [
+                'async_req',
+                '_return_http_data_only',
+                '_preload_content',
+                '_request_timeout',
+                '_request_auth',
+                '_content_type',
+                '_headers'
+            ]
         )
 
-        _response_types_map: Dict[str, Optional[str]] = {
+        # validate the arguments
+        for _key, _val in _params['kwargs'].items():
+            if _key not in _all_params:
+                raise ApiTypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_identificativo_transazione_get" % _key
+                )
+            _params[_key] = _val
+        del _params['kwargs']
+
+        _collection_formats = {}
+
+        # process the path parameters
+        _path_params = {}
+        if _params['num_iscr_ass'] is not None:
+            _path_params['num_iscr_ass'] = _params['num_iscr_ass']
+
+        if _params['num_iscr_sito'] is not None:
+            _path_params['num_iscr_sito'] = _params['num_iscr_sito']
+
+        if _params['identificativo_transazione'] is not None:
+            _path_params['identificativo_transazione'] = _params['identificativo_transazione']
+
+
+        # process the query parameters
+        _query_params = []
+        # process the header parameters
+        _header_params = dict(_params.get('_headers', {}))
+        # process the form parameters
+        _form_params = []
+        _files = {}
+        # process the body parameter
+        _body_params = None
+        # set the HTTP header `Accept`
+        _header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json', 'application/problem+json'])  # noqa: E501
+
+        # authentication setting
+        _auth_settings = ['Bearer']  # noqa: E501
+
+        _response_types_map = {
             '200': "InfoTransazioneDettaglioModel",
             '403': None,
             '404': None,
             '500': "ProblemDetails",
             '429': None,
         }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        )
 
-
-    @validate_call
-    def soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_identificativo_transazione_get_without_preload_content(
-        self,
-        num_iscr_ass: Annotated[StrictStr, Field(description="Numero iscrizione soggetto delegato rilasciato all'iscrizione.")],
-        num_iscr_sito: Annotated[StrictStr, Field(description="Numero iscrizione unità locale rilasciato all'iscrizione.")],
-        identificativo_transazione: Annotated[StrictStr, Field(description="Identificativo della transazione da recuperare.")],
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> RESTResponseType:
-        """Dettaglio transazione
-
-        Ottiene il dettaglio di una transazione specificando l'identificativo.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>
-
-        :param num_iscr_ass: Numero iscrizione soggetto delegato rilasciato all'iscrizione. (required)
-        :type num_iscr_ass: str
-        :param num_iscr_sito: Numero iscrizione unità locale rilasciato all'iscrizione. (required)
-        :type num_iscr_sito: str
-        :param identificativo_transazione: Identificativo della transazione da recuperare. (required)
-        :type identificativo_transazione: str
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_identificativo_transazione_get_serialize(
-            num_iscr_ass=num_iscr_ass,
-            num_iscr_sito=num_iscr_sito,
-            identificativo_transazione=identificativo_transazione,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
-
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "InfoTransazioneDettaglioModel",
-            '403': None,
-            '404': None,
-            '500': "ProblemDetails",
-            '429': None,
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        return response_data.response
-
-
-    def _soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_identificativo_transazione_get_serialize(
-        self,
-        num_iscr_ass,
-        num_iscr_sito,
-        identificativo_transazione,
-        _request_auth,
-        _content_type,
-        _headers,
-        _host_index,
-    ) -> RequestSerialized:
-
-        _host = None
-
-        _collection_formats: Dict[str, str] = {
-        }
-
-        _path_params: Dict[str, str] = {}
-        _query_params: List[Tuple[str, str]] = []
-        _header_params: Dict[str, Optional[str]] = _headers or {}
-        _form_params: List[Tuple[str, str]] = []
-        _files: Dict[
-            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
-        ] = {}
-        _body_params: Optional[bytes] = None
-
-        # process the path parameters
-        if num_iscr_ass is not None:
-            _path_params['num_iscr_ass'] = num_iscr_ass
-        if num_iscr_sito is not None:
-            _path_params['num_iscr_sito'] = num_iscr_sito
-        if identificativo_transazione is not None:
-            _path_params['identificativo_transazione'] = identificativo_transazione
-        # process the query parameters
-        # process the header parameters
-        # process the form parameters
-        # process the body parameter
-
-
-        # set the HTTP header `Accept`
-        if 'Accept' not in _header_params:
-            _header_params['Accept'] = self.api_client.select_header_accept(
-                [
-                    'application/json', 
-                    'application/problem+json'
-                ]
-            )
-
-
-        # authentication setting
-        _auth_settings: List[str] = [
-            'Bearer'
-        ]
-
-        return self.api_client.param_serialize(
-            method='GET',
-            resource_path='/soggetto-delegato/{num_iscr_ass}/transazioni/movimenti/{num_iscr_sito}/{identificativo_transazione}',
-            path_params=_path_params,
-            query_params=_query_params,
-            header_params=_header_params,
+        return self.api_client.call_api(
+            '/soggetto-delegato/{num_iscr_ass}/transazioni/movimenti/{num_iscr_sito}/{identificativo_transazione}', 'GET',
+            _path_params,
+            _query_params,
+            _header_params,
             body=_body_params,
             post_params=_form_params,
             files=_files,
+            response_types_map=_response_types_map,
             auth_settings=_auth_settings,
+            async_req=_params.get('async_req'),
+            _return_http_data_only=_params.get('_return_http_data_only'),  # noqa: E501
+            _preload_content=_params.get('_preload_content', True),
+            _request_timeout=_params.get('_request_timeout'),
             collection_formats=_collection_formats,
-            _host=_host,
-            _request_auth=_request_auth
-        )
+            _request_auth=_params.get('_request_auth'))
 
+    @validate_arguments
+    def soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_identificativo_transazione_request_get(self, num_iscr_ass : Annotated[StrictStr, Field(..., description="Numero iscrizione soggetto delegato rilasciato all'iscrizione.")], num_iscr_sito : Annotated[StrictStr, Field(..., description="Numero iscrizione unità locale rilasciato all'iscrizione.")], identificativo_transazione : Annotated[StrictStr, Field(..., description="Identificativo della transazione.")], **kwargs) -> TransazioneRequestModel:  # noqa: E501
+        """Request transazione  # noqa: E501
 
+        Ottiene la request associata alla transazione specificata.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>  # noqa: E501
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
 
-
-    @validate_call
-    def soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_identificativo_transazione_request_get(
-        self,
-        num_iscr_ass: Annotated[StrictStr, Field(description="Numero iscrizione soggetto delegato rilasciato all'iscrizione.")],
-        num_iscr_sito: Annotated[StrictStr, Field(description="Numero iscrizione unità locale rilasciato all'iscrizione.")],
-        identificativo_transazione: Annotated[StrictStr, Field(description="Identificativo della transazione.")],
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> TransazioneRequestModel:
-        """Request transazione
-
-        Ottiene la request associata alla transazione specificata.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>
+        >>> thread = api.soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_identificativo_transazione_request_get(num_iscr_ass, num_iscr_sito, identificativo_transazione, async_req=True)
+        >>> result = thread.get()
 
         :param num_iscr_ass: Numero iscrizione soggetto delegato rilasciato all'iscrizione. (required)
         :type num_iscr_ass: str
@@ -3289,78 +1712,33 @@ class SoggettoDelegatoApi:
         :type num_iscr_sito: str
         :param identificativo_transazione: Identificativo della transazione. (required)
         :type identificativo_transazione: str
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
+        :param async_req: Whether to execute the request asynchronously.
+        :type async_req: bool, optional
+        :param _request_timeout: timeout setting for this request.
+               If one number provided, it will be total request
+               timeout. It can also be a pair (tuple) of
+               (connection, read) timeouts.
         :return: Returns the result object.
-        """ # noqa: E501
+                 If the method is called asynchronously,
+                 returns the request thread.
+        :rtype: TransazioneRequestModel
+        """
+        kwargs['_return_http_data_only'] = True
+        if '_preload_content' in kwargs:
+            message = "Error! Please call the soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_identificativo_transazione_request_get_with_http_info method with `_preload_content` instead and obtain raw data from ApiResponse.raw_data"  # noqa: E501
+            raise ValueError(message)
+        return self.soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_identificativo_transazione_request_get_with_http_info(num_iscr_ass, num_iscr_sito, identificativo_transazione, **kwargs)  # noqa: E501
 
-        _param = self._soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_identificativo_transazione_request_get_serialize(
-            num_iscr_ass=num_iscr_ass,
-            num_iscr_sito=num_iscr_sito,
-            identificativo_transazione=identificativo_transazione,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
+    @validate_arguments
+    def soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_identificativo_transazione_request_get_with_http_info(self, num_iscr_ass : Annotated[StrictStr, Field(..., description="Numero iscrizione soggetto delegato rilasciato all'iscrizione.")], num_iscr_sito : Annotated[StrictStr, Field(..., description="Numero iscrizione unità locale rilasciato all'iscrizione.")], identificativo_transazione : Annotated[StrictStr, Field(..., description="Identificativo della transazione.")], **kwargs) -> ApiResponse:  # noqa: E501
+        """Request transazione  # noqa: E501
 
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "TransazioneRequestModel",
-            '403': None,
-            '404': None,
-            '500': "ProblemDetails",
-            '429': None,
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        ).data
+        Ottiene la request associata alla transazione specificata.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>  # noqa: E501
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
 
-
-    @validate_call
-    def soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_identificativo_transazione_request_get_with_http_info(
-        self,
-        num_iscr_ass: Annotated[StrictStr, Field(description="Numero iscrizione soggetto delegato rilasciato all'iscrizione.")],
-        num_iscr_sito: Annotated[StrictStr, Field(description="Numero iscrizione unità locale rilasciato all'iscrizione.")],
-        identificativo_transazione: Annotated[StrictStr, Field(description="Identificativo della transazione.")],
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[TransazioneRequestModel]:
-        """Request transazione
-
-        Ottiene la request associata alla transazione specificata.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>
+        >>> thread = api.soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_identificativo_transazione_request_get_with_http_info(num_iscr_ass, num_iscr_sito, identificativo_transazione, async_req=True)
+        >>> result = thread.get()
 
         :param num_iscr_ass: Numero iscrizione soggetto delegato rilasciato all'iscrizione. (required)
         :type num_iscr_ass: str
@@ -3368,197 +1746,111 @@ class SoggettoDelegatoApi:
         :type num_iscr_sito: str
         :param identificativo_transazione: Identificativo della transazione. (required)
         :type identificativo_transazione: str
+        :param async_req: Whether to execute the request asynchronously.
+        :type async_req: bool, optional
+        :param _preload_content: if False, the ApiResponse.data will
+                                 be set to none and raw_data will store the
+                                 HTTP response body without reading/decoding.
+                                 Default is True.
+        :type _preload_content: bool, optional
+        :param _return_http_data_only: response data instead of ApiResponse
+                                       object with status code, headers, etc
+        :type _return_http_data_only: bool, optional
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
                                  (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
         :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
+                              request; this effectively ignores the authentication
+                              in the spec for a single request.
         :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
+        :type _content_type: string, optional: force content-type for the request
         :return: Returns the result object.
-        """ # noqa: E501
+                 If the method is called asynchronously,
+                 returns the request thread.
+        :rtype: tuple(TransazioneRequestModel, status_code(int), headers(HTTPHeaderDict))
+        """
 
-        _param = self._soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_identificativo_transazione_request_get_serialize(
-            num_iscr_ass=num_iscr_ass,
-            num_iscr_sito=num_iscr_sito,
-            identificativo_transazione=identificativo_transazione,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
+        _params = locals()
 
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "TransazioneRequestModel",
-            '403': None,
-            '404': None,
-            '500': "ProblemDetails",
-            '429': None,
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        )
-
-
-    @validate_call
-    def soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_identificativo_transazione_request_get_without_preload_content(
-        self,
-        num_iscr_ass: Annotated[StrictStr, Field(description="Numero iscrizione soggetto delegato rilasciato all'iscrizione.")],
-        num_iscr_sito: Annotated[StrictStr, Field(description="Numero iscrizione unità locale rilasciato all'iscrizione.")],
-        identificativo_transazione: Annotated[StrictStr, Field(description="Identificativo della transazione.")],
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
+        _all_params = [
+            'num_iscr_ass',
+            'num_iscr_sito',
+            'identificativo_transazione'
+        ]
+        _all_params.extend(
+            [
+                'async_req',
+                '_return_http_data_only',
+                '_preload_content',
+                '_request_timeout',
+                '_request_auth',
+                '_content_type',
+                '_headers'
             ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> RESTResponseType:
-        """Request transazione
-
-        Ottiene la request associata alla transazione specificata.<hr/><i>Servizio richiamabile in modalità <b>STUB</b> (le richieste restituiranno sempre una risposta vuota) anche in ambiente di produzione.</i><hr/>
-
-        :param num_iscr_ass: Numero iscrizione soggetto delegato rilasciato all'iscrizione. (required)
-        :type num_iscr_ass: str
-        :param num_iscr_sito: Numero iscrizione unità locale rilasciato all'iscrizione. (required)
-        :type num_iscr_sito: str
-        :param identificativo_transazione: Identificativo della transazione. (required)
-        :type identificativo_transazione: str
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_identificativo_transazione_request_get_serialize(
-            num_iscr_ass=num_iscr_ass,
-            num_iscr_sito=num_iscr_sito,
-            identificativo_transazione=identificativo_transazione,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
         )
 
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "TransazioneRequestModel",
-            '403': None,
-            '404': None,
-            '500': "ProblemDetails",
-            '429': None,
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        return response_data.response
+        # validate the arguments
+        for _key, _val in _params['kwargs'].items():
+            if _key not in _all_params:
+                raise ApiTypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_identificativo_transazione_request_get" % _key
+                )
+            _params[_key] = _val
+        del _params['kwargs']
 
-
-    def _soggetto_delegato_num_iscr_ass_transazioni_movimenti_num_iscr_sito_identificativo_transazione_request_get_serialize(
-        self,
-        num_iscr_ass,
-        num_iscr_sito,
-        identificativo_transazione,
-        _request_auth,
-        _content_type,
-        _headers,
-        _host_index,
-    ) -> RequestSerialized:
-
-        _host = None
-
-        _collection_formats: Dict[str, str] = {
-        }
-
-        _path_params: Dict[str, str] = {}
-        _query_params: List[Tuple[str, str]] = []
-        _header_params: Dict[str, Optional[str]] = _headers or {}
-        _form_params: List[Tuple[str, str]] = []
-        _files: Dict[
-            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
-        ] = {}
-        _body_params: Optional[bytes] = None
+        _collection_formats = {}
 
         # process the path parameters
-        if num_iscr_ass is not None:
-            _path_params['num_iscr_ass'] = num_iscr_ass
-        if num_iscr_sito is not None:
-            _path_params['num_iscr_sito'] = num_iscr_sito
-        if identificativo_transazione is not None:
-            _path_params['identificativo_transazione'] = identificativo_transazione
+        _path_params = {}
+        if _params['num_iscr_ass'] is not None:
+            _path_params['num_iscr_ass'] = _params['num_iscr_ass']
+
+        if _params['num_iscr_sito'] is not None:
+            _path_params['num_iscr_sito'] = _params['num_iscr_sito']
+
+        if _params['identificativo_transazione'] is not None:
+            _path_params['identificativo_transazione'] = _params['identificativo_transazione']
+
+
         # process the query parameters
+        _query_params = []
         # process the header parameters
+        _header_params = dict(_params.get('_headers', {}))
         # process the form parameters
+        _form_params = []
+        _files = {}
         # process the body parameter
-
-
+        _body_params = None
         # set the HTTP header `Accept`
-        if 'Accept' not in _header_params:
-            _header_params['Accept'] = self.api_client.select_header_accept(
-                [
-                    'application/json', 
-                    'application/problem+json'
-                ]
-            )
-
+        _header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json', 'application/problem+json'])  # noqa: E501
 
         # authentication setting
-        _auth_settings: List[str] = [
-            'Bearer'
-        ]
+        _auth_settings = ['Bearer']  # noqa: E501
 
-        return self.api_client.param_serialize(
-            method='GET',
-            resource_path='/soggetto-delegato/{num_iscr_ass}/transazioni/movimenti/{num_iscr_sito}/{identificativo_transazione}/request',
-            path_params=_path_params,
-            query_params=_query_params,
-            header_params=_header_params,
+        _response_types_map = {
+            '200': "TransazioneRequestModel",
+            '403': None,
+            '404': None,
+            '500': "ProblemDetails",
+            '429': None,
+        }
+
+        return self.api_client.call_api(
+            '/soggetto-delegato/{num_iscr_ass}/transazioni/movimenti/{num_iscr_sito}/{identificativo_transazione}/request', 'GET',
+            _path_params,
+            _query_params,
+            _header_params,
             body=_body_params,
             post_params=_form_params,
             files=_files,
+            response_types_map=_response_types_map,
             auth_settings=_auth_settings,
+            async_req=_params.get('async_req'),
+            _return_http_data_only=_params.get('_return_http_data_only'),  # noqa: E501
+            _preload_content=_params.get('_preload_content', True),
+            _request_timeout=_params.get('_request_timeout'),
             collection_formats=_collection_formats,
-            _host=_host,
-            _request_auth=_request_auth
-        )
-
-
+            _request_auth=_params.get('_request_auth'))

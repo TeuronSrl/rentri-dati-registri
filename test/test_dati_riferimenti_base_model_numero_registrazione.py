@@ -14,8 +14,9 @@
 
 
 import unittest
+import datetime
 
-from rentri_dati_registri.models.dati_riferimenti_base_model_numero_registrazione import DatiRiferimentiBaseModelNumeroRegistrazione
+from rentri_dati_registri.models.dati_riferimenti_base_model_numero_registrazione import DatiRiferimentiBaseModelNumeroRegistrazione  # noqa: E501
 
 class TestDatiRiferimentiBaseModelNumeroRegistrazione(unittest.TestCase):
     """DatiRiferimentiBaseModelNumeroRegistrazione unit test stubs"""
@@ -28,12 +29,12 @@ class TestDatiRiferimentiBaseModelNumeroRegistrazione(unittest.TestCase):
 
     def make_instance(self, include_optional) -> DatiRiferimentiBaseModelNumeroRegistrazione:
         """Test DatiRiferimentiBaseModelNumeroRegistrazione
-            include_optional is a boolean, when False only required
+            include_option is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
         # uncomment below to create an instance of `DatiRiferimentiBaseModelNumeroRegistrazione`
         """
-        model = DatiRiferimentiBaseModelNumeroRegistrazione()
+        model = DatiRiferimentiBaseModelNumeroRegistrazione()  # noqa: E501
         if include_optional:
             return DatiRiferimentiBaseModelNumeroRegistrazione(
                 anno = 1980,

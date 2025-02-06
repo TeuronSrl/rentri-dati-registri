@@ -3,7 +3,6 @@
 Annullamento registrazione
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **numero_registrazione** | [**AnnoProgressivoMovimentoModel**](AnnoProgressivoMovimentoModel.md) | Numero registrazione della rettifica di annullamento tramite anno di riferimento e progressivo | 
@@ -21,7 +20,7 @@ json = "{}"
 # create an instance of AnnullamentoMovimentoModel from a JSON string
 annullamento_movimento_model_instance = AnnullamentoMovimentoModel.from_json(json)
 # print the JSON string representation of the object
-print(AnnullamentoMovimentoModel.to_json())
+print AnnullamentoMovimentoModel.to_json()
 
 # convert the object into a dict
 annullamento_movimento_model_dict = annullamento_movimento_model_instance.to_dict()

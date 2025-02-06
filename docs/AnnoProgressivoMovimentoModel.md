@@ -3,7 +3,6 @@
 Dati di identificazione della registrazione tramite anno di riferimento e progressivo (da utilizzare in alternativa a identificativo rilasciato dal RENTRI)
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **anno** | **int** | Anno di riferimento della registrazione | 
@@ -19,7 +18,7 @@ json = "{}"
 # create an instance of AnnoProgressivoMovimentoModel from a JSON string
 anno_progressivo_movimento_model_instance = AnnoProgressivoMovimentoModel.from_json(json)
 # print the JSON string representation of the object
-print(AnnoProgressivoMovimentoModel.to_json())
+print AnnoProgressivoMovimentoModel.to_json()
 
 # convert the object into a dict
 anno_progressivo_movimento_model_dict = anno_progressivo_movimento_model_instance.to_dict()

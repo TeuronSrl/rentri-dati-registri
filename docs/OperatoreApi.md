@@ -25,8 +25,9 @@ Ottiene il conteggio delle registrazioni relative associate ad un Registro, filt
 ### Example
 
 * Bearer (JWT) Authentication (Bearer):
-
 ```python
+import time
+import os
 import rentri_dati_registri
 from rentri_dati_registri.models.caratteristiche_pericolo import CaratteristichePericolo
 from rentri_dati_registri.models.causali_operazione import CausaliOperazione
@@ -84,7 +85,6 @@ with rentri_dati_registri.ApiClient(configuration) as api_client:
 
 ### Parameters
 
-
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **identificativo_registro** | **str**| Identificativo del Registro. | 
@@ -119,7 +119,6 @@ Name | Type | Description  | Notes
  - **Accept**: application/json, application/problem+json
 
 ### HTTP response details
-
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **200** | Conteggio delle registrazioni correnti al momento indicato corrispondenti ai criteri di ricerca specificati. |  -  |
@@ -140,8 +139,9 @@ Ottiene l'elenco delle registrazioni relative ad un Registro, filtrate in base a
 ### Example
 
 * Bearer (JWT) Authentication (Bearer):
-
 ```python
+import time
+import os
 import rentri_dati_registri
 from rentri_dati_registri.models.caratteristiche_pericolo import CaratteristichePericolo
 from rentri_dati_registri.models.causali_operazione import CausaliOperazione
@@ -202,7 +202,6 @@ with rentri_dati_registri.ApiClient(configuration) as api_client:
 
 ### Parameters
 
-
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **identificativo_registro** | **str**| Identificativo del Registro. | 
@@ -239,7 +238,6 @@ Name | Type | Description  | Notes
  - **Accept**: application/json, application/problem+json
 
 ### HTTP response details
-
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **200** | Elenco delle registrazioni correnti al momento indicato corrispondenti ai criteri di ricerca specificati. |  * Paging-PageCount - Numero totale di pagine. <br>  * Paging-Page - Numero di pagina. <br>  * Paging-PageSize - Dimensione della pagina. <br>  * Paging-TotalRecordCount - Numero totale di record. <br>  |
@@ -260,8 +258,9 @@ Acquisisce la richiesta di trasmissione di registrazioni (nuove, rettifiche, ann
 ### Example
 
 * Bearer (JWT) Authentication (Bearer):
-
 ```python
+import time
+import os
 import rentri_dati_registri
 from rentri_dati_registri.models.operatore_identificativo_registro_movimenti_post_request_inner import OperatoreIdentificativoRegistroMovimentiPostRequestInner
 from rentri_dati_registri.models.transazione_model import TransazioneModel
@@ -305,7 +304,6 @@ with rentri_dati_registri.ApiClient(configuration) as api_client:
 
 ### Parameters
 
-
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **identificativo_registro** | **str**| Identificativo del Registro a cui fanno riferimento le registrazioni. | 
@@ -326,7 +324,6 @@ Name | Type | Description  | Notes
  - **Accept**: application/json, application/problem+json
 
 ### HTTP response details
-
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **202** | Richiesta accettata e identificativo della transazione. |  * Location - URL per verificare lo stato dell&#39;elaborazione. Restituito solo se non viene specificata una URL di callback nell&#39;header X-ReplyTo. <br>  |
@@ -348,8 +345,9 @@ Ottiene il dettaglio di una registrazione specificando anno/numero registrazione
 ### Example
 
 * Bearer (JWT) Authentication (Bearer):
-
 ```python
+import time
+import os
 import rentri_dati_registri
 from rentri_dati_registri.models.movimento_dettaglio_model import MovimentoDettaglioModel
 from rentri_dati_registri.rest import ApiException
@@ -394,7 +392,6 @@ with rentri_dati_registri.ApiClient(configuration) as api_client:
 
 ### Parameters
 
-
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **identificativo_registro** | **str**| Identificativo del Registro. | 
@@ -417,7 +414,6 @@ Name | Type | Description  | Notes
  - **Accept**: application/json, application/problem+json
 
 ### HTTP response details
-
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **200** | Dettaglio della registrazione (ed eventuale lista di tutte le sue variazioni) riferita al momento indicato. |  -  |
@@ -438,8 +434,9 @@ Ottiene il dettaglio di una registrazione specificando l'identificativo assegnat
 ### Example
 
 * Bearer (JWT) Authentication (Bearer):
-
 ```python
+import time
+import os
 import rentri_dati_registri
 from rentri_dati_registri.models.movimento_dettaglio_model import MovimentoDettaglioModel
 from rentri_dati_registri.rest import ApiException
@@ -483,7 +480,6 @@ with rentri_dati_registri.ApiClient(configuration) as api_client:
 
 ### Parameters
 
-
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **identificativo_registro** | **str**| Identificativo del Registro. | 
@@ -505,7 +501,6 @@ Name | Type | Description  | Notes
  - **Accept**: application/json, application/problem+json
 
 ### HTTP response details
-
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **200** | Dettaglio della registrazione (ed eventuale lista di tutte le sue variazioni) riferita al momento indicato. |  -  |
@@ -526,8 +521,9 @@ Esegue la validazione strutturale del registro cronologico di carico e scarico d
 ### Example
 
 * Bearer (JWT) Authentication (Bearer):
-
 ```python
+import time
+import os
 import rentri_dati_registri
 from rentri_dati_registri.models.transazione_model import TransazioneModel
 from rentri_dati_registri.models.valida_registro_request import ValidaRegistroRequest
@@ -571,7 +567,6 @@ with rentri_dati_registri.ApiClient(configuration) as api_client:
 
 ### Parameters
 
-
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **identificativo_registro** | **str**| Identificativo del Registro a cui fanno riferimento le registrazioni. | 
@@ -592,7 +587,6 @@ Name | Type | Description  | Notes
  - **Accept**: application/json, application/problem+json
 
 ### HTTP response details
-
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **202** | Richiesta accettata e identificativo della transazione. |  * Location - URL per verificare lo stato dell&#39;elaborazione. Restituito solo se non viene specificata una URL di callback nell&#39;header X-ReplyTo. <br>  |
@@ -614,8 +608,9 @@ Ottiene l'elenco delle transazioni associate alle richieste di trasmissione dell
 ### Example
 
 * Bearer (JWT) Authentication (Bearer):
-
 ```python
+import time
+import os
 import rentri_dati_registri
 from rentri_dati_registri.models.info_transazione_model import InfoTransazioneModel
 from rentri_dati_registri.rest import ApiException
@@ -663,7 +658,6 @@ with rentri_dati_registri.ApiClient(configuration) as api_client:
 
 ### Parameters
 
-
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **num_iscr_sito** | **str**| Numero iscrizione unità locale rilasciato all&#39;iscrizione. | 
@@ -689,7 +683,6 @@ Name | Type | Description  | Notes
  - **Accept**: application/json, application/problem+json
 
 ### HTTP response details
-
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **200** | Elenco delle transazioni relative all&#39;unità locale e corrispondenti ai criteri di ricerca specificati. |  * Paging-PageCount - Numero totale di pagine. <br>  * Paging-Page - Numero di pagina. <br>  * Paging-PageSize - Dimensione della pagina. <br>  * Paging-TotalRecordCount - Numero totale di record. <br>  |
@@ -710,8 +703,9 @@ Ottiene il dettaglio di una transazione specificando l'identificativo.<hr/><i>Se
 ### Example
 
 * Bearer (JWT) Authentication (Bearer):
-
 ```python
+import time
+import os
 import rentri_dati_registri
 from rentri_dati_registri.models.info_transazione_dettaglio_model import InfoTransazioneDettaglioModel
 from rentri_dati_registri.rest import ApiException
@@ -753,7 +747,6 @@ with rentri_dati_registri.ApiClient(configuration) as api_client:
 
 ### Parameters
 
-
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **num_iscr_sito** | **str**| Numero iscrizione unità locale rilasciato all&#39;iscrizione. | 
@@ -773,7 +766,6 @@ Name | Type | Description  | Notes
  - **Accept**: application/json, application/problem+json
 
 ### HTTP response details
-
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **200** | Dettaglio della transazione. |  -  |
@@ -794,8 +786,9 @@ Ottiene la request associata alla transazione specificata.<hr/><i>Servizio richi
 ### Example
 
 * Bearer (JWT) Authentication (Bearer):
-
 ```python
+import time
+import os
 import rentri_dati_registri
 from rentri_dati_registri.models.transazione_request_model import TransazioneRequestModel
 from rentri_dati_registri.rest import ApiException
@@ -837,7 +830,6 @@ with rentri_dati_registri.ApiClient(configuration) as api_client:
 
 ### Parameters
 
-
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **num_iscr_sito** | **str**| Numero iscrizione unità locale rilasciato all&#39;iscrizione. | 
@@ -857,7 +849,6 @@ Name | Type | Description  | Notes
  - **Accept**: application/json, application/problem+json
 
 ### HTTP response details
-
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **200** | Request associata alla transazione. |  -  |

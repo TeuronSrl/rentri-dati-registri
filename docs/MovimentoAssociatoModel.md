@@ -3,7 +3,6 @@
 Dati di identificazione della registrazione associata con anno/progressivo e identificativo rilasciato RENTRI (modello utilizzato in output)
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **anno** | **int** | Anno di riferimento della registrazione | [optional] 
@@ -22,7 +21,7 @@ json = "{}"
 # create an instance of MovimentoAssociatoModel from a JSON string
 movimento_associato_model_instance = MovimentoAssociatoModel.from_json(json)
 # print the JSON string representation of the object
-print(MovimentoAssociatoModel.to_json())
+print MovimentoAssociatoModel.to_json()
 
 # convert the object into a dict
 movimento_associato_model_dict = movimento_associato_model_instance.to_dict()

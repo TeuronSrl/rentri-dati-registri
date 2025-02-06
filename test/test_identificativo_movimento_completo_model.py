@@ -14,8 +14,9 @@
 
 
 import unittest
+import datetime
 
-from rentri_dati_registri.models.identificativo_movimento_completo_model import IdentificativoMovimentoCompletoModel
+from rentri_dati_registri.models.identificativo_movimento_completo_model import IdentificativoMovimentoCompletoModel  # noqa: E501
 
 class TestIdentificativoMovimentoCompletoModel(unittest.TestCase):
     """IdentificativoMovimentoCompletoModel unit test stubs"""
@@ -28,12 +29,12 @@ class TestIdentificativoMovimentoCompletoModel(unittest.TestCase):
 
     def make_instance(self, include_optional) -> IdentificativoMovimentoCompletoModel:
         """Test IdentificativoMovimentoCompletoModel
-            include_optional is a boolean, when False only required
+            include_option is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
         # uncomment below to create an instance of `IdentificativoMovimentoCompletoModel`
         """
-        model = IdentificativoMovimentoCompletoModel()
+        model = IdentificativoMovimentoCompletoModel()  # noqa: E501
         if include_optional:
             return IdentificativoMovimentoCompletoModel(
                 anno = 56,

@@ -14,8 +14,9 @@
 
 
 import unittest
+import datetime
 
-from rentri_dati_registri.models.dati_esito_model import DatiEsitoModel
+from rentri_dati_registri.models.dati_esito_model import DatiEsitoModel  # noqa: E501
 
 class TestDatiEsitoModel(unittest.TestCase):
     """DatiEsitoModel unit test stubs"""
@@ -28,12 +29,12 @@ class TestDatiEsitoModel(unittest.TestCase):
 
     def make_instance(self, include_optional) -> DatiEsitoModel:
         """Test DatiEsitoModel
-            include_optional is a boolean, when False only required
+            include_option is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
         # uncomment below to create an instance of `DatiEsitoModel`
         """
-        model = DatiEsitoModel()
+        model = DatiEsitoModel()  # noqa: E501
         if include_optional:
             return DatiEsitoModel(
                 data_fine_trasporto = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'),

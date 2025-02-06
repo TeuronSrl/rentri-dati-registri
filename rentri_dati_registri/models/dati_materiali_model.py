@@ -18,90 +18,73 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field
-from typing import Any, ClassVar, Dict, List, Optional
-from typing_extensions import Annotated
+
+from typing import Optional
+from pydantic import BaseModel, Field, constr
 from rentri_dati_registri.models.materiali import Materiali
 from rentri_dati_registri.models.unita_misura_peso_quantita_model import UnitaMisuraPesoQuantitaModel
-from typing import Optional, Set
-from typing_extensions import Self
 
 class DatiMaterialiModel(BaseModel):
     """
-    Materiali (solo Impianti)
-    """ # noqa: E501
-    materiale: Materiali = Field(description="Materiale  Vedi API di codifica: <i>GET /codifiche/v1.0/materiali</i><p>Valori ammessi:<ul style=\"margin:0\"><li><i>ACV</i> - 1 - Ammendante compostato verde</li><li><i>ACM</i> - 2 - Ammendante compostato misto</li><li><i>AA</i> - 3 - Altri Ammendanti</li><li><i>DIG</i> - 4 - Digestato</li><li><i>AGG</i> - 5 - Aggregati riciclati</li><li><i>RA</i> - 6 - Rottami di alluminio</li><li><i>RV</i> - 7 - Rottami di vetro</li><li><i>RFA</i> - 8 - Rottami di ferro e acciaio</li><li><i>RR</i> - 9 - Rottami di rame</li><li><i>CC</i> - 10 - Carta e cartone</li><li><i>PLA</i> - 11 - Plastica</li><li><i>LS</i> - 12 - Legno e sughero</li><li><i>CSS</i> - 13 - CSS – combustibile</li><li><i>TE</i> - 14 - Tessili</li><li><i>GOM</i> - 15 - Gomma</li><li><i>CU</i> - 16 - Cuoio</li><li><i>MC</i> - 17 - Materiali ceramici</li><li><i>CF</i> - 18 - Correttivi da Fanghi</li><li><i>AF</i> - 19 - Altri Fertilizzanti</li><li><i>GCB</i> - 20 - Granulato di Conglomerato bituminoso</li><li><i>ASS</i> - 21 - Materiali secondari derivanti dal recupero di prodotti assorbenti per la persona</li><li><i>GMV</i> - 22 - Gomma vulcanizzata da PFU</li><li><i>A</i> - 23 - Altro</li></ul></p>")
-    descrizione_materiale: Optional[Annotated[str, Field(strict=True, max_length=50)]] = Field(default=None, description="Descrizione materiale")
+    Materiali (solo Impianti)  # noqa: E501
+    """
+    materiale: Materiali = Field(default=..., description="Materiale  Vedi API di codifica: <i>GET /codifiche/v1.0/materiali</i><p>Valori ammessi:<ul style=\"margin:0\"><li><i>ACV</i> - 1 - Ammendante compostato verde</li><li><i>ACM</i> - 2 - Ammendante compostato misto</li><li><i>AA</i> - 3 - Altri Ammendanti</li><li><i>DIG</i> - 4 - Digestato</li><li><i>AGG</i> - 5 - Aggregati riciclati</li><li><i>RA</i> - 6 - Rottami di alluminio</li><li><i>RV</i> - 7 - Rottami di vetro</li><li><i>RFA</i> - 8 - Rottami di ferro e acciaio</li><li><i>RR</i> - 9 - Rottami di rame</li><li><i>CC</i> - 10 - Carta e cartone</li><li><i>PLA</i> - 11 - Plastica</li><li><i>LS</i> - 12 - Legno e sughero</li><li><i>CSS</i> - 13 - CSS – combustibile</li><li><i>TE</i> - 14 - Tessili</li><li><i>GOM</i> - 15 - Gomma</li><li><i>CU</i> - 16 - Cuoio</li><li><i>MC</i> - 17 - Materiali ceramici</li><li><i>CF</i> - 18 - Correttivi da Fanghi</li><li><i>AF</i> - 19 - Altri Fertilizzanti</li><li><i>GCB</i> - 20 - Granulato di Conglomerato bituminoso</li><li><i>ASS</i> - 21 - Materiali secondari derivanti dal recupero di prodotti assorbenti per la persona</li><li><i>GMV</i> - 22 - Gomma vulcanizzata da PFU</li><li><i>A</i> - 23 - Altro</li></ul></p>")
+    descrizione_materiale: Optional[constr(strict=True, max_length=50)] = Field(default=None, description="Descrizione materiale")
     quantita: Optional[UnitaMisuraPesoQuantitaModel] = Field(default=None, description="Quantità")
-    __properties: ClassVar[List[str]] = ["materiale", "descrizione_materiale", "quantita"]
+    __properties = ["materiale", "descrizione_materiale", "quantita"]
 
-    model_config = ConfigDict(
-        populate_by_name=True,
-        validate_assignment=True,
-        protected_namespaces=(),
-    )
-
+    class Config:
+        """Pydantic configuration"""
+        allow_population_by_field_name = True
+        validate_assignment = True
 
     def to_str(self) -> str:
         """Returns the string representation of the model using alias"""
-        return pprint.pformat(self.model_dump(by_alias=True))
+        return pprint.pformat(self.dict(by_alias=True))
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> DatiMaterialiModel:
         """Create an instance of DatiMaterialiModel from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
-    def to_dict(self) -> Dict[str, Any]:
-        """Return the dictionary representation of the model using alias.
-
-        This has the following differences from calling pydantic's
-        `self.model_dump(by_alias=True)`:
-
-        * `None` is only added to the output dict for nullable fields that
-          were set at model initialization. Other fields with value `None`
-          are ignored.
-        """
-        excluded_fields: Set[str] = set([
-        ])
-
-        _dict = self.model_dump(
-            by_alias=True,
-            exclude=excluded_fields,
-            exclude_none=True,
-        )
+    def to_dict(self):
+        """Returns the dictionary representation of the model using alias"""
+        _dict = self.dict(by_alias=True,
+                          exclude={
+                          },
+                          exclude_none=True)
         # override the default output from pydantic by calling `to_dict()` of quantita
         if self.quantita:
             _dict['quantita'] = self.quantita.to_dict()
         # set to None if descrizione_materiale (nullable) is None
-        # and model_fields_set contains the field
-        if self.descrizione_materiale is None and "descrizione_materiale" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.descrizione_materiale is None and "descrizione_materiale" in self.__fields_set__:
             _dict['descrizione_materiale'] = None
 
         # set to None if quantita (nullable) is None
-        # and model_fields_set contains the field
-        if self.quantita is None and "quantita" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.quantita is None and "quantita" in self.__fields_set__:
             _dict['quantita'] = None
 
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: dict) -> DatiMaterialiModel:
         """Create an instance of DatiMaterialiModel from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
-            return cls.model_validate(obj)
+            return DatiMaterialiModel.parse_obj(obj)
 
-        _obj = cls.model_validate({
+        _obj = DatiMaterialiModel.parse_obj({
             "materiale": obj.get("materiale"),
             "descrizione_materiale": obj.get("descrizione_materiale"),
-            "quantita": UnitaMisuraPesoQuantitaModel.from_dict(obj["quantita"]) if obj.get("quantita") is not None else None
+            "quantita": UnitaMisuraPesoQuantitaModel.from_dict(obj.get("quantita")) if obj.get("quantita") is not None else None
         })
         return _obj
 

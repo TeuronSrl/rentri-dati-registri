@@ -20,8 +20,9 @@ Ritorna il riferimento generato dal sistema relativo all'ultima trasmissione del
 ### Example
 
 * Bearer (JWT) Authentication (Bearer):
-
 ```python
+import time
+import os
 import rentri_dati_registri
 from rentri_dati_registri.models.transazione_model import TransazioneModel
 from rentri_dati_registri.rest import ApiException
@@ -62,7 +63,6 @@ with rentri_dati_registri.ApiClient(configuration) as api_client:
 
 ### Parameters
 
-
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **identificativo_registro** | **str**| Identificativo del Registro. | 
@@ -81,7 +81,6 @@ Name | Type | Description  | Notes
  - **Accept**: application/json, application/problem+json
 
 ### HTTP response details
-
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **200** | Riferimento relativo all&#39;ultima transazione. |  -  |
@@ -101,8 +100,9 @@ Verifica dello stato dell'API.<hr/><i>Servizio richiamabile in modalità <b>STUB
 ### Example
 
 * Bearer (JWT) Authentication (Bearer):
-
 ```python
+import time
+import os
 import rentri_dati_registri
 from rentri_dati_registri.rest import ApiException
 from pprint import pprint
@@ -138,7 +138,6 @@ with rentri_dati_registri.ApiClient(configuration) as api_client:
 
 
 ### Parameters
-
 This endpoint does not need any parameter.
 
 ### Return type
@@ -155,7 +154,6 @@ void (empty response body)
  - **Accept**: application/problem+json
 
 ### HTTP response details
-
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **200** | OK |  -  |
@@ -174,8 +172,9 @@ Ottiene l'esito dell'elaborazione di una richiesta di trasmissione registrazioni
 ### Example
 
 * Bearer (JWT) Authentication (Bearer):
-
 ```python
+import time
+import os
 import rentri_dati_registri
 from rentri_dati_registri.models.transazione_id_result_get200_response import TransazioneIdResultGet200Response
 from rentri_dati_registri.rest import ApiException
@@ -216,7 +215,6 @@ with rentri_dati_registri.ApiClient(configuration) as api_client:
 
 ### Parameters
 
-
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **transazione_id** | **str**| Id della richiesta | 
@@ -235,7 +233,6 @@ Name | Type | Description  | Notes
  - **Accept**: application/json, application/problem+json
 
 ### HTTP response details
-
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **200** | Esito dell&#39;elaborazione con eventuali errori. |  -  |
@@ -257,8 +254,9 @@ Ottiene lo stato di elaborazione di una richiesta di trasmissione registrazioni.
 ### Example
 
 * Bearer (JWT) Authentication (Bearer):
-
 ```python
+import time
+import os
 import rentri_dati_registri
 from rentri_dati_registri.rest import ApiException
 from pprint import pprint
@@ -296,7 +294,6 @@ with rentri_dati_registri.ApiClient(configuration) as api_client:
 
 ### Parameters
 
-
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **transazione_id** | **str**| Id della richiesta. | 
@@ -315,7 +312,6 @@ void (empty response body)
  - **Accept**: application/problem+json
 
 ### HTTP response details
-
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **200** | Richiesta non ancora elaborata. |  -  |

@@ -3,7 +3,6 @@
 Identificazione del rifiuto
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **codice_eer** | **str** | Codice EER.  Codice numerico di 6 caratteri che identifica il rifiuto in base alla Lista Europea dei Rifiuti (European Waste List - EWL),  vengono accettati solo codici EER validi e presenti nella lista ufficiale, senza alcun carattere separatore.  Vedi API di codifica: &lt;i&gt;GET /codifiche/v1.0/codici-eer&lt;/i&gt; | 
@@ -27,7 +26,7 @@ json = "{}"
 # create an instance of DatiRifiutoModel from a JSON string
 dati_rifiuto_model_instance = DatiRifiutoModel.from_json(json)
 # print the JSON string representation of the object
-print(DatiRifiutoModel.to_json())
+print DatiRifiutoModel.to_json()
 
 # convert the object into a dict
 dati_rifiuto_model_dict = dati_rifiuto_model_instance.to_dict()

@@ -3,7 +3,6 @@
 Richiesta per la validazione strutturale del registro cronologico di carico e scarico digitale in formato XML
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **file_content** | **bytearray** | Contenuto in Base64 del file XML, o del file ZIP contenente il file XML, del registro cronologico di carico e scarico digitale | 
@@ -20,7 +19,7 @@ json = "{}"
 # create an instance of ValidaRegistroRequest from a JSON string
 valida_registro_request_instance = ValidaRegistroRequest.from_json(json)
 # print the JSON string representation of the object
-print(ValidaRegistroRequest.to_json())
+print ValidaRegistroRequest.to_json()
 
 # convert the object into a dict
 valida_registro_request_dict = valida_registro_request_instance.to_dict()

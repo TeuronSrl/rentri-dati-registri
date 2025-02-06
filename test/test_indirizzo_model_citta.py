@@ -14,8 +14,9 @@
 
 
 import unittest
+import datetime
 
-from rentri_dati_registri.models.indirizzo_model_citta import IndirizzoModelCitta
+from rentri_dati_registri.models.indirizzo_model_citta import IndirizzoModelCitta  # noqa: E501
 
 class TestIndirizzoModelCitta(unittest.TestCase):
     """IndirizzoModelCitta unit test stubs"""
@@ -28,22 +29,22 @@ class TestIndirizzoModelCitta(unittest.TestCase):
 
     def make_instance(self, include_optional) -> IndirizzoModelCitta:
         """Test IndirizzoModelCitta
-            include_optional is a boolean, when False only required
+            include_option is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
         # uncomment below to create an instance of `IndirizzoModelCitta`
         """
-        model = IndirizzoModelCitta()
+        model = IndirizzoModelCitta()  # noqa: E501
         if include_optional:
             return IndirizzoModelCitta(
                 comune_id = '0',
-                nazione_id = ERROR_TO_EXAMPLE_VALUE,
+                nazione_id = 'lY,rZ#UM/?R,Fp^l6$ARjbhJk C>i H'qT0',
                 nome_citta = '0'
             )
         else:
             return IndirizzoModelCitta(
                 comune_id = '0',
-                nazione_id = ERROR_TO_EXAMPLE_VALUE,
+                nazione_id = 'lY,rZ#UM/?R,Fp^l6$ARjbhJk C>i H'qT0',
                 nome_citta = '0',
         )
         """

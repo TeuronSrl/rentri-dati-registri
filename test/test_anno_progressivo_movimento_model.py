@@ -14,8 +14,9 @@
 
 
 import unittest
+import datetime
 
-from rentri_dati_registri.models.anno_progressivo_movimento_model import AnnoProgressivoMovimentoModel
+from rentri_dati_registri.models.anno_progressivo_movimento_model import AnnoProgressivoMovimentoModel  # noqa: E501
 
 class TestAnnoProgressivoMovimentoModel(unittest.TestCase):
     """AnnoProgressivoMovimentoModel unit test stubs"""
@@ -28,12 +29,12 @@ class TestAnnoProgressivoMovimentoModel(unittest.TestCase):
 
     def make_instance(self, include_optional) -> AnnoProgressivoMovimentoModel:
         """Test AnnoProgressivoMovimentoModel
-            include_optional is a boolean, when False only required
+            include_option is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
         # uncomment below to create an instance of `AnnoProgressivoMovimentoModel`
         """
-        model = AnnoProgressivoMovimentoModel()
+        model = AnnoProgressivoMovimentoModel()  # noqa: E501
         if include_optional:
             return AnnoProgressivoMovimentoModel(
                 anno = 1980,

@@ -3,7 +3,6 @@
 Esito conferimento
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **data_fine_trasporto** | **datetime** | Data di fine trasporto (formato ISO 8601 UTC) | [optional] 
@@ -20,7 +19,7 @@ json = "{}"
 # create an instance of DatiEsitoModel from a JSON string
 dati_esito_model_instance = DatiEsitoModel.from_json(json)
 # print the JSON string representation of the object
-print(DatiEsitoModel.to_json())
+print DatiEsitoModel.to_json()
 
 # convert the object into a dict
 dati_esito_model_dict = dati_esito_model_instance.to_dict()

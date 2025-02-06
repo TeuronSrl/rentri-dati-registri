@@ -3,7 +3,6 @@
 Città estera o comune Italiano
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **comune_id** | **str** | Comune ISTAT del comune.  Non vengono accettati codici non corrispondenti a codici ISTAT di comuni italiani.  Vedi API di codifica: &lt;i&gt;GET /codifiche/v1.0/comuni&lt;/i&gt; | 
@@ -20,7 +19,7 @@ json = "{}"
 # create an instance of IndirizzoModelCitta from a JSON string
 indirizzo_model_citta_instance = IndirizzoModelCitta.from_json(json)
 # print the JSON string representation of the object
-print(IndirizzoModelCitta.to_json())
+print IndirizzoModelCitta.to_json()
 
 # convert the object into a dict
 indirizzo_model_citta_dict = indirizzo_model_citta_instance.to_dict()

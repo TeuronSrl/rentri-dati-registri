@@ -3,7 +3,6 @@
 Dati della registrazione
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **riferimenti** | [**DatiRiferimentiModel**](DatiRiferimentiModel.md) | Riferimenti operazione | 
@@ -28,7 +27,7 @@ json = "{}"
 # create an instance of MovimentoModel from a JSON string
 movimento_model_instance = MovimentoModel.from_json(json)
 # print the JSON string representation of the object
-print(MovimentoModel.to_json())
+print MovimentoModel.to_json()
 
 # convert the object into a dict
 movimento_model_dict = movimento_model_instance.to_dict()

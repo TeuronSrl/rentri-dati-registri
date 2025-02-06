@@ -14,8 +14,9 @@
 
 
 import unittest
+import datetime
 
-from rentri_dati_registri.models.annullamento_movimento_model import AnnullamentoMovimentoModel
+from rentri_dati_registri.models.annullamento_movimento_model import AnnullamentoMovimentoModel  # noqa: E501
 
 class TestAnnullamentoMovimentoModel(unittest.TestCase):
     """AnnullamentoMovimentoModel unit test stubs"""
@@ -28,12 +29,12 @@ class TestAnnullamentoMovimentoModel(unittest.TestCase):
 
     def make_instance(self, include_optional) -> AnnullamentoMovimentoModel:
         """Test AnnullamentoMovimentoModel
-            include_optional is a boolean, when False only required
+            include_option is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
         # uncomment below to create an instance of `AnnullamentoMovimentoModel`
         """
-        model = AnnullamentoMovimentoModel()
+        model = AnnullamentoMovimentoModel()  # noqa: E501
         if include_optional:
             return AnnullamentoMovimentoModel(
                 numero_registrazione = rentri_dati_registri.models.anno_progressivo_movimento_model.AnnoProgressivoMovimentoModel(

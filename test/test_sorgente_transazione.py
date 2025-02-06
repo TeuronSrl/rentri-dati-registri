@@ -14,8 +14,9 @@
 
 
 import unittest
+import datetime
 
-from rentri_dati_registri.models.sorgente_transazione import SorgenteTransazione
+from rentri_dati_registri.models.sorgente_transazione import SorgenteTransazione  # noqa: E501
 
 class TestSorgenteTransazione(unittest.TestCase):
     """SorgenteTransazione unit test stubs"""

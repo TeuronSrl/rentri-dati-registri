@@ -14,8 +14,9 @@
 
 
 import unittest
+import datetime
 
-from rentri_dati_registri.models.citta_estera_model import CittaEsteraModel
+from rentri_dati_registri.models.citta_estera_model import CittaEsteraModel  # noqa: E501
 
 class TestCittaEsteraModel(unittest.TestCase):
     """CittaEsteraModel unit test stubs"""
@@ -28,20 +29,20 @@ class TestCittaEsteraModel(unittest.TestCase):
 
     def make_instance(self, include_optional) -> CittaEsteraModel:
         """Test CittaEsteraModel
-            include_optional is a boolean, when False only required
+            include_option is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
         # uncomment below to create an instance of `CittaEsteraModel`
         """
-        model = CittaEsteraModel()
+        model = CittaEsteraModel()  # noqa: E501
         if include_optional:
             return CittaEsteraModel(
-                nazione_id = ERROR_TO_EXAMPLE_VALUE,
+                nazione_id = 'lY,rZ#UM/?R,Fp^l6$ARjbhJk C>i H'qT0',
                 nome_citta = '0'
             )
         else:
             return CittaEsteraModel(
-                nazione_id = ERROR_TO_EXAMPLE_VALUE,
+                nazione_id = 'lY,rZ#UM/?R,Fp^l6$ARjbhJk C>i H'qT0',
                 nome_citta = '0',
         )
         """

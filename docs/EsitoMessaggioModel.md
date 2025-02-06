@@ -3,7 +3,6 @@
 Messaggio di validazione
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **indice** | **int** | Indice dell&#39;elemento di input relativo al messaggio di validazione | [optional] 
@@ -22,7 +21,7 @@ json = "{}"
 # create an instance of EsitoMessaggioModel from a JSON string
 esito_messaggio_model_instance = EsitoMessaggioModel.from_json(json)
 # print the JSON string representation of the object
-print(EsitoMessaggioModel.to_json())
+print EsitoMessaggioModel.to_json()
 
 # convert the object into a dict
 esito_messaggio_model_dict = esito_messaggio_model_instance.to_dict()

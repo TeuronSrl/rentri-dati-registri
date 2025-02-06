@@ -14,15 +14,17 @@
 
 
 from __future__ import annotations
+from inspect import getfullargspec
 import json
 import pprint
-from pydantic import BaseModel, ConfigDict, Field, StrictStr, ValidationError, field_validator
+import re  # noqa: F401
+
 from typing import Any, List, Optional
+from pydantic import BaseModel, Field, StrictStr, ValidationError, validator
 from rentri_dati_registri.models.esito_movimenti_model import EsitoMovimentiModel
 from rentri_dati_registri.models.esito_valida_registro_model import EsitoValidaRegistroModel
+from typing import Union, Any, List, TYPE_CHECKING
 from pydantic import StrictStr, Field
-from typing import Union, List, Set, Optional, Dict
-from typing_extensions import Literal, Self
 
 TRANSAZIONEIDRESULTGET200RESPONSE_ONE_OF_SCHEMAS = ["EsitoMovimentiModel", "EsitoValidaRegistroModel"]
 
@@ -34,14 +36,14 @@ class TransazioneIdResultGet200Response(BaseModel):
     oneof_schema_1_validator: Optional[EsitoMovimentiModel] = None
     # data type: EsitoValidaRegistroModel
     oneof_schema_2_validator: Optional[EsitoValidaRegistroModel] = None
-    actual_instance: Optional[Union[EsitoMovimentiModel, EsitoValidaRegistroModel]] = None
-    one_of_schemas: Set[str] = { "EsitoMovimentiModel", "EsitoValidaRegistroModel" }
+    if TYPE_CHECKING:
+        actual_instance: Union[EsitoMovimentiModel, EsitoValidaRegistroModel]
+    else:
+        actual_instance: Any
+    one_of_schemas: List[str] = Field(TRANSAZIONEIDRESULTGET200RESPONSE_ONE_OF_SCHEMAS, const=True)
 
-    model_config = ConfigDict(
-        validate_assignment=True,
-        protected_namespaces=(),
-    )
-
+    class Config:
+        validate_assignment = True
 
     def __init__(self, *args, **kwargs) -> None:
         if args:
@@ -53,9 +55,9 @@ class TransazioneIdResultGet200Response(BaseModel):
         else:
             super().__init__(**kwargs)
 
-    @field_validator('actual_instance')
+    @validator('actual_instance')
     def actual_instance_must_validate_oneof(cls, v):
-        instance = TransazioneIdResultGet200Response.model_construct()
+        instance = TransazioneIdResultGet200Response.construct()
         error_messages = []
         match = 0
         # validate data type: EsitoMovimentiModel
@@ -78,13 +80,13 @@ class TransazioneIdResultGet200Response(BaseModel):
             return v
 
     @classmethod
-    def from_dict(cls, obj: Union[str, Dict[str, Any]]) -> Self:
+    def from_dict(cls, obj: dict) -> TransazioneIdResultGet200Response:
         return cls.from_json(json.dumps(obj))
 
     @classmethod
-    def from_json(cls, json_str: str) -> Self:
+    def from_json(cls, json_str: str) -> TransazioneIdResultGet200Response:
         """Returns the object represented by the json string"""
-        instance = cls.model_construct()
+        instance = TransazioneIdResultGet200Response.construct()
         error_messages = []
         match = 0
 
@@ -94,10 +96,6 @@ class TransazioneIdResultGet200Response(BaseModel):
             match += 1
         except (ValidationError, ValueError) as e:
             error_messages.append(str(e))
-
-        if match == 1:
-            return instance
-        
         # deserialize data into EsitoValidaRegistroModel
         try:
             instance.actual_instance = EsitoValidaRegistroModel.from_json(json_str)
@@ -119,17 +117,19 @@ class TransazioneIdResultGet200Response(BaseModel):
         if self.actual_instance is None:
             return "null"
 
-        if hasattr(self.actual_instance, "to_json") and callable(self.actual_instance.to_json):
+        to_json = getattr(self.actual_instance, "to_json", None)
+        if callable(to_json):
             return self.actual_instance.to_json()
         else:
             return json.dumps(self.actual_instance)
 
-    def to_dict(self) -> Optional[Union[Dict[str, Any], EsitoMovimentiModel, EsitoValidaRegistroModel]]:
+    def to_dict(self) -> dict:
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None
 
-        if hasattr(self.actual_instance, "to_dict") and callable(self.actual_instance.to_dict):
+        to_dict = getattr(self.actual_instance, "to_dict", None)
+        if callable(to_dict):
             return self.actual_instance.to_dict()
         else:
             # primitive type
@@ -137,6 +137,6 @@ class TransazioneIdResultGet200Response(BaseModel):
 
     def to_str(self) -> str:
         """Returns the string representation of the actual instance"""
-        return pprint.pformat(self.model_dump())
+        return pprint.pformat(self.dict())
 
 

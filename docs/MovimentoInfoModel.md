@@ -2,7 +2,6 @@
 
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **anno** | **int** |  | [optional] 
@@ -20,7 +19,7 @@ json = "{}"
 # create an instance of MovimentoInfoModel from a JSON string
 movimento_info_model_instance = MovimentoInfoModel.from_json(json)
 # print the JSON string representation of the object
-print(MovimentoInfoModel.to_json())
+print MovimentoInfoModel.to_json()
 
 # convert the object into a dict
 movimento_info_model_dict = movimento_info_model_instance.to_dict()

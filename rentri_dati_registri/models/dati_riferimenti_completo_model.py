@@ -19,79 +19,60 @@ import re  # noqa: F401
 import json
 
 from datetime import datetime
-from pydantic import BaseModel, ConfigDict, Field, StrictStr
-from typing import Any, ClassVar, Dict, List, Optional
+from typing import List, Optional
+from pydantic import BaseModel, Field, StrictStr, conlist
 from rentri_dati_registri.models.causali_operazione import CausaliOperazione
 from rentri_dati_registri.models.causali_operazione_cs import CausaliOperazioneCs
 from rentri_dati_registri.models.identificativo_movimento_completo_model import IdentificativoMovimentoCompletoModel
 from rentri_dati_registri.models.movimento_associato_model import MovimentoAssociatoModel
-from typing import Optional, Set
-from typing_extensions import Self
 
 class DatiRiferimentiCompletoModel(BaseModel):
     """
-    Riferimenti dell'operazione (modello utilizzato in output)
-    """ # noqa: E501
+    Riferimenti dell'operazione (modello utilizzato in output)  # noqa: E501
+    """
     numero_registrazione: Optional[IdentificativoMovimentoCompletoModel] = Field(default=None, description="Numero registrazione della registrazione tramite anno e progressivo e identificativo rilasciato dal RENTRI")
-    data_ora_registrazione: datetime = Field(description="Data di registrazione (formato ISO 8601 UTC) come previsto nel modello di registro RENTRI. In caso di rettifica, è la data di registrazione della registrazione rettificata.  Trattandosi di una registrazione informatica, è consentito indicare l'ora, anche se non obbligatoria.  <b>Esempi:</b> solo data = \"2024-01-01\", data con ora = \"2024-01-01T12:00:00Z\"")
+    data_ora_registrazione: datetime = Field(default=..., description="Data di registrazione (formato ISO 8601 UTC) come previsto nel modello di registro RENTRI. In caso di rettifica, è la data di registrazione della registrazione rettificata.  Trattandosi di una registrazione informatica, è consentito indicare l'ora, anche se non obbligatoria.  <b>Esempi:</b> solo data = \"2024-01-01\", data con ora = \"2024-01-01T12:00:00Z\"")
     numero_registrazione_di_rettifica: Optional[IdentificativoMovimentoCompletoModel] = Field(default=None, description="Numero della registrazione della rettifica")
     numero_registrazione_rettifica: Optional[IdentificativoMovimentoCompletoModel] = Field(default=None, description="Numero della registrazione rettificata")
     causale_operazione_cs: Optional[CausaliOperazioneCs] = Field(default=None, description="Causale dell'operazione Carico/Scarico<p>Valori ammessi:<ul style=\"margin:0\"><li><i>Carico</i> - Carico</li><li><i>Scarico</i> - Scarico</li><li><i>CaricoScarico</i> - Carico e scarico</li></ul></p>")
     causale_operazione: Optional[CausaliOperazione] = Field(default=None, description="Causale dell'operazione.  Non richiesto solo nel caso di stoccaggio istantaneo (o giacenza).  Vedi API di codifica: <i>GET /codifiche/v1.0/causali-operazione</i><p>Valori ammessi:<ul style=\"margin:0\"><li><i>DT</i> - Prodotto o detenuto nell'unità locale</li><li><i>NP</i> - Nuovo produttore</li><li><i>T*</i> - Ricevuto da terzi</li><li><i>RE</i> - Prodotto al di fuori dell’unità locale</li><li><i>I</i> - Scarico interno</li><li><i>aT</i> - Scarico a terzi</li><li><i>M</i> - Scarico per produzione di materiali</li><li><i>TR</i> - Intermediario</li><li><i>T*aT</i> - Carico e scarico</li></ul></p>")
     stoccaggio_istantaneo: Optional[datetime] = Field(default=None, description="Data dello stoccaggio istantaneo (formato ISO 8601 UTC) (o giacenza), se valorizzata possono essere compilati solamente i dati relativi al rifiuto e non al materiale.")
-    riferimenti_operazione: Optional[List[MovimentoAssociatoModel]] = Field(default=None, description="Registrazioni associate     ⚠️ Deprecato: utilizzare \"riferimento_operazione\"")
-    riferimento_operazione: Optional[List[MovimentoAssociatoModel]] = Field(default=None, description="Registrazioni associate")
+    riferimenti_operazione: Optional[conlist(MovimentoAssociatoModel)] = Field(default=None, description="Registrazioni associate     ⚠️ Deprecato: utilizzare \"riferimento_operazione\"")
+    riferimento_operazione: Optional[conlist(MovimentoAssociatoModel)] = Field(default=None, description="Registrazioni associate")
     identificativo_registro: Optional[StrictStr] = Field(default=None, description="Identificativo del registro")
     num_iscr_sito: Optional[StrictStr] = Field(default=None, description="Numero iscrizione unità locale rilasciato all'iscrizione")
     data_creazione: Optional[datetime] = Field(default=None, description="Data di creazione della registrazione in RENTRI (formato ISO 8601 UTC)")
     data_trasmissione: Optional[datetime] = Field(default=None, description="Data di trasmissione della registrazione a RENTRI (formato ISO 8601 UTC)")
     data_inizio_validita: Optional[datetime] = Field(default=None, description="Data di inizio validità della posizione (formato ISO 8601 UTC)")
     data_fine_validita: Optional[datetime] = Field(default=None, description="Data di fine validità della posizione (formato ISO 8601 UTC)")
-    __properties: ClassVar[List[str]] = ["numero_registrazione", "data_ora_registrazione", "numero_registrazione_di_rettifica", "numero_registrazione_rettifica", "causale_operazione_cs", "causale_operazione", "stoccaggio_istantaneo", "riferimenti_operazione", "riferimento_operazione", "identificativo_registro", "num_iscr_sito", "data_creazione", "data_trasmissione", "data_inizio_validita", "data_fine_validita"]
+    __properties = ["numero_registrazione", "data_ora_registrazione", "numero_registrazione_di_rettifica", "numero_registrazione_rettifica", "causale_operazione_cs", "causale_operazione", "stoccaggio_istantaneo", "riferimenti_operazione", "riferimento_operazione", "identificativo_registro", "num_iscr_sito", "data_creazione", "data_trasmissione", "data_inizio_validita", "data_fine_validita"]
 
-    model_config = ConfigDict(
-        populate_by_name=True,
-        validate_assignment=True,
-        protected_namespaces=(),
-    )
-
+    class Config:
+        """Pydantic configuration"""
+        allow_population_by_field_name = True
+        validate_assignment = True
 
     def to_str(self) -> str:
         """Returns the string representation of the model using alias"""
-        return pprint.pformat(self.model_dump(by_alias=True))
+        return pprint.pformat(self.dict(by_alias=True))
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> DatiRiferimentiCompletoModel:
         """Create an instance of DatiRiferimentiCompletoModel from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
-    def to_dict(self) -> Dict[str, Any]:
-        """Return the dictionary representation of the model using alias.
-
-        This has the following differences from calling pydantic's
-        `self.model_dump(by_alias=True)`:
-
-        * `None` is only added to the output dict for nullable fields that
-          were set at model initialization. Other fields with value `None`
-          are ignored.
-        * OpenAPI `readOnly` fields are excluded.
-        * OpenAPI `readOnly` fields are excluded.
-        """
-        excluded_fields: Set[str] = set([
-            "riferimenti_operazione",
-            "riferimento_operazione",
-        ])
-
-        _dict = self.model_dump(
-            by_alias=True,
-            exclude=excluded_fields,
-            exclude_none=True,
-        )
+    def to_dict(self):
+        """Returns the dictionary representation of the model using alias"""
+        _dict = self.dict(by_alias=True,
+                          exclude={
+                            "riferimenti_operazione",
+                            "riferimento_operazione",
+                          },
+                          exclude_none=True)
         # override the default output from pydantic by calling `to_dict()` of numero_registrazione
         if self.numero_registrazione:
             _dict['numero_registrazione'] = self.numero_registrazione.to_dict()
@@ -104,88 +85,88 @@ class DatiRiferimentiCompletoModel(BaseModel):
         # override the default output from pydantic by calling `to_dict()` of each item in riferimenti_operazione (list)
         _items = []
         if self.riferimenti_operazione:
-            for _item_riferimenti_operazione in self.riferimenti_operazione:
-                if _item_riferimenti_operazione:
-                    _items.append(_item_riferimenti_operazione.to_dict())
+            for _item in self.riferimenti_operazione:
+                if _item:
+                    _items.append(_item.to_dict())
             _dict['riferimenti_operazione'] = _items
         # override the default output from pydantic by calling `to_dict()` of each item in riferimento_operazione (list)
         _items = []
         if self.riferimento_operazione:
-            for _item_riferimento_operazione in self.riferimento_operazione:
-                if _item_riferimento_operazione:
-                    _items.append(_item_riferimento_operazione.to_dict())
+            for _item in self.riferimento_operazione:
+                if _item:
+                    _items.append(_item.to_dict())
             _dict['riferimento_operazione'] = _items
         # set to None if numero_registrazione (nullable) is None
-        # and model_fields_set contains the field
-        if self.numero_registrazione is None and "numero_registrazione" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.numero_registrazione is None and "numero_registrazione" in self.__fields_set__:
             _dict['numero_registrazione'] = None
 
         # set to None if numero_registrazione_di_rettifica (nullable) is None
-        # and model_fields_set contains the field
-        if self.numero_registrazione_di_rettifica is None and "numero_registrazione_di_rettifica" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.numero_registrazione_di_rettifica is None and "numero_registrazione_di_rettifica" in self.__fields_set__:
             _dict['numero_registrazione_di_rettifica'] = None
 
         # set to None if numero_registrazione_rettifica (nullable) is None
-        # and model_fields_set contains the field
-        if self.numero_registrazione_rettifica is None and "numero_registrazione_rettifica" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.numero_registrazione_rettifica is None and "numero_registrazione_rettifica" in self.__fields_set__:
             _dict['numero_registrazione_rettifica'] = None
 
         # set to None if causale_operazione_cs (nullable) is None
-        # and model_fields_set contains the field
-        if self.causale_operazione_cs is None and "causale_operazione_cs" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.causale_operazione_cs is None and "causale_operazione_cs" in self.__fields_set__:
             _dict['causale_operazione_cs'] = None
 
         # set to None if causale_operazione (nullable) is None
-        # and model_fields_set contains the field
-        if self.causale_operazione is None and "causale_operazione" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.causale_operazione is None and "causale_operazione" in self.__fields_set__:
             _dict['causale_operazione'] = None
 
         # set to None if stoccaggio_istantaneo (nullable) is None
-        # and model_fields_set contains the field
-        if self.stoccaggio_istantaneo is None and "stoccaggio_istantaneo" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.stoccaggio_istantaneo is None and "stoccaggio_istantaneo" in self.__fields_set__:
             _dict['stoccaggio_istantaneo'] = None
 
         # set to None if riferimenti_operazione (nullable) is None
-        # and model_fields_set contains the field
-        if self.riferimenti_operazione is None and "riferimenti_operazione" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.riferimenti_operazione is None and "riferimenti_operazione" in self.__fields_set__:
             _dict['riferimenti_operazione'] = None
 
         # set to None if riferimento_operazione (nullable) is None
-        # and model_fields_set contains the field
-        if self.riferimento_operazione is None and "riferimento_operazione" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.riferimento_operazione is None and "riferimento_operazione" in self.__fields_set__:
             _dict['riferimento_operazione'] = None
 
         # set to None if identificativo_registro (nullable) is None
-        # and model_fields_set contains the field
-        if self.identificativo_registro is None and "identificativo_registro" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.identificativo_registro is None and "identificativo_registro" in self.__fields_set__:
             _dict['identificativo_registro'] = None
 
         # set to None if num_iscr_sito (nullable) is None
-        # and model_fields_set contains the field
-        if self.num_iscr_sito is None and "num_iscr_sito" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.num_iscr_sito is None and "num_iscr_sito" in self.__fields_set__:
             _dict['num_iscr_sito'] = None
 
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: dict) -> DatiRiferimentiCompletoModel:
         """Create an instance of DatiRiferimentiCompletoModel from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
-            return cls.model_validate(obj)
+            return DatiRiferimentiCompletoModel.parse_obj(obj)
 
-        _obj = cls.model_validate({
-            "numero_registrazione": IdentificativoMovimentoCompletoModel.from_dict(obj["numero_registrazione"]) if obj.get("numero_registrazione") is not None else None,
+        _obj = DatiRiferimentiCompletoModel.parse_obj({
+            "numero_registrazione": IdentificativoMovimentoCompletoModel.from_dict(obj.get("numero_registrazione")) if obj.get("numero_registrazione") is not None else None,
             "data_ora_registrazione": obj.get("data_ora_registrazione"),
-            "numero_registrazione_di_rettifica": IdentificativoMovimentoCompletoModel.from_dict(obj["numero_registrazione_di_rettifica"]) if obj.get("numero_registrazione_di_rettifica") is not None else None,
-            "numero_registrazione_rettifica": IdentificativoMovimentoCompletoModel.from_dict(obj["numero_registrazione_rettifica"]) if obj.get("numero_registrazione_rettifica") is not None else None,
+            "numero_registrazione_di_rettifica": IdentificativoMovimentoCompletoModel.from_dict(obj.get("numero_registrazione_di_rettifica")) if obj.get("numero_registrazione_di_rettifica") is not None else None,
+            "numero_registrazione_rettifica": IdentificativoMovimentoCompletoModel.from_dict(obj.get("numero_registrazione_rettifica")) if obj.get("numero_registrazione_rettifica") is not None else None,
             "causale_operazione_cs": obj.get("causale_operazione_cs"),
             "causale_operazione": obj.get("causale_operazione"),
             "stoccaggio_istantaneo": obj.get("stoccaggio_istantaneo"),
-            "riferimenti_operazione": [MovimentoAssociatoModel.from_dict(_item) for _item in obj["riferimenti_operazione"]] if obj.get("riferimenti_operazione") is not None else None,
-            "riferimento_operazione": [MovimentoAssociatoModel.from_dict(_item) for _item in obj["riferimento_operazione"]] if obj.get("riferimento_operazione") is not None else None,
+            "riferimenti_operazione": [MovimentoAssociatoModel.from_dict(_item) for _item in obj.get("riferimenti_operazione")] if obj.get("riferimenti_operazione") is not None else None,
+            "riferimento_operazione": [MovimentoAssociatoModel.from_dict(_item) for _item in obj.get("riferimento_operazione")] if obj.get("riferimento_operazione") is not None else None,
             "identificativo_registro": obj.get("identificativo_registro"),
             "num_iscr_sito": obj.get("num_iscr_sito"),
             "data_creazione": obj.get("data_creazione"),

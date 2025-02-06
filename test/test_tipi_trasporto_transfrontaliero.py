@@ -14,8 +14,9 @@
 
 
 import unittest
+import datetime
 
-from rentri_dati_registri.models.tipi_trasporto_transfrontaliero import TipiTrasportoTransfrontaliero
+from rentri_dati_registri.models.tipi_trasporto_transfrontaliero import TipiTrasportoTransfrontaliero  # noqa: E501
 
 class TestTipiTrasportoTransfrontaliero(unittest.TestCase):
     """TipiTrasportoTransfrontaliero unit test stubs"""

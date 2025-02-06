@@ -14,8 +14,9 @@
 
 
 import unittest
+import datetime
 
-from rentri_dati_registri.models.tipi_respingimento import TipiRespingimento
+from rentri_dati_registri.models.tipi_respingimento import TipiRespingimento  # noqa: E501
 
 class TestTipiRespingimento(unittest.TestCase):
     """TipiRespingimento unit test stubs"""

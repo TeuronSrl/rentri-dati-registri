@@ -18,9 +18,9 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field
-from typing import Any, ClassVar, Dict, List, Optional
-from typing_extensions import Annotated
+
+from typing import List, Optional
+from pydantic import BaseModel, Field, conlist, constr
 from rentri_dati_registri.models.dati_destinatario_model import DatiDestinatarioModel
 from rentri_dati_registri.models.dati_esito_model import DatiEsitoModel
 from rentri_dati_registri.models.dati_integrazione_fir_model import DatiIntegrazioneFirModel
@@ -30,14 +30,12 @@ from rentri_dati_registri.models.dati_produttore_model import DatiProduttoreMode
 from rentri_dati_registri.models.dati_riferimenti_base_model import DatiRiferimentiBaseModel
 from rentri_dati_registri.models.dati_rifiuto_model import DatiRifiutoModel
 from rentri_dati_registri.models.dati_trasportatore_model import DatiTrasportatoreModel
-from typing import Optional, Set
-from typing_extensions import Self
 
 class MovimentoBaseModel(BaseModel):
     """
-    Dati della registrazione
-    """ # noqa: E501
-    riferimenti: DatiRiferimentiBaseModel = Field(description="Riferimenti operazione")
+    Dati della registrazione  # noqa: E501
+    """
+    riferimenti: DatiRiferimentiBaseModel = Field(default=..., description="Riferimenti operazione")
     rifiuto: Optional[DatiRifiutoModel] = Field(default=None, description="Identificazione del rifiuto.  Richiesto solamente se causale_operazione è diversa da \"M\".")
     materiali: Optional[DatiMaterialiModel] = Field(default=None, description="Materiali (solo impianti).  Richiesto solamente se causale_operazione è uguale a \"M\".")
     integrazione_fir: Optional[DatiIntegrazioneFirModel] = Field(default=None, description="Integrazione FIR - Registro C/S.  Non deve essere indicato se causale_operazione è diversa da \"aT\", \"TR\", \"T*\", \"T*AT\".")
@@ -46,61 +44,47 @@ class MovimentoBaseModel(BaseModel):
     trasportatore: Optional[DatiTrasportatoreModel] = Field(default=None, description="Trasportatore")
     destinatario: Optional[DatiDestinatarioModel] = Field(default=None, description="Destinatario")
     intermediario: Optional[DatiIntermediarioModel] = Field(default=None, description="Intermediario     ⚠️ Deprecato: utilizzare \"Intermediari\"")
-    intermediari: Optional[List[DatiIntermediarioModel]] = Field(default=None, description="Intermediari")
-    annotazioni: Optional[Annotated[str, Field(strict=True, max_length=500)]] = Field(default=None, description="Annotazioni generiche")
-    __properties: ClassVar[List[str]] = []
+    intermediari: Optional[conlist(DatiIntermediarioModel)] = Field(default=None, description="Intermediari")
+    annotazioni: Optional[constr(strict=True, max_length=500)] = Field(default=None, description="Annotazioni generiche")
+    __properties = []
 
-    model_config = ConfigDict(
-        populate_by_name=True,
-        validate_assignment=True,
-        protected_namespaces=(),
-    )
-
+    class Config:
+        """Pydantic configuration"""
+        allow_population_by_field_name = True
+        validate_assignment = True
 
     def to_str(self) -> str:
         """Returns the string representation of the model using alias"""
-        return pprint.pformat(self.model_dump(by_alias=True))
+        return pprint.pformat(self.dict(by_alias=True))
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> MovimentoBaseModel:
         """Create an instance of MovimentoBaseModel from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
-    def to_dict(self) -> Dict[str, Any]:
-        """Return the dictionary representation of the model using alias.
-
-        This has the following differences from calling pydantic's
-        `self.model_dump(by_alias=True)`:
-
-        * `None` is only added to the output dict for nullable fields that
-          were set at model initialization. Other fields with value `None`
-          are ignored.
-        """
-        excluded_fields: Set[str] = set([
-        ])
-
-        _dict = self.model_dump(
-            by_alias=True,
-            exclude=excluded_fields,
-            exclude_none=True,
-        )
+    def to_dict(self):
+        """Returns the dictionary representation of the model using alias"""
+        _dict = self.dict(by_alias=True,
+                          exclude={
+                          },
+                          exclude_none=True)
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: dict) -> MovimentoBaseModel:
         """Create an instance of MovimentoBaseModel from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
-            return cls.model_validate(obj)
+            return MovimentoBaseModel.parse_obj(obj)
 
-        _obj = cls.model_validate(obj)
+        _obj = MovimentoBaseModel.parse_obj({
+        })
         return _obj
 
 

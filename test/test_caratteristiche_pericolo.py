@@ -14,8 +14,9 @@
 
 
 import unittest
+import datetime
 
-from rentri_dati_registri.models.caratteristiche_pericolo import CaratteristichePericolo
+from rentri_dati_registri.models.caratteristiche_pericolo import CaratteristichePericolo  # noqa: E501
 
 class TestCaratteristichePericolo(unittest.TestCase):
     """CaratteristichePericolo unit test stubs"""

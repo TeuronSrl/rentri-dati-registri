@@ -14,8 +14,9 @@
 
 
 import unittest
+import datetime
 
-from rentri_dati_registri.models.destinazioni_rifiuto import DestinazioniRifiuto
+from rentri_dati_registri.models.destinazioni_rifiuto import DestinazioniRifiuto  # noqa: E501
 
 class TestDestinazioniRifiuto(unittest.TestCase):
     """DestinazioniRifiuto unit test stubs"""

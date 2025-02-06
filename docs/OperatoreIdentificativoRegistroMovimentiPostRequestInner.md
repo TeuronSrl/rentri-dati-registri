@@ -3,7 +3,6 @@
 Dati della registrazione
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **riferimenti** | [**DatiRiferimentiBaseModel**](DatiRiferimentiBaseModel.md) | Riferimenti operazione | 
@@ -31,7 +30,7 @@ json = "{}"
 # create an instance of OperatoreIdentificativoRegistroMovimentiPostRequestInner from a JSON string
 operatore_identificativo_registro_movimenti_post_request_inner_instance = OperatoreIdentificativoRegistroMovimentiPostRequestInner.from_json(json)
 # print the JSON string representation of the object
-print(OperatoreIdentificativoRegistroMovimentiPostRequestInner.to_json())
+print OperatoreIdentificativoRegistroMovimentiPostRequestInner.to_json()
 
 # convert the object into a dict
 operatore_identificativo_registro_movimenti_post_request_inner_dict = operatore_identificativo_registro_movimenti_post_request_inner_instance.to_dict()

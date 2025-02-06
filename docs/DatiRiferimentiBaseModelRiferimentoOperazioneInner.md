@@ -3,7 +3,6 @@
 Dati di identificazione della registrazione tramite anno di riferimento e progressivo oppure identificativo rilasciato dal RENTRI
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **anno** | **int** | Anno di riferimento della registrazione | 
@@ -20,7 +19,7 @@ json = "{}"
 # create an instance of DatiRiferimentiBaseModelRiferimentoOperazioneInner from a JSON string
 dati_riferimenti_base_model_riferimento_operazione_inner_instance = DatiRiferimentiBaseModelRiferimentoOperazioneInner.from_json(json)
 # print the JSON string representation of the object
-print(DatiRiferimentiBaseModelRiferimentoOperazioneInner.to_json())
+print DatiRiferimentiBaseModelRiferimentoOperazioneInner.to_json()
 
 # convert the object into a dict
 dati_riferimenti_base_model_riferimento_operazione_inner_dict = dati_riferimenti_base_model_riferimento_operazione_inner_instance.to_dict()

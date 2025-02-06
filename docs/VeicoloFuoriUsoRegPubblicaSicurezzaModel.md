@@ -3,7 +3,6 @@
 Registro pubblica sicurezza
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **numero** | **str** | Numero reg. pubblica sicurezza | 
@@ -19,7 +18,7 @@ json = "{}"
 # create an instance of VeicoloFuoriUsoRegPubblicaSicurezzaModel from a JSON string
 veicolo_fuori_uso_reg_pubblica_sicurezza_model_instance = VeicoloFuoriUsoRegPubblicaSicurezzaModel.from_json(json)
 # print the JSON string representation of the object
-print(VeicoloFuoriUsoRegPubblicaSicurezzaModel.to_json())
+print VeicoloFuoriUsoRegPubblicaSicurezzaModel.to_json()
 
 # convert the object into a dict
 veicolo_fuori_uso_reg_pubblica_sicurezza_model_dict = veicolo_fuori_uso_reg_pubblica_sicurezza_model_instance.to_dict()

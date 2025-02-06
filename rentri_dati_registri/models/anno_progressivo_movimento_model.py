@@ -18,71 +18,55 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field
-from typing import Any, ClassVar, Dict, List
-from typing_extensions import Annotated
-from typing import Optional, Set
-from typing_extensions import Self
+
+
+from pydantic import BaseModel, Field, conint
 
 class AnnoProgressivoMovimentoModel(BaseModel):
     """
-    Dati di identificazione della registrazione tramite anno di riferimento e progressivo (da utilizzare in alternativa a identificativo rilasciato dal RENTRI)
-    """ # noqa: E501
-    anno: Annotated[int, Field(le=2050, strict=True, ge=1980)] = Field(description="Anno di riferimento della registrazione")
-    progressivo: Annotated[int, Field(le=2147483647, strict=True, ge=1)] = Field(description="Progressivo della registrazione")
-    __properties: ClassVar[List[str]] = []
+    Dati di identificazione della registrazione tramite anno di riferimento e progressivo (da utilizzare in alternativa a identificativo rilasciato dal RENTRI)  # noqa: E501
+    """
+    anno: conint(strict=True, le=2050, ge=1980) = Field(default=..., description="Anno di riferimento della registrazione")
+    progressivo: conint(strict=True, le=2147483647, ge=1) = Field(default=..., description="Progressivo della registrazione")
+    __properties = []
 
-    model_config = ConfigDict(
-        populate_by_name=True,
-        validate_assignment=True,
-        protected_namespaces=(),
-    )
-
+    class Config:
+        """Pydantic configuration"""
+        allow_population_by_field_name = True
+        validate_assignment = True
 
     def to_str(self) -> str:
         """Returns the string representation of the model using alias"""
-        return pprint.pformat(self.model_dump(by_alias=True))
+        return pprint.pformat(self.dict(by_alias=True))
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> AnnoProgressivoMovimentoModel:
         """Create an instance of AnnoProgressivoMovimentoModel from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
-    def to_dict(self) -> Dict[str, Any]:
-        """Return the dictionary representation of the model using alias.
-
-        This has the following differences from calling pydantic's
-        `self.model_dump(by_alias=True)`:
-
-        * `None` is only added to the output dict for nullable fields that
-          were set at model initialization. Other fields with value `None`
-          are ignored.
-        """
-        excluded_fields: Set[str] = set([
-        ])
-
-        _dict = self.model_dump(
-            by_alias=True,
-            exclude=excluded_fields,
-            exclude_none=True,
-        )
+    def to_dict(self):
+        """Returns the dictionary representation of the model using alias"""
+        _dict = self.dict(by_alias=True,
+                          exclude={
+                          },
+                          exclude_none=True)
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: dict) -> AnnoProgressivoMovimentoModel:
         """Create an instance of AnnoProgressivoMovimentoModel from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
-            return cls.model_validate(obj)
+            return AnnoProgressivoMovimentoModel.parse_obj(obj)
 
-        _obj = cls.model_validate(obj)
+        _obj = AnnoProgressivoMovimentoModel.parse_obj({
+        })
         return _obj
 
 

@@ -14,8 +14,9 @@
 
 
 import unittest
+import datetime
 
-from rentri_dati_registri.models.veicolo_fuori_uso_reg_pubblica_sicurezza_model import VeicoloFuoriUsoRegPubblicaSicurezzaModel
+from rentri_dati_registri.models.veicolo_fuori_uso_reg_pubblica_sicurezza_model import VeicoloFuoriUsoRegPubblicaSicurezzaModel  # noqa: E501
 
 class TestVeicoloFuoriUsoRegPubblicaSicurezzaModel(unittest.TestCase):
     """VeicoloFuoriUsoRegPubblicaSicurezzaModel unit test stubs"""
@@ -28,12 +29,12 @@ class TestVeicoloFuoriUsoRegPubblicaSicurezzaModel(unittest.TestCase):
 
     def make_instance(self, include_optional) -> VeicoloFuoriUsoRegPubblicaSicurezzaModel:
         """Test VeicoloFuoriUsoRegPubblicaSicurezzaModel
-            include_optional is a boolean, when False only required
+            include_option is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
         # uncomment below to create an instance of `VeicoloFuoriUsoRegPubblicaSicurezzaModel`
         """
-        model = VeicoloFuoriUsoRegPubblicaSicurezzaModel()
+        model = VeicoloFuoriUsoRegPubblicaSicurezzaModel()  # noqa: E501
         if include_optional:
             return VeicoloFuoriUsoRegPubblicaSicurezzaModel(
                 numero = '0',

@@ -14,8 +14,9 @@
 
 
 import unittest
+import datetime
 
-from rentri_dati_registri.models.esito_messaggio_model import EsitoMessaggioModel
+from rentri_dati_registri.models.esito_messaggio_model import EsitoMessaggioModel  # noqa: E501
 
 class TestEsitoMessaggioModel(unittest.TestCase):
     """EsitoMessaggioModel unit test stubs"""
@@ -28,12 +29,12 @@ class TestEsitoMessaggioModel(unittest.TestCase):
 
     def make_instance(self, include_optional) -> EsitoMessaggioModel:
         """Test EsitoMessaggioModel
-            include_optional is a boolean, when False only required
+            include_option is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
         # uncomment below to create an instance of `EsitoMessaggioModel`
         """
-        model = EsitoMessaggioModel()
+        model = EsitoMessaggioModel()  # noqa: E501
         if include_optional:
             return EsitoMessaggioModel(
                 indice = 56,

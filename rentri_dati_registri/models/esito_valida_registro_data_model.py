@@ -19,15 +19,13 @@ import re  # noqa: F401
 import json
 
 from datetime import datetime
-from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, StrictStr
-from typing import Any, ClassVar, Dict, List, Optional
-from typing import Optional, Set
-from typing_extensions import Self
+from typing import Optional
+from pydantic import BaseModel, Field, StrictBool, StrictInt, StrictStr
 
 class EsitoValidaRegistroDataModel(BaseModel):
     """
     EsitoValidaRegistroDataModel
-    """ # noqa: E501
+    """
     identificativo_registro: Optional[StrictStr] = Field(default=None, description="Identificativo del registro")
     num_iscr_operatore: Optional[StrictStr] = Field(default=None, description="Numero di iscrizione dell'operatore")
     codice_fiscale_operatore: Optional[StrictStr] = Field(default=None, description="Codice fiscale dell'operatore")
@@ -50,169 +48,154 @@ class EsitoValidaRegistroDataModel(BaseModel):
     numero_registrazioni_ultima_esportazione: Optional[StrictInt] = Field(default=None, description="Numero di registrazioni presenti nell'ultima esportazione")
     data_ultima_esportazione: Optional[datetime] = Field(default=None, description="Data dell'ultima esportazione effettuata")
     ultimo_anno_progressivo_esportato: Optional[StrictStr] = Field(default=None, description="Ultimo progressivo esportato")
-    __properties: ClassVar[List[str]] = ["identificativo_registro", "num_iscr_operatore", "codice_fiscale_operatore", "denominazione_operatore", "num_iscr_soggetto_delegato", "codice_fiscale_soggetto_delegato", "denominazione_soggetto_delegato", "num_iscr_sito", "indirizzo_sito", "data_vidimazione", "cciaa", "identificativo_firma", "denominazione_firma", "ca_firma", "firma_non_etsi", "numero_esportazioni_totali", "numero_esportazioni_file", "numero_registrazioni_file", "numero_registrazioni_rentri", "numero_registrazioni_ultima_esportazione", "data_ultima_esportazione", "ultimo_anno_progressivo_esportato"]
+    __properties = ["identificativo_registro", "num_iscr_operatore", "codice_fiscale_operatore", "denominazione_operatore", "num_iscr_soggetto_delegato", "codice_fiscale_soggetto_delegato", "denominazione_soggetto_delegato", "num_iscr_sito", "indirizzo_sito", "data_vidimazione", "cciaa", "identificativo_firma", "denominazione_firma", "ca_firma", "firma_non_etsi", "numero_esportazioni_totali", "numero_esportazioni_file", "numero_registrazioni_file", "numero_registrazioni_rentri", "numero_registrazioni_ultima_esportazione", "data_ultima_esportazione", "ultimo_anno_progressivo_esportato"]
 
-    model_config = ConfigDict(
-        populate_by_name=True,
-        validate_assignment=True,
-        protected_namespaces=(),
-    )
-
+    class Config:
+        """Pydantic configuration"""
+        allow_population_by_field_name = True
+        validate_assignment = True
 
     def to_str(self) -> str:
         """Returns the string representation of the model using alias"""
-        return pprint.pformat(self.model_dump(by_alias=True))
+        return pprint.pformat(self.dict(by_alias=True))
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> EsitoValidaRegistroDataModel:
         """Create an instance of EsitoValidaRegistroDataModel from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
-    def to_dict(self) -> Dict[str, Any]:
-        """Return the dictionary representation of the model using alias.
-
-        This has the following differences from calling pydantic's
-        `self.model_dump(by_alias=True)`:
-
-        * `None` is only added to the output dict for nullable fields that
-          were set at model initialization. Other fields with value `None`
-          are ignored.
-        """
-        excluded_fields: Set[str] = set([
-        ])
-
-        _dict = self.model_dump(
-            by_alias=True,
-            exclude=excluded_fields,
-            exclude_none=True,
-        )
+    def to_dict(self):
+        """Returns the dictionary representation of the model using alias"""
+        _dict = self.dict(by_alias=True,
+                          exclude={
+                          },
+                          exclude_none=True)
         # set to None if identificativo_registro (nullable) is None
-        # and model_fields_set contains the field
-        if self.identificativo_registro is None and "identificativo_registro" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.identificativo_registro is None and "identificativo_registro" in self.__fields_set__:
             _dict['identificativo_registro'] = None
 
         # set to None if num_iscr_operatore (nullable) is None
-        # and model_fields_set contains the field
-        if self.num_iscr_operatore is None and "num_iscr_operatore" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.num_iscr_operatore is None and "num_iscr_operatore" in self.__fields_set__:
             _dict['num_iscr_operatore'] = None
 
         # set to None if codice_fiscale_operatore (nullable) is None
-        # and model_fields_set contains the field
-        if self.codice_fiscale_operatore is None and "codice_fiscale_operatore" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.codice_fiscale_operatore is None and "codice_fiscale_operatore" in self.__fields_set__:
             _dict['codice_fiscale_operatore'] = None
 
         # set to None if denominazione_operatore (nullable) is None
-        # and model_fields_set contains the field
-        if self.denominazione_operatore is None and "denominazione_operatore" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.denominazione_operatore is None and "denominazione_operatore" in self.__fields_set__:
             _dict['denominazione_operatore'] = None
 
         # set to None if num_iscr_soggetto_delegato (nullable) is None
-        # and model_fields_set contains the field
-        if self.num_iscr_soggetto_delegato is None and "num_iscr_soggetto_delegato" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.num_iscr_soggetto_delegato is None and "num_iscr_soggetto_delegato" in self.__fields_set__:
             _dict['num_iscr_soggetto_delegato'] = None
 
         # set to None if codice_fiscale_soggetto_delegato (nullable) is None
-        # and model_fields_set contains the field
-        if self.codice_fiscale_soggetto_delegato is None and "codice_fiscale_soggetto_delegato" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.codice_fiscale_soggetto_delegato is None and "codice_fiscale_soggetto_delegato" in self.__fields_set__:
             _dict['codice_fiscale_soggetto_delegato'] = None
 
         # set to None if denominazione_soggetto_delegato (nullable) is None
-        # and model_fields_set contains the field
-        if self.denominazione_soggetto_delegato is None and "denominazione_soggetto_delegato" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.denominazione_soggetto_delegato is None and "denominazione_soggetto_delegato" in self.__fields_set__:
             _dict['denominazione_soggetto_delegato'] = None
 
         # set to None if num_iscr_sito (nullable) is None
-        # and model_fields_set contains the field
-        if self.num_iscr_sito is None and "num_iscr_sito" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.num_iscr_sito is None and "num_iscr_sito" in self.__fields_set__:
             _dict['num_iscr_sito'] = None
 
         # set to None if indirizzo_sito (nullable) is None
-        # and model_fields_set contains the field
-        if self.indirizzo_sito is None and "indirizzo_sito" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.indirizzo_sito is None and "indirizzo_sito" in self.__fields_set__:
             _dict['indirizzo_sito'] = None
 
         # set to None if data_vidimazione (nullable) is None
-        # and model_fields_set contains the field
-        if self.data_vidimazione is None and "data_vidimazione" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.data_vidimazione is None and "data_vidimazione" in self.__fields_set__:
             _dict['data_vidimazione'] = None
 
         # set to None if cciaa (nullable) is None
-        # and model_fields_set contains the field
-        if self.cciaa is None and "cciaa" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.cciaa is None and "cciaa" in self.__fields_set__:
             _dict['cciaa'] = None
 
         # set to None if identificativo_firma (nullable) is None
-        # and model_fields_set contains the field
-        if self.identificativo_firma is None and "identificativo_firma" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.identificativo_firma is None and "identificativo_firma" in self.__fields_set__:
             _dict['identificativo_firma'] = None
 
         # set to None if denominazione_firma (nullable) is None
-        # and model_fields_set contains the field
-        if self.denominazione_firma is None and "denominazione_firma" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.denominazione_firma is None and "denominazione_firma" in self.__fields_set__:
             _dict['denominazione_firma'] = None
 
         # set to None if ca_firma (nullable) is None
-        # and model_fields_set contains the field
-        if self.ca_firma is None and "ca_firma" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.ca_firma is None and "ca_firma" in self.__fields_set__:
             _dict['ca_firma'] = None
 
         # set to None if firma_non_etsi (nullable) is None
-        # and model_fields_set contains the field
-        if self.firma_non_etsi is None and "firma_non_etsi" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.firma_non_etsi is None and "firma_non_etsi" in self.__fields_set__:
             _dict['firma_non_etsi'] = None
 
         # set to None if numero_esportazioni_totali (nullable) is None
-        # and model_fields_set contains the field
-        if self.numero_esportazioni_totali is None and "numero_esportazioni_totali" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.numero_esportazioni_totali is None and "numero_esportazioni_totali" in self.__fields_set__:
             _dict['numero_esportazioni_totali'] = None
 
         # set to None if numero_esportazioni_file (nullable) is None
-        # and model_fields_set contains the field
-        if self.numero_esportazioni_file is None and "numero_esportazioni_file" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.numero_esportazioni_file is None and "numero_esportazioni_file" in self.__fields_set__:
             _dict['numero_esportazioni_file'] = None
 
         # set to None if numero_registrazioni_file (nullable) is None
-        # and model_fields_set contains the field
-        if self.numero_registrazioni_file is None and "numero_registrazioni_file" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.numero_registrazioni_file is None and "numero_registrazioni_file" in self.__fields_set__:
             _dict['numero_registrazioni_file'] = None
 
         # set to None if numero_registrazioni_rentri (nullable) is None
-        # and model_fields_set contains the field
-        if self.numero_registrazioni_rentri is None and "numero_registrazioni_rentri" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.numero_registrazioni_rentri is None and "numero_registrazioni_rentri" in self.__fields_set__:
             _dict['numero_registrazioni_rentri'] = None
 
         # set to None if numero_registrazioni_ultima_esportazione (nullable) is None
-        # and model_fields_set contains the field
-        if self.numero_registrazioni_ultima_esportazione is None and "numero_registrazioni_ultima_esportazione" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.numero_registrazioni_ultima_esportazione is None and "numero_registrazioni_ultima_esportazione" in self.__fields_set__:
             _dict['numero_registrazioni_ultima_esportazione'] = None
 
         # set to None if data_ultima_esportazione (nullable) is None
-        # and model_fields_set contains the field
-        if self.data_ultima_esportazione is None and "data_ultima_esportazione" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.data_ultima_esportazione is None and "data_ultima_esportazione" in self.__fields_set__:
             _dict['data_ultima_esportazione'] = None
 
         # set to None if ultimo_anno_progressivo_esportato (nullable) is None
-        # and model_fields_set contains the field
-        if self.ultimo_anno_progressivo_esportato is None and "ultimo_anno_progressivo_esportato" in self.model_fields_set:
+        # and __fields_set__ contains the field
+        if self.ultimo_anno_progressivo_esportato is None and "ultimo_anno_progressivo_esportato" in self.__fields_set__:
             _dict['ultimo_anno_progressivo_esportato'] = None
 
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: dict) -> EsitoValidaRegistroDataModel:
         """Create an instance of EsitoValidaRegistroDataModel from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
-            return cls.model_validate(obj)
+            return EsitoValidaRegistroDataModel.parse_obj(obj)
 
-        _obj = cls.model_validate({
+        _obj = EsitoValidaRegistroDataModel.parse_obj({
             "identificativo_registro": obj.get("identificativo_registro"),
             "num_iscr_operatore": obj.get("num_iscr_operatore"),
             "codice_fiscale_operatore": obj.get("codice_fiscale_operatore"),

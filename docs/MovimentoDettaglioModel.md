@@ -3,7 +3,6 @@
 Dati della registrazione con storico
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **riferimenti** | [**DatiRiferimentiCompletoModel**](DatiRiferimentiCompletoModel.md) | Riferimenti operazione | [optional] 
@@ -31,7 +30,7 @@ json = "{}"
 # create an instance of MovimentoDettaglioModel from a JSON string
 movimento_dettaglio_model_instance = MovimentoDettaglioModel.from_json(json)
 # print the JSON string representation of the object
-print(MovimentoDettaglioModel.to_json())
+print MovimentoDettaglioModel.to_json()
 
 # convert the object into a dict
 movimento_dettaglio_model_dict = movimento_dettaglio_model_instance.to_dict()

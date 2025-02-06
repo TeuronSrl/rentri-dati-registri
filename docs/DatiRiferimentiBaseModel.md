@@ -3,7 +3,6 @@
 Riferimenti dell'operazione
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **numero_registrazione** | [**DatiRiferimentiBaseModelNumeroRegistrazione**](DatiRiferimentiBaseModelNumeroRegistrazione.md) |  | 
@@ -23,7 +22,7 @@ json = "{}"
 # create an instance of DatiRiferimentiBaseModel from a JSON string
 dati_riferimenti_base_model_instance = DatiRiferimentiBaseModel.from_json(json)
 # print the JSON string representation of the object
-print(DatiRiferimentiBaseModel.to_json())
+print DatiRiferimentiBaseModel.to_json()
 
 # convert the object into a dict
 dati_riferimenti_base_model_dict = dati_riferimenti_base_model_instance.to_dict()

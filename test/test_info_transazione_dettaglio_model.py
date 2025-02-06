@@ -14,8 +14,9 @@
 
 
 import unittest
+import datetime
 
-from rentri_dati_registri.models.info_transazione_dettaglio_model import InfoTransazioneDettaglioModel
+from rentri_dati_registri.models.info_transazione_dettaglio_model import InfoTransazioneDettaglioModel  # noqa: E501
 
 class TestInfoTransazioneDettaglioModel(unittest.TestCase):
     """InfoTransazioneDettaglioModel unit test stubs"""
@@ -28,12 +29,12 @@ class TestInfoTransazioneDettaglioModel(unittest.TestCase):
 
     def make_instance(self, include_optional) -> InfoTransazioneDettaglioModel:
         """Test InfoTransazioneDettaglioModel
-            include_optional is a boolean, when False only required
+            include_option is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
         # uncomment below to create an instance of `InfoTransazioneDettaglioModel`
         """
-        model = InfoTransazioneDettaglioModel()
+        model = InfoTransazioneDettaglioModel()  # noqa: E501
         if include_optional:
             return InfoTransazioneDettaglioModel(
                 identificativo = '',

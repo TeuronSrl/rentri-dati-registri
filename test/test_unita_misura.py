@@ -14,8 +14,9 @@
 
 
 import unittest
+import datetime
 
-from rentri_dati_registri.models.unita_misura import UnitaMisura
+from rentri_dati_registri.models.unita_misura import UnitaMisura  # noqa: E501
 
 class TestUnitaMisura(unittest.TestCase):
     """UnitaMisura unit test stubs"""

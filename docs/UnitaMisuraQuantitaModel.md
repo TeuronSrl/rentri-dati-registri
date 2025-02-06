@@ -2,7 +2,6 @@
 
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **valore** | **float** | Quantità (parte intera: 10, parte decimale: 4) compresa tra 0.0000 e 9999999999.9999. | 
@@ -18,7 +17,7 @@ json = "{}"
 # create an instance of UnitaMisuraQuantitaModel from a JSON string
 unita_misura_quantita_model_instance = UnitaMisuraQuantitaModel.from_json(json)
 # print the JSON string representation of the object
-print(UnitaMisuraQuantitaModel.to_json())
+print UnitaMisuraQuantitaModel.to_json()
 
 # convert the object into a dict
 unita_misura_quantita_model_dict = unita_misura_quantita_model_instance.to_dict()

@@ -14,8 +14,9 @@
 
 
 import unittest
+import datetime
 
-from rentri_dati_registri.models.dati_riferimenti_base_model import DatiRiferimentiBaseModel
+from rentri_dati_registri.models.dati_riferimenti_base_model import DatiRiferimentiBaseModel  # noqa: E501
 
 class TestDatiRiferimentiBaseModel(unittest.TestCase):
     """DatiRiferimentiBaseModel unit test stubs"""
@@ -28,12 +29,12 @@ class TestDatiRiferimentiBaseModel(unittest.TestCase):
 
     def make_instance(self, include_optional) -> DatiRiferimentiBaseModel:
         """Test DatiRiferimentiBaseModel
-            include_optional is a boolean, when False only required
+            include_option is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
         # uncomment below to create an instance of `DatiRiferimentiBaseModel`
         """
-        model = DatiRiferimentiBaseModel()
+        model = DatiRiferimentiBaseModel()  # noqa: E501
         if include_optional:
             return DatiRiferimentiBaseModel(
                 numero_registrazione = None,

@@ -14,8 +14,9 @@
 
 
 import unittest
+import datetime
 
-from rentri_dati_registri.models.unita_misura_peso import UnitaMisuraPeso
+from rentri_dati_registri.models.unita_misura_peso import UnitaMisuraPeso  # noqa: E501
 
 class TestUnitaMisuraPeso(unittest.TestCase):
     """UnitaMisuraPeso unit test stubs"""

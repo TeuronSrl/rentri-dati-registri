@@ -19,74 +19,57 @@ import re  # noqa: F401
 import json
 
 from datetime import datetime
-from pydantic import BaseModel, ConfigDict, Field
-from typing import Any, ClassVar, Dict, List, Optional
-from typing_extensions import Annotated
+from typing import Any, Optional
+from pydantic import BaseModel, Field, constr
 from rentri_dati_registri.models.anno_progressivo_movimento_model import AnnoProgressivoMovimentoModel
-from typing import Optional, Set
-from typing_extensions import Self
 
 class AnnullamentoMovimentoModel(BaseModel):
     """
-    Annullamento registrazione
-    """ # noqa: E501
-    numero_registrazione: AnnoProgressivoMovimentoModel = Field(description="Numero registrazione della rettifica di annullamento tramite anno di riferimento e progressivo")
-    data_ora_registrazione: datetime = Field(description="Data di registrazione (formato ISO 8601 UTC) dell'annullamento come previsto nel modello di registro RENTRI. Trattandosi di una registrazione informatica, è consentito indicare l'ora, anche se non obbligatoria.  <b>Esempi:</b> solo data = \"2024-01-01\", data con ora = \"2024-01-01T12:00:00Z\"")
-    numero_registrazione_annullata: Optional[Any] = Field(description="Numero registrazione della registrazione da annullare")
-    annotazioni: Annotated[str, Field(min_length=1, strict=True, max_length=500)] = Field(description="Annotazioni contenenti il motivo dell'annullamento")
-    __properties: ClassVar[List[str]] = []
+    Annullamento registrazione  # noqa: E501
+    """
+    numero_registrazione: AnnoProgressivoMovimentoModel = Field(default=..., description="Numero registrazione della rettifica di annullamento tramite anno di riferimento e progressivo")
+    data_ora_registrazione: datetime = Field(default=..., description="Data di registrazione (formato ISO 8601 UTC) dell'annullamento come previsto nel modello di registro RENTRI. Trattandosi di una registrazione informatica, è consentito indicare l'ora, anche se non obbligatoria.  <b>Esempi:</b> solo data = \"2024-01-01\", data con ora = \"2024-01-01T12:00:00Z\"")
+    numero_registrazione_annullata: Optional[Any] = Field(default=..., description="Numero registrazione della registrazione da annullare")
+    annotazioni: constr(strict=True, max_length=500, min_length=1) = Field(default=..., description="Annotazioni contenenti il motivo dell'annullamento")
+    __properties = []
 
-    model_config = ConfigDict(
-        populate_by_name=True,
-        validate_assignment=True,
-        protected_namespaces=(),
-    )
-
+    class Config:
+        """Pydantic configuration"""
+        allow_population_by_field_name = True
+        validate_assignment = True
 
     def to_str(self) -> str:
         """Returns the string representation of the model using alias"""
-        return pprint.pformat(self.model_dump(by_alias=True))
+        return pprint.pformat(self.dict(by_alias=True))
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> AnnullamentoMovimentoModel:
         """Create an instance of AnnullamentoMovimentoModel from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
-    def to_dict(self) -> Dict[str, Any]:
-        """Return the dictionary representation of the model using alias.
-
-        This has the following differences from calling pydantic's
-        `self.model_dump(by_alias=True)`:
-
-        * `None` is only added to the output dict for nullable fields that
-          were set at model initialization. Other fields with value `None`
-          are ignored.
-        """
-        excluded_fields: Set[str] = set([
-        ])
-
-        _dict = self.model_dump(
-            by_alias=True,
-            exclude=excluded_fields,
-            exclude_none=True,
-        )
+    def to_dict(self):
+        """Returns the dictionary representation of the model using alias"""
+        _dict = self.dict(by_alias=True,
+                          exclude={
+                          },
+                          exclude_none=True)
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: dict) -> AnnullamentoMovimentoModel:
         """Create an instance of AnnullamentoMovimentoModel from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
-            return cls.model_validate(obj)
+            return AnnullamentoMovimentoModel.parse_obj(obj)
 
-        _obj = cls.model_validate(obj)
+        _obj = AnnullamentoMovimentoModel.parse_obj({
+        })
         return _obj
 
 

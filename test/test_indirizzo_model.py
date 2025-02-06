@@ -14,8 +14,9 @@
 
 
 import unittest
+import datetime
 
-from rentri_dati_registri.models.indirizzo_model import IndirizzoModel
+from rentri_dati_registri.models.indirizzo_model import IndirizzoModel  # noqa: E501
 
 class TestIndirizzoModel(unittest.TestCase):
     """IndirizzoModel unit test stubs"""
@@ -28,12 +29,12 @@ class TestIndirizzoModel(unittest.TestCase):
 
     def make_instance(self, include_optional) -> IndirizzoModel:
         """Test IndirizzoModel
-            include_optional is a boolean, when False only required
+            include_option is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
         # uncomment below to create an instance of `IndirizzoModel`
         """
-        model = IndirizzoModel()
+        model = IndirizzoModel()  # noqa: E501
         if include_optional:
             return IndirizzoModel(
                 citta = None,
