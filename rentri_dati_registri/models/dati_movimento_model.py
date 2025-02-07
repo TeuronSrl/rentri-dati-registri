@@ -175,16 +175,16 @@ class DatiMovimentoModel(BaseModel):
             return DatiMovimentoModel.parse_obj(obj)
 
         _obj = DatiMovimentoModel.parse_obj({
-            "riferimenti": DatiRiferimentiCompletoModel.from_dict(obj.get("riferimenti")) if obj.get("riferimenti") is not None else None,
-            "rifiuto": DatiRifiutoModel.from_dict(obj.get("rifiuto")) if obj.get("rifiuto") is not None else None,
-            "materiali": DatiMaterialiModel.from_dict(obj.get("materiali")) if obj.get("materiali") is not None else None,
-            "integrazione_fir": DatiIntegrazioneFirModel.from_dict(obj.get("integrazione_fir")) if obj.get("integrazione_fir") is not None else None,
-            "esito": DatiEsitoModel.from_dict(obj.get("esito")) if obj.get("esito") is not None else None,
-            "produttore": DatiProduttoreModel.from_dict(obj.get("produttore")) if obj.get("produttore") is not None else None,
-            "trasportatore": DatiTrasportatoreModel.from_dict(obj.get("trasportatore")) if obj.get("trasportatore") is not None else None,
-            "destinatario": DatiDestinatarioModel.from_dict(obj.get("destinatario")) if obj.get("destinatario") is not None else None,
-            "intermediario": DatiIntermediarioModel.from_dict(obj.get("intermediario")) if obj.get("intermediario") is not None else None,
-            "intermediari": [DatiIntermediarioModel.from_dict(_item) for _item in obj.get("intermediari")] if obj.get("intermediari") is not None else None,
+            "riferimenti": DatiRiferimentiCompletoModel.from_dict(obj["riferimenti"]) if obj.get("riferimenti") not in (None, {}) else None,
+            "rifiuto": DatiRifiutoModel.from_dict(obj["rifiuto"]) if obj.get("rifiuto") not in (None, {}) else None,
+            "materiali": DatiMaterialiModel.from_dict(obj["materiali"]) if obj.get("materiali") not in (None, {}) else None,
+            "integrazione_fir": DatiIntegrazioneFirModel.from_dict(obj["integrazione_fir"]) if obj.get("integrazione_fir") not in (None, {}) else None,
+            "esito": DatiEsitoModel.from_dict(obj["esito"]) if obj.get("esito") not in (None, {}) else None,
+            "produttore": DatiProduttoreModel.from_dict(obj["produttore"]) if obj.get("produttore") not in (None, {}) else None,
+            "trasportatore": DatiTrasportatoreModel.from_dict(obj["trasportatore"]) if obj.get("trasportatore") not in (None, {}) else None,
+            "destinatario": DatiDestinatarioModel.from_dict(obj["destinatario"]) if obj.get("destinatario") not in (None, {}) else None,
+            "intermediario": DatiIntermediarioModel.from_dict(obj["intermediario"]) if obj.get("intermediario") not in (None, {}) else None,
+            "intermediari": [DatiIntermediarioModel.from_dict(_item) for _item in obj["intermediari"]] if obj.get("intermediari") not in (None, {}) else None,
             "annotazioni": obj.get("annotazioni"),
             "annullato": obj.get("annullato"),
             "rettificato": obj.get("rettificato")
