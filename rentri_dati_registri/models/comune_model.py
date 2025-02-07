@@ -64,8 +64,7 @@ class ComuneModel(BaseModel):
         if not isinstance(obj, dict):
             return ComuneModel.parse_obj(obj)
 
-        _obj = ComuneModel.parse_obj({
-        })
+        _obj = ComuneModel.parse_obj(obj)
         return _obj
 
 

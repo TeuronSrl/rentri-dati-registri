@@ -72,8 +72,7 @@ class CittaEsteraModel(BaseModel):
         if not isinstance(obj, dict):
             return CittaEsteraModel.parse_obj(obj)
 
-        _obj = CittaEsteraModel.parse_obj({
-        })
+        _obj = CittaEsteraModel.parse_obj(obj)
         return _obj
 
 

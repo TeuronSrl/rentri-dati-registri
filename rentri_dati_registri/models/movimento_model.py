@@ -169,7 +169,7 @@ class MovimentoModel(BaseModel):
             return MovimentoModel.parse_obj(obj)
 
         _obj = MovimentoModel.parse_obj({
-            "riferimenti": DatiRiferimentiBaseModel.from_dict(obj.get("riferimenti")) if obj.get("riferimenti") is not None else None,
+            "riferimenti": DatiRiferimentiModel.from_dict(obj.get("riferimenti")) if obj.get("riferimenti") is not None else None,
             "rifiuto": DatiRifiutoModel.from_dict(obj.get("rifiuto")) if obj.get("rifiuto") is not None else None,
             "materiali": DatiMaterialiModel.from_dict(obj.get("materiali")) if obj.get("materiali") is not None else None,
             "integrazione_fir": DatiIntegrazioneFirModel.from_dict(obj.get("integrazione_fir")) if obj.get("integrazione_fir") is not None else None,

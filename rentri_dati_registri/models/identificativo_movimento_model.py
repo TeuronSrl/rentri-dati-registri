@@ -71,8 +71,7 @@ class IdentificativoMovimentoModel(BaseModel):
         if not isinstance(obj, dict):
             return IdentificativoMovimentoModel.parse_obj(obj)
 
-        _obj = IdentificativoMovimentoModel.parse_obj({
-        })
+        _obj = IdentificativoMovimentoModel.parse_obj(obj)
         return _obj
 
 

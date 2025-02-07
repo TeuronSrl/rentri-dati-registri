@@ -96,6 +96,10 @@ class TransazioneIdResultGet200Response(BaseModel):
             match += 1
         except (ValidationError, ValueError) as e:
             error_messages.append(str(e))
+
+        if match == 1:
+            return instance
+
         # deserialize data into EsitoValidaRegistroModel
         try:
             instance.actual_instance = EsitoValidaRegistroModel.from_json(json_str)

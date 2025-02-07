@@ -83,8 +83,7 @@ class MovimentoBaseModel(BaseModel):
         if not isinstance(obj, dict):
             return MovimentoBaseModel.parse_obj(obj)
 
-        _obj = MovimentoBaseModel.parse_obj({
-        })
+        _obj = MovimentoBaseModel.parse_obj(obj)
         return _obj
 
 

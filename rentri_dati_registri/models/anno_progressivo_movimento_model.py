@@ -65,8 +65,7 @@ class AnnoProgressivoMovimentoModel(BaseModel):
         if not isinstance(obj, dict):
             return AnnoProgressivoMovimentoModel.parse_obj(obj)
 
-        _obj = AnnoProgressivoMovimentoModel.parse_obj({
-        })
+        _obj = AnnoProgressivoMovimentoModel.parse_obj(obj)
         return _obj
 
 
