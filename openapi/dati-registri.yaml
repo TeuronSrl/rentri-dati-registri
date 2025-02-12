@@ -9,7 +9,7 @@ info:
   x-summary: Servizio dati registri RENTRI
   x-api-id: rentrigov.movimenti
 servers:
-- url: https://demoapi.rentri.gov.it/dati-registri/v1.0
+- url: https://api.rentri.gov.it/dati-registri/v1.0
   description: Demo
 paths:
   /{identificativo_registro}/last-transazione-id:

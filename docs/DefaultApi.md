@@ -1,6 +1,6 @@
 # rentri_dati_registri.DefaultApi
 
-All URIs are relative to *https://demoapi.rentri.gov.it/dati-registri/v1.0*
+All URIs are relative to *https://api.rentri.gov.it/dati-registri/v1.0*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -28,10 +28,10 @@ from rentri_dati_registri.models.transazione_model import TransazioneModel
 from rentri_dati_registri.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://demoapi.rentri.gov.it/dati-registri/v1.0
+# Defining the host is optional and defaults to https://api.rentri.gov.it/dati-registri/v1.0
 # See configuration.py for a list of all supported configuration parameters.
 configuration = rentri_dati_registri.Configuration(
-    host = "https://demoapi.rentri.gov.it/dati-registri/v1.0"
+    host = "https://api.rentri.gov.it/dati-registri/v1.0"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -107,10 +107,10 @@ import rentri_dati_registri
 from rentri_dati_registri.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://demoapi.rentri.gov.it/dati-registri/v1.0
+# Defining the host is optional and defaults to https://api.rentri.gov.it/dati-registri/v1.0
 # See configuration.py for a list of all supported configuration parameters.
 configuration = rentri_dati_registri.Configuration(
-    host = "https://demoapi.rentri.gov.it/dati-registri/v1.0"
+    host = "https://api.rentri.gov.it/dati-registri/v1.0"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -180,10 +180,10 @@ from rentri_dati_registri.models.transazione_id_result_get200_response import Tr
 from rentri_dati_registri.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://demoapi.rentri.gov.it/dati-registri/v1.0
+# Defining the host is optional and defaults to https://api.rentri.gov.it/dati-registri/v1.0
 # See configuration.py for a list of all supported configuration parameters.
 configuration = rentri_dati_registri.Configuration(
-    host = "https://demoapi.rentri.gov.it/dati-registri/v1.0"
+    host = "https://api.rentri.gov.it/dati-registri/v1.0"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -261,10 +261,10 @@ import rentri_dati_registri
 from rentri_dati_registri.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://demoapi.rentri.gov.it/dati-registri/v1.0
+# Defining the host is optional and defaults to https://api.rentri.gov.it/dati-registri/v1.0
 # See configuration.py for a list of all supported configuration parameters.
 configuration = rentri_dati_registri.Configuration(
-    host = "https://demoapi.rentri.gov.it/dati-registri/v1.0"
+    host = "https://api.rentri.gov.it/dati-registri/v1.0"
 )
 
 # The client must configure the authentication and authorization parameters
