@@ -69,7 +69,9 @@ class AnnullamentoMovimentoModel(BaseModel):
             return AnnullamentoMovimentoModel.parse_obj(obj)
 
         _obj = AnnullamentoMovimentoModel.parse_obj({
+            "numero_registrazione": AnnoProgressivoMovimentoModel.from_dict(obj["numero_registrazione"]) if obj.get("numero_registrazione") not in (None, {}) else None,
+            "data_ora_registrazione": obj.get("data_ora_registrazione"),
+            "numero_registrazione_annullata": AnnoProgressivoMovimentoModel.from_dict(obj["numero_registrazione_annullata"]) if obj.get("numero_registrazione_annullata") not in (None, {}) else None,
+            "annotazioni": obj.get("annotazioni")
         })
         return _obj
-
-
